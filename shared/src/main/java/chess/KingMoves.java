@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class KingMoves implements ChessMoveCalculator {
     ChessPiece piece;
@@ -27,7 +26,7 @@ public class KingMoves implements ChessMoveCalculator {
             if (pos.getRow() > 8 || pos.getRow() < 1) { continue; }
             if (pos.getColumn() > 8 || pos.getColumn() < 1) { continue; }
             ChessPiece tempPiece = board.getPiece(pos);
-            if (!board.isPiecePresent(pos) || (tempPiece.getTeamColor() != piece.getTeamColor())) {
+            if (board.isSpaceEmpty(pos) || (tempPiece.getTeamColor() != piece.getTeamColor())) {
                 possibleMoves.add(new ChessMove(myPosition, pos, piece.getPieceType()));
             }
         }

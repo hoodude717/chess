@@ -59,7 +59,7 @@ public class ChessBoard {
 
     }
 
-    public boolean isPiecePresent(ChessPosition position) {
-        return (grid[position.getRow()-1][position.getColumn()-1] != null);
+    public boolean isSpaceEmpty(ChessPosition position) {
+        return (grid[position.getRow()-1][position.getColumn()-1] == null);
     }
 }

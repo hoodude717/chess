@@ -26,7 +26,7 @@ public class QueenMoves implements ChessMoveCalculator{
                 continue;
             }
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
-            if (!board.isPiecePresent(curSpace)) {
+            if (board.isSpaceEmpty(curSpace)) {
                 possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
             } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
                 possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
@@ -48,7 +48,7 @@ public class QueenMoves implements ChessMoveCalculator{
             }
 
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
-            if (!board.isPiecePresent(curSpace)) {
+            if (board.isSpaceEmpty(curSpace)) {
                 possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
             } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
                 possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
@@ -70,7 +70,7 @@ public class QueenMoves implements ChessMoveCalculator{
             }
 
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
-            if (!board.isPiecePresent(curSpace)) {
+            if (board.isSpaceEmpty(curSpace)) {
                 possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
             } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
                 possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
@@ -92,7 +92,7 @@ public class QueenMoves implements ChessMoveCalculator{
             }
 
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
-            if (!board.isPiecePresent(curSpace)) {
+            if (board.isSpaceEmpty(curSpace)) {
                 possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
             } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
                 possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
@@ -115,7 +115,7 @@ public class QueenMoves implements ChessMoveCalculator{
                 continue;
             }
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
-            if (!board.isPiecePresent(curSpace)) {
+            if (board.isSpaceEmpty(curSpace)) {
                 possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
             } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
                 possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
@@ -135,7 +135,7 @@ public class QueenMoves implements ChessMoveCalculator{
                 continue;
             }
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
-            if (!board.isPiecePresent(curSpace)) {
+            if (board.isSpaceEmpty(curSpace)) {
                 possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
             } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
                 possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
@@ -155,7 +155,7 @@ public class QueenMoves implements ChessMoveCalculator{
                 continue;
             }
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
-            if (!board.isPiecePresent(curSpace)) {
+            if (board.isSpaceEmpty(curSpace)) {
                 possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
             } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
                 possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
@@ -176,7 +176,7 @@ public class QueenMoves implements ChessMoveCalculator{
             }
 
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
-            if (!board.isPiecePresent(curSpace)) {
+            if (board.isSpaceEmpty(curSpace)) {
                 possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
             } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
                 possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
