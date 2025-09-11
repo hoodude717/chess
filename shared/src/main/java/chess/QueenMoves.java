@@ -1,6 +1,8 @@
 package chess;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Collection;
 
 public class QueenMoves implements ChessMoveCalculator{
@@ -11,7 +13,7 @@ public class QueenMoves implements ChessMoveCalculator{
 
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> possibleMoves = new ArrayList<>();
+        var possibleMoves = new ArrayList<ChessMove>();
 
         boolean validSpace = true;
         int curRow = myPosition.getRow();
@@ -188,5 +190,7 @@ public class QueenMoves implements ChessMoveCalculator{
 
         return possibleMoves;
     }
+
+
 
 }

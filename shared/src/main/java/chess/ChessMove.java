@@ -47,14 +47,15 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return String.format("[%s,%s]", startPosition, endPosition);
+        return String.format("[%s,%s,%s]", startPosition, endPosition, promotionPiece);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof ChessMove chessMove)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
+        ChessMove chessMove = (ChessMove) o;
         return Objects.equals(startPosition, chessMove.startPosition) && Objects.equals(endPosition, chessMove.endPosition) && promotionPiece == chessMove.promotionPiece;
     }
 

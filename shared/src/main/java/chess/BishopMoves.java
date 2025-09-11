@@ -29,10 +29,10 @@ public class BishopMoves implements ChessMoveCalculator {
 
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
             if (board.isSpaceEmpty(curSpace)) {
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
             }
             else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace,null));
                 validSpace = false;
             }
             else {
@@ -55,10 +55,10 @@ public class BishopMoves implements ChessMoveCalculator {
 
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
             if (board.isSpaceEmpty(curSpace)) {
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
             }
             else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
                 validSpace = false;
             }
             else {
@@ -81,10 +81,10 @@ public class BishopMoves implements ChessMoveCalculator {
 
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
             if (board.isSpaceEmpty(curSpace)) {
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
             }
             else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
                 validSpace = false;
             }
             else {
@@ -107,10 +107,10 @@ public class BishopMoves implements ChessMoveCalculator {
 
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
             if (board.isSpaceEmpty(curSpace)) {
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
             }
             else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
                 validSpace = false;
             }
             else {
