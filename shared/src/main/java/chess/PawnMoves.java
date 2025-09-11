@@ -28,45 +28,57 @@ public class PawnMoves implements ChessMoveCalculator {
 
         // Check the position based on color
         if (pieceColor == ChessGame.TeamColor.WHITE) {
-            ChessPosition tempPosition = new ChessPosition(curRow+1, curCol);
+            ChessPosition tempPosition = new ChessPosition(curRow + 1, curCol);
             if (!isOutofBounds(tempPosition) && board.isSpaceEmpty(tempPosition)) { // Check for empty spaces in front
                 possibleMoves.add(new ChessMove(myPosition, tempPosition, pawn));
                 if (curRow == 2) { //In Starting Position
-                    tempPosition = new ChessPosition(curRow+2, curCol);
+                    tempPosition = new ChessPosition(curRow + 2, curCol);
                     if (!isOutofBounds(tempPosition) && board.isSpaceEmpty(tempPosition)) {
-                        possibleMoves.add(new ChessMove(myPosition,tempPosition, pawn));
+                        possibleMoves.add(new ChessMove(myPosition, tempPosition, pawn));
                     }
                 }
             }
             // Check attacking Positions
-            ChessPiece tempPiece = board.getPiece(new ChessPosition(curRow+1, curCol-1)); //Front Left
-            if (tempPiece != null && tempPiece.getTeamColor() != pieceColor ) {
-                possibleMoves.add(new ChessMove(myPosition, new ChessPosition(curRow+1, curCol-1), pawn));
+            tempPosition = new ChessPosition(curRow + 1, curCol - 1);
+            if (!isOutofBounds(tempPosition)) {
+                ChessPiece tempPiece = board.getPiece(tempPosition); //Front Left
+                if (tempPiece != null && tempPiece.getTeamColor() != pieceColor) {
+                    possibleMoves.add(new ChessMove(myPosition, tempPosition, pawn));
+                }
             }
-
-            tempPiece = board.getPiece(new ChessPosition(curRow+1, curCol+1)); //Front Right
-            if (tempPiece != null && tempPiece.getTeamColor() != pieceColor ) {
-                possibleMoves.add(new ChessMove(myPosition, new ChessPosition(curRow+1, curCol+1), pawn));
+            tempPosition = new ChessPosition(curRow+1, curCol+1);
+            if (!isOutofBounds(tempPosition)) {
+                ChessPiece tempPiece = board.getPiece(tempPosition); //Front Right
+                if (tempPiece != null && tempPiece.getTeamColor() != pieceColor) {
+                    possibleMoves.add(new ChessMove(myPosition, tempPosition, pawn));
+                }
             }
         }
         else { // Is Black Piece
-            if (board.isSpaceEmpty(new ChessPosition(curRow-1, curCol))) { // Check for empty spaces in front
-                possibleMoves.add(new ChessMove(myPosition, new ChessPosition(curRow-1, curCol), pawn));
+            ChessPosition tempPosition = new ChessPosition(curRow-1, curCol);
+            if (!isOutofBounds(tempPosition) && board.isSpaceEmpty(tempPosition)) { // Check for empty spaces in front
+                possibleMoves.add(new ChessMove(myPosition, tempPosition, pawn));
                 if (curRow == 7) { //In Starting Position
-                    if (board.isSpaceEmpty(new ChessPosition(curRow-2, curCol))) {
-                        possibleMoves.add(new ChessMove(myPosition, new ChessPosition(curRow-2, curCol), piece.getPieceType()));
+                    tempPosition = new ChessPosition(curRow - 2, curCol);
+                    if (!isOutofBounds(tempPosition) && board.isSpaceEmpty(tempPosition)) {
+                        possibleMoves.add(new ChessMove(myPosition, tempPosition, pawn));
                     }
                 }
             }
             // Check attacking Positions
-            ChessPiece tempPiece = board.getPiece(new ChessPosition(curRow-1, curCol-1)); //Front Left
-            if (tempPiece != null && tempPiece.getTeamColor() != pieceColor ) {
-                possibleMoves.add(new ChessMove(myPosition, new ChessPosition(curRow-1, curCol-1), pawn));
+            tempPosition = new ChessPosition(curRow - 1, curCol - 1);
+            if (!isOutofBounds(tempPosition)) {
+                ChessPiece tempPiece = board.getPiece(tempPosition); //Front Left
+                if (tempPiece != null && tempPiece.getTeamColor() != pieceColor) {
+                    possibleMoves.add(new ChessMove(myPosition, tempPosition, pawn));
+                }
             }
-
-            tempPiece = board.getPiece(new ChessPosition(curRow-1, curCol+1)); //Front Right
-            if (tempPiece != null && tempPiece.getTeamColor() != pieceColor ) {
-                possibleMoves.add(new ChessMove(myPosition, new ChessPosition(curRow-1, curCol+1), pawn));
+            tempPosition = new ChessPosition(curRow-1, curCol+1);
+            if (!isOutofBounds(tempPosition)) {
+                ChessPiece tempPiece = board.getPiece(tempPosition); //Front Right
+                if (tempPiece != null && tempPiece.getTeamColor() != pieceColor) {
+                    possibleMoves.add(new ChessMove(myPosition, tempPosition, pawn));
+                }
             }
         }
 
