@@ -7,10 +7,20 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
-
+    /*
+      | | | | | | | | |
+      | | | | | | | | |
+      | | | | | | | | |
+      | | | | | | | | |
+      | | | | | | | | |
+      | | | | | | | | |
+      | | | | | | | | |
+      | | | | | | | | |
+     */
     ChessPiece [][] grid = new ChessPiece[8][8];
     public ChessBoard() {
-        
+        // Fill the 16 White pieces into the board
+
     }
 
     /**
@@ -24,6 +34,7 @@ public class ChessBoard {
 
     }
 
+
     /**
      * Gets a chess piece on the chessboard
      *
@@ -32,6 +43,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
+
         return grid[position.getRow() - 1][position.getColumn() - 1];
     }
 
@@ -40,6 +52,14 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
+        addPiece(new ChessPosition(1,1), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
+
+
         throw new RuntimeException("Not implemented");
+
+    }
+
+    public boolean isPiecePresent(ChessPosition position) {
+        return (grid[position.getRow()-1][position.getColumn()-1] != null);
     }
 }

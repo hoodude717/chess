@@ -35,14 +35,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return type;
     }
 
     /**
@@ -53,7 +53,31 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return List.of();
+        ChessPiece piece = board.getPiece(myPosition);
+        Collection<ChessMove> possibleMoves = List.of();
+        if (piece.getPieceType() == PieceType.BISHOP) {
+            BishopMoves bishopMoves = new BishopMoves(piece);
+            possibleMoves = bishopMoves.pieceMoves(board, myPosition);
+        }
+        else if (piece.getPieceType() == PieceType.KING) {
+            KingMoves kingMoves = new KingMoves(piece);
+            possibleMoves = kingMoves.pieceMoves(board, myPosition);
+        }
+        else if (piece.getPieceType() == PieceType.QUEEN) {
+            QueenMoves queenMoves = new QueenMoves(piece);
+            possibleMoves = queenMoves.pieceMoves(board, myPosition);
+        }
+        else if (piece.getPieceType() == PieceType.ROOK) {
+            RookMoves rookMoves = new RookMoves(piece);
+            possibleMoves = rookMoves.pieceMoves(board, myPosition);
+        }
+        else if (piece.getPieceType() == PieceType.KNIGHT) {
+            KnightMoves knightMoves = new KnightMoves(piece);
+            possibleMoves = knightMoves.pieceMoves(board, myPosition);
+        }
+
+
+        return possibleMoves;
     }
 
     @Override
