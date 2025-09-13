@@ -36,7 +36,6 @@ public class PawnMoves implements ChessMoveCalculator {
         else {
             possibleMoves.add(new ChessMove(myPosition, tempPosition, null));
         }
-
         return possibleMoves;
     }
 
@@ -51,7 +50,6 @@ public class PawnMoves implements ChessMoveCalculator {
         else {
             possibleMoves.add(new ChessMove(myPosition, tempPosition, null));
         }
-
         return possibleMoves;
     }
 
