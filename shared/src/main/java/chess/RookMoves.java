@@ -9,6 +9,24 @@ public class RookMoves implements ChessMoveCalculator{
         piece = newPiece;
     }
 
+
+    private boolean getValidMoves(Collection<ChessMove> possibleMoves, ChessBoard board, ChessPosition myPosition, int curRow, int curCol) {
+        boolean validSpace = true;
+
+        if ((curRow < 1 || curRow > 8) || (curCol < 1 || curCol > 8)) {
+            return false;
+        }
+        ChessPosition curSpace = new ChessPosition(curRow, curCol);
+        if (board.isSpaceEmpty(curSpace)) {
+            possibleMoves.add(new ChessMove(myPosition, curSpace, null));
+        } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
+            possibleMoves.add(new ChessMove(myPosition, curSpace, null));
+            validSpace = false;
+        } else { validSpace = false; }
+
+        return validSpace;
+    }
+
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
@@ -19,18 +37,7 @@ public class RookMoves implements ChessMoveCalculator{
         // Check the front spaces
         while (validSpace) {
             ++curRow;
-            //Check for out of bounds
-            if ((curRow < 1 || curRow > 8) || (curCol < 1 || curCol > 8)) {
-                validSpace = false;
-                continue;
-            }
-            ChessPosition curSpace = new ChessPosition(curRow, curCol);
-            if (board.isSpaceEmpty(curSpace)) {
-                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
-            } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
-                validSpace = false;
-            } else { validSpace = false; }
+            validSpace = getValidMoves(possibleMoves, board, myPosition, curRow, curCol);
         }
 
         validSpace = true;
@@ -39,18 +46,8 @@ public class RookMoves implements ChessMoveCalculator{
         // Check the left spaces
         while (validSpace) {
             --curCol;
-            //Check for out of bounds
-            if ((curRow < 1 || curRow > 8) || (curCol < 1 || curCol > 8)) {
-                validSpace = false;
-                continue;
-            }
-            ChessPosition curSpace = new ChessPosition(curRow, curCol);
-            if (board.isSpaceEmpty(curSpace)) {
-                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
-            } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
-                validSpace = false;
-            } else { validSpace = false; }
+            validSpace = getValidMoves(possibleMoves, board, myPosition, curRow, curCol);
+
         }
 
         validSpace = true;
@@ -59,18 +56,7 @@ public class RookMoves implements ChessMoveCalculator{
         // Check the behind spaces
         while (validSpace) {
             --curRow;
-            //Check for out of bounds
-            if ((curRow < 1 || curRow > 8) || (curCol < 1 || curCol > 8)) {
-                validSpace = false;
-                continue;
-            }
-            ChessPosition curSpace = new ChessPosition(curRow, curCol);
-            if (board.isSpaceEmpty(curSpace)) {
-                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
-            } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
-                validSpace = false;
-            } else { validSpace = false; }
+            validSpace = getValidMoves(possibleMoves, board, myPosition, curRow, curCol);
         }
 
         validSpace = true;
@@ -79,19 +65,7 @@ public class RookMoves implements ChessMoveCalculator{
         // Check the right spaces
         while (validSpace) {
             ++curCol;
-            //Check for out of bounds
-            if ((curRow < 1 || curRow > 8) || (curCol < 1 || curCol > 8)) {
-                validSpace = false;
-                continue;
-            }
-
-            ChessPosition curSpace = new ChessPosition(curRow, curCol);
-            if (board.isSpaceEmpty(curSpace)) {
-                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
-            } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
-                validSpace = false;
-            } else { validSpace = false; }
+            validSpace = getValidMoves(possibleMoves, board, myPosition, curRow, curCol);
         }
 
 
