@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 public class KingMoves implements ChessMoveCalculator {
@@ -11,7 +12,7 @@ public class KingMoves implements ChessMoveCalculator {
 
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        ChessPosition[] possiblePositions = {
+        Collection<ChessPosition> possiblePositions = new ArrayList<>(Arrays.asList(
                 new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()), //One in front
                 new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()-1), //One in front level
                 new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()+1), //One in front right
@@ -20,16 +21,10 @@ public class KingMoves implements ChessMoveCalculator {
                 new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()), //Back
                 new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()-1), //Back left
                 new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()+1) //Back right
-        };
+            )
+        );
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-        for (ChessPosition pos : possiblePositions) {
-            if (pos.getRow() > 8 || pos.getRow() < 1) { continue; }
-            if (pos.getColumn() > 8 || pos.getColumn() < 1) { continue; }
-            ChessPiece tempPiece = board.getPiece(pos);
-            if (board.isSpaceEmpty(pos) || (tempPiece.getTeamColor() != piece.getTeamColor())) {
-                possibleMoves.add(new ChessMove(myPosition, pos, null));
-            }
-        }
+        getValidMovesFor(possiblePositions, possibleMoves, board, myPosition);
 
         return possibleMoves;
     }

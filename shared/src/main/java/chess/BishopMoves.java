@@ -10,22 +10,22 @@ public class BishopMoves implements ChessMoveCalculator {
         piece = newPiece;
     }
 
-    private boolean getValidMoves(Collection<ChessMove> possibleMoves, ChessBoard board, ChessPosition myPosition, int curRow, int curCol) {
-        boolean validSpace = true;
-
-        if ((curRow < 1 || curRow > 8) || (curCol < 1 || curCol > 8)) {
-            return false;
-        }
-        ChessPosition curSpace = new ChessPosition(curRow, curCol);
-        if (board.isSpaceEmpty(curSpace)) {
-            possibleMoves.add(new ChessMove(myPosition, curSpace, null));
-        } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-            possibleMoves.add(new ChessMove(myPosition, curSpace, null));
-            validSpace = false;
-        } else { validSpace = false; }
-
-        return validSpace;
-    }
+//    private boolean getValidMovesWhile(Collection<ChessMove> possibleMoves, ChessBoard board, ChessPosition myPosition, int curRow, int curCol) {
+//        boolean validSpace = true;
+//
+//        if ((curRow < 1 || curRow > 8) || (curCol < 1 || curCol > 8)) {
+//            return false;
+//        }
+//        ChessPosition curSpace = new ChessPosition(curRow, curCol);
+//        if (board.isSpaceEmpty(curSpace)) {
+//            possibleMoves.add(new ChessMove(myPosition, curSpace, null));
+//        } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
+//            possibleMoves.add(new ChessMove(myPosition, curSpace, null));
+//            validSpace = false;
+//        } else { validSpace = false; }
+//
+//        return validSpace;
+//    }
 
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
@@ -38,7 +38,7 @@ public class BishopMoves implements ChessMoveCalculator {
         while (validSpace) {
             --curCol;
             --curRow;
-            validSpace = getValidMoves(possibleMoves, board, myPosition, curRow, curCol);
+            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
         }
 
         validSpace = true;
@@ -48,7 +48,7 @@ public class BishopMoves implements ChessMoveCalculator {
         while (validSpace) {
             --curCol;
             ++curRow;
-            validSpace = getValidMoves(possibleMoves, board, myPosition, curRow, curCol);
+            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
         }
 
         validSpace = true;
@@ -58,7 +58,7 @@ public class BishopMoves implements ChessMoveCalculator {
         while (validSpace) {
             ++curCol;
             --curRow;
-            validSpace = getValidMoves(possibleMoves, board, myPosition, curRow, curCol);
+            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
         }
 
         validSpace = true;
@@ -68,7 +68,7 @@ public class BishopMoves implements ChessMoveCalculator {
         while (validSpace) {
             ++curCol;
             ++curRow;
-            validSpace = getValidMoves(possibleMoves, board, myPosition, curRow, curCol);
+            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
 
         }
         return possibleMoves;
