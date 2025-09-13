@@ -42,9 +42,9 @@ public class PawnMoves implements ChessMoveCalculator {
     private Collection<ChessMove> checkPromotionBlack(ChessPosition myPosition, ChessPosition tempPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
         if (tempPosition.getRow() == 1) {
-            possibleMoves.add(new ChessMove(myPosition, tempPosition, rook));
             possibleMoves.add(new ChessMove(myPosition, tempPosition, knight));
             possibleMoves.add(new ChessMove(myPosition, tempPosition, bishop));
+            possibleMoves.add(new ChessMove(myPosition, tempPosition, rook));
             possibleMoves.add(new ChessMove(myPosition, tempPosition, queen));
         }
         else {
