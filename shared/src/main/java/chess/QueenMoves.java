@@ -2,7 +2,6 @@ package chess;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collection;
 
 public class QueenMoves implements ChessMoveCalculator{
@@ -29,9 +28,9 @@ public class QueenMoves implements ChessMoveCalculator{
             }
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
             if (board.isSpaceEmpty(curSpace)) {
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
             } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
                 validSpace = false;
             } else { validSpace = false; }
         }
@@ -51,9 +50,9 @@ public class QueenMoves implements ChessMoveCalculator{
 
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
             if (board.isSpaceEmpty(curSpace)) {
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
             } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
                 validSpace = false;
             } else { validSpace = false; }
         }
@@ -73,9 +72,9 @@ public class QueenMoves implements ChessMoveCalculator{
 
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
             if (board.isSpaceEmpty(curSpace)) {
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
             } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
                 validSpace = false;
             } else { validSpace = false; }
         }
@@ -95,9 +94,9 @@ public class QueenMoves implements ChessMoveCalculator{
 
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
             if (board.isSpaceEmpty(curSpace)) {
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
             } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
                 validSpace = false;
             } else { validSpace = false; }
         }
@@ -118,9 +117,9 @@ public class QueenMoves implements ChessMoveCalculator{
             }
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
             if (board.isSpaceEmpty(curSpace)) {
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
             } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
                 validSpace = false;
             } else { validSpace = false; }
         }
@@ -138,9 +137,9 @@ public class QueenMoves implements ChessMoveCalculator{
             }
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
             if (board.isSpaceEmpty(curSpace)) {
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
             } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
                 validSpace = false;
             } else { validSpace = false; }
         }
@@ -158,9 +157,9 @@ public class QueenMoves implements ChessMoveCalculator{
             }
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
             if (board.isSpaceEmpty(curSpace)) {
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
             } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
                 validSpace = false;
             } else { validSpace = false; }
         }
@@ -179,9 +178,9 @@ public class QueenMoves implements ChessMoveCalculator{
 
             ChessPosition curSpace = new ChessPosition(curRow, curCol);
             if (board.isSpaceEmpty(curSpace)) {
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
             } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-                possibleMoves.add(new ChessMove(myPosition, curSpace, piece.getPieceType()));
+                possibleMoves.add(new ChessMove(myPosition, curSpace, null));
                 validSpace = false;
             } else { validSpace = false; }
         }
