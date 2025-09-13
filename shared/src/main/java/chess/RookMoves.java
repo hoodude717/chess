@@ -10,23 +10,6 @@ public class RookMoves implements ChessMoveCalculator{
     }
 
 
-//    private boolean getValidMovesWhile(Collection<ChessMove> possibleMoves, ChessBoard board, ChessPosition myPosition, int curRow, int curCol) {
-//        boolean validSpace = true;
-//
-//        if ((curRow < 1 || curRow > 8) || (curCol < 1 || curCol > 8)) {
-//            return false;
-//        }
-//        ChessPosition curSpace = new ChessPosition(curRow, curCol);
-//        if (board.isSpaceEmpty(curSpace)) {
-//            possibleMoves.add(new ChessMove(myPosition, curSpace, null));
-//        } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
-//            possibleMoves.add(new ChessMove(myPosition, curSpace, null));
-//            validSpace = false;
-//        } else { validSpace = false; }
-//
-//        return validSpace;
-//    }
-
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
@@ -43,22 +26,20 @@ public class RookMoves implements ChessMoveCalculator{
         validSpace = true;
         curRow = myPosition.getRow();
         curCol = myPosition.getColumn();
+        // Check the behind spaces
+        while (validSpace) {
+            --curRow;
+            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
+        }
+        validSpace = true;
+        curRow = myPosition.getRow();
+        curCol = myPosition.getColumn();
         // Check the left spaces
         while (validSpace) {
             --curCol;
             validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
 
         }
-
-        validSpace = true;
-        curRow = myPosition.getRow();
-        curCol = myPosition.getColumn();
-        // Check the behind spaces
-        while (validSpace) {
-            --curRow;
-            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
-        }
-
         validSpace = true;
         curRow = myPosition.getRow();
         curCol = myPosition.getColumn();
@@ -67,9 +48,6 @@ public class RookMoves implements ChessMoveCalculator{
             ++curCol;
             validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
         }
-
-
-
 
         return possibleMoves;
     }

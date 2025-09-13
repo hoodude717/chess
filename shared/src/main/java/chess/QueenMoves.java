@@ -54,10 +54,6 @@ public class QueenMoves implements ChessMoveCalculator{
             ++curRow;
             validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
         }
-
-
-
-
         validSpace = true;
         curRow = myPosition.getRow();
         curCol = myPosition.getColumn();
@@ -96,7 +92,4 @@ public class QueenMoves implements ChessMoveCalculator{
         }
         return possibleMoves;
     }
-
-
-
 }
