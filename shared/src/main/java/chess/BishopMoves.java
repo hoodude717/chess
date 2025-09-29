@@ -2,17 +2,19 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class BishopMoves implements ChessMoveCalculator {
 
     ChessPiece piece;
+    private Collection<ChessMove> attacks = new ArrayList<>();
     public BishopMoves(ChessPiece newPiece) {
         piece = newPiece;
     }
 
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> possibleMoves = new ArrayList<>();
+        ArrayList<ChessMove> possibleMoves = new ArrayList<>();
         boolean validSpace = true;
         int curRow = myPosition.getRow();
         int curCol = myPosition.getColumn();
@@ -23,6 +25,11 @@ public class BishopMoves implements ChessMoveCalculator {
             ++curRow;
             validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
         }
+        ChessMove lastMove = possibleMoves.getLast();
+        if (!board.isSpaceEmpty(lastMove.getEndPosition())) { //Check the last space that was added and see if there is a piece there
+            attacks.add(lastMove);
+        }
+
 
 
         validSpace = true;
@@ -34,7 +41,10 @@ public class BishopMoves implements ChessMoveCalculator {
             --curRow;
             validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
         }
-
+        lastMove = possibleMoves.getLast();
+        if (!board.isSpaceEmpty(lastMove.getEndPosition())) { //Check the last space that was added and see if there is a piece there
+            attacks.add(lastMove);
+        }
 
         validSpace = true;
         curRow = myPosition.getRow();
@@ -46,6 +56,10 @@ public class BishopMoves implements ChessMoveCalculator {
             validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
 
         }
+        lastMove = possibleMoves.getLast();
+        if (!board.isSpaceEmpty(lastMove.getEndPosition())) { //Check the last space that was added and see if there is a piece there
+            attacks.add(lastMove);
+        }
         validSpace = true;
         curRow = myPosition.getRow();
         curCol = myPosition.getColumn();
@@ -55,8 +69,17 @@ public class BishopMoves implements ChessMoveCalculator {
             --curRow;
             validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
         }
+        lastMove = possibleMoves.getLast();
+        if (!board.isSpaceEmpty(lastMove.getEndPosition())) { //Check the last space that was added and see if there is a piece there
+            attacks.add(lastMove);
+        }
 
 
         return possibleMoves;
+    }
+
+    @Override
+    public Collection<ChessMove> attackMoves(ChessBoard board, ChessPosition myPosition) {
+        return attacks;
     }
 }

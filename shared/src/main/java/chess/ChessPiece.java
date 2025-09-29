@@ -81,9 +81,41 @@ public class ChessPiece {
             PawnMoves pawnMoves = new PawnMoves(piece);
             possibleMoves = pawnMoves.pieceMoves(board, myPosition);
         }
-
-
         return possibleMoves;
+    }
+
+    public Collection<ChessMove> attackMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> attacks = new ArrayList<>();
+        ChessPiece piece = board.getPiece(myPosition);
+
+        switch (piece.getPieceType()) {
+            case KING -> {
+                KingMoves kingMoves = new KingMoves(piece);
+                attacks = kingMoves.attackMoves(board, myPosition);
+            }
+            case PAWN -> {
+                PawnMoves pawnMoves = new PawnMoves(piece);
+                attacks = pawnMoves.attackMoves(board, myPosition);
+            }
+            case ROOK -> {
+                RookMoves rookMoves = new RookMoves(piece);
+                attacks = rookMoves.attackMoves(board, myPosition);
+            }
+            case QUEEN -> {
+                QueenMoves queenMoves = new QueenMoves(piece);
+                attacks = queenMoves.attackMoves(board, myPosition);
+            }
+            case BISHOP -> {
+                BishopMoves bishopMoves = new BishopMoves(piece);
+                attacks = bishopMoves.attackMoves(board, myPosition);
+            }
+            case KNIGHT -> {
+                KnightMoves knightMoves = new KnightMoves(piece);
+                attacks = knightMoves.attackMoves(board, myPosition);
+            }
+            default -> throw new RuntimeException("NO PIECE TYPE THAT MATCHES");
+        }
+        return attacks;
     }
 
     @Override

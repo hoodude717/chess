@@ -6,6 +6,7 @@ public interface ChessMoveCalculator {
 
 
     Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition);
+    Collection<ChessMove> attackMoves(ChessBoard board, ChessPosition myPosition);
 
     default boolean getValidMovesWhile(Collection<ChessMove> possibleMoves, ChessBoard board, ChessPosition myPosition, int curRow, int curCol) {
         boolean validSpace = true;

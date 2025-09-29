@@ -6,6 +6,8 @@ import java.util.Collection;
 
 public class KnightMoves implements ChessMoveCalculator{
     ChessPiece piece;
+    private Collection<ChessMove> attacks = new ArrayList<>();
+
     public KnightMoves(ChessPiece newPiece) {
         piece = newPiece;
     }
@@ -30,5 +32,10 @@ public class KnightMoves implements ChessMoveCalculator{
 
 
         return possibleMoves;
+    }
+
+    @Override
+    public Collection<ChessMove> attackMoves(ChessBoard board, ChessPosition myPosition) {
+        return attacks;
     }
 }

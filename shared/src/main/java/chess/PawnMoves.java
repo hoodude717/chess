@@ -13,6 +13,8 @@ public class PawnMoves implements ChessMoveCalculator {
 
     ChessPiece piece;
     ChessGame.TeamColor pieceColor;
+    private Collection<ChessMove> attacks = new ArrayList<>();
+
     public PawnMoves(ChessPiece newPiece) {
         piece = newPiece;
         pieceColor = newPiece.getTeamColor();
@@ -121,5 +123,10 @@ public class PawnMoves implements ChessMoveCalculator {
         }
 
         return possibleMoves;
+    }
+
+    @Override
+    public Collection<ChessMove> attackMoves(ChessBoard board, ChessPosition myPosition) {
+        return attacks;
     }
 }

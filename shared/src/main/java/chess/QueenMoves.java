@@ -5,6 +5,8 @@ import java.util.Collection;
 
 public class QueenMoves implements ChessMoveCalculator{
     ChessPiece piece;
+    private Collection<ChessMove> attacks = new ArrayList<>();
+
     public QueenMoves(ChessPiece newPiece) {
         piece = newPiece;
     }
@@ -91,5 +93,10 @@ public class QueenMoves implements ChessMoveCalculator{
             validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
         }
         return possibleMoves;
+    }
+
+    @Override
+    public Collection<ChessMove> attackMoves(ChessBoard board, ChessPosition myPosition) {
+        return attacks;
     }
 }
