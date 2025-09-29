@@ -15,6 +15,8 @@ public class ChessGame {
     private TeamColor teamTurn = TeamColor.WHITE;
     private ChessBoard board = new ChessBoard();
     private Collection<ChessMove> allMoves = new ArrayList<>(); //Used to keep track of all the moves in the game
+    private ChessPosition whiteKingPos = new ChessPosition(1, 5);
+    private ChessPosition blackKingPos = new ChessPosition(8, 5);
 
     public ChessGame() {
         board.resetBoard();
@@ -76,6 +78,7 @@ public class ChessGame {
             if(move.getPromotionPiece() != null) {//Upgrade if promotion piece
                 board.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
             } else {
+                if (piece.getPieceType() == ChessPiece.PieceType.KING) updateKingPosition(move.getEndPosition());
                 board.addPiece(move.getEndPosition(), piece);
             }
             board.addPiece(start, null); //Clear old space
@@ -87,6 +90,14 @@ public class ChessGame {
         }
     }
 
+    private void updateKingPosition(ChessPosition pos) {
+        if (teamTurn == TeamColor.WHITE) {
+            whiteKingPos = pos;
+        } else {
+            blackKingPos = pos;
+        }
+    }
+
     /**
      * Determines if the given team is in check
      *
@@ -94,15 +105,25 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+        ChessPosition kingPosition;
+        if (teamColor == TeamColor.WHITE) kingPosition = whiteKingPos; //TODO: Implement getKing functions inside Game
+        else kingPosition = blackKingPos;
+
         for (int i=1; i<=8; i++ ) { // Check row by row
             for (int j=1; j<=8; j++) { // Check columns
                 ChessPosition space = new ChessPosition(i,j);
                 if (board.isSpaceEmpty(space)) {
                     continue;
                 }
+
                 ChessPiece piece = board.getPiece(space);
                 if (piece.getTeamColor() == teamColor) continue;
-
+                Collection<ChessMove> attacks = piece.attackMoves(board, space);
+                for (ChessMove move : attacks) {
+                    if (move.getEndPosition().equals(kingPosition)) { //Compare each of the attacking end points to the king position
+                        return true;
+                    }
+                }
             }
         }
 
@@ -137,6 +158,23 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         this.board = board;
+        for (int i = 1; i <= 8; i++) { // Check row by row
+            for (int j = 1; j <= 8; j++) { // Check columns
+                ChessPosition curPos = new ChessPosition(i, j);
+                ChessPiece piece = board.getPiece(curPos);
+                if (board.isSpaceEmpty(curPos)) {
+                    continue;
+                }
+                if (piece.getPieceType() == ChessPiece.PieceType.KING) {
+                    if (piece.getTeamColor() == TeamColor.WHITE) {
+                        whiteKingPos = curPos;
+                    } else {
+                        blackKingPos = curPos;
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     /**
