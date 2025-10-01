@@ -28,7 +28,7 @@ public class KnightMoves implements ChessMoveCalculator{
             )
         );
 
-        getValidMovesFor(possiblePositions, possibleMoves, board, myPosition);
+        getValidMovesFor(possiblePositions, possibleMoves,attacks, board, myPosition);
 
 
         return possibleMoves;
@@ -36,6 +36,7 @@ public class KnightMoves implements ChessMoveCalculator{
 
     @Override
     public Collection<ChessMove> attackMoves(ChessBoard board, ChessPosition myPosition) {
+        pieceMoves(board, myPosition);
         return attacks;
     }
 }

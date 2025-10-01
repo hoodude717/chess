@@ -26,13 +26,15 @@ public class KingMoves implements ChessMoveCalculator {
             )
         );
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-        getValidMovesFor(possiblePositions, possibleMoves, board, myPosition);
+
+        getValidMovesFor(possiblePositions, possibleMoves, attacks, board, myPosition);
 
         return possibleMoves;
     }
 
     @Override
     public Collection<ChessMove> attackMoves(ChessBoard board, ChessPosition myPosition) {
+        pieceMoves(board, myPosition);
         return attacks;
     }
 }

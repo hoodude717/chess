@@ -23,15 +23,9 @@ public class BishopMoves implements ChessMoveCalculator {
         while (validSpace) {
             --curCol;
             ++curRow;
-            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
+            validSpace = getValidMovesWhile(possibleMoves,attacks, board, myPosition, curRow, curCol);
         }
-        ChessMove lastMove;
-        if (!possibleMoves.isEmpty()) {
-            lastMove = possibleMoves.getLast();
-            if (!board.isSpaceEmpty(lastMove.getEndPosition())) { //Check the last space that was added and see if there is a piece there
-                attacks.add(lastMove);
-            }
-        }
+
 
 
 
@@ -42,14 +36,9 @@ public class BishopMoves implements ChessMoveCalculator {
         while (validSpace) {
             --curCol;
             --curRow;
-            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
+            validSpace = getValidMovesWhile(possibleMoves, attacks, board, myPosition, curRow, curCol);
         }
-        if (!possibleMoves.isEmpty()) {
-            lastMove = possibleMoves.getLast();
-            if (!board.isSpaceEmpty(lastMove.getEndPosition())) { //Check the last space that was added and see if there is a piece there
-                attacks.add(lastMove);
-            }
-        }
+
 
         validSpace = true;
         curRow = myPosition.getRow();
@@ -58,15 +47,10 @@ public class BishopMoves implements ChessMoveCalculator {
         while (validSpace) {
             ++curCol;
             ++curRow;
-            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
+            validSpace = getValidMovesWhile(possibleMoves, attacks, board, myPosition, curRow, curCol);
 
         }
-        if (!possibleMoves.isEmpty()) {
-            lastMove = possibleMoves.getLast();
-            if (!board.isSpaceEmpty(lastMove.getEndPosition())) { //Check the last space that was added and see if there is a piece there
-                attacks.add(lastMove);
-            }
-        }
+
         validSpace = true;
         curRow = myPosition.getRow();
         curCol = myPosition.getColumn();
@@ -74,15 +58,8 @@ public class BishopMoves implements ChessMoveCalculator {
         while (validSpace) {
             ++curCol;
             --curRow;
-            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
+            validSpace = getValidMovesWhile(possibleMoves,attacks, board, myPosition, curRow, curCol);
         }
-        if (!possibleMoves.isEmpty()) {
-            lastMove = possibleMoves.getLast();
-            if (!board.isSpaceEmpty(lastMove.getEndPosition())) { //Check the last space that was added and see if there is a piece there
-                attacks.add(lastMove);
-            }
-        }
-
 
         return possibleMoves;
     }

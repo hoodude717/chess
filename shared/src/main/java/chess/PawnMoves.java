@@ -61,6 +61,7 @@ public class PawnMoves implements ChessMoveCalculator {
             ChessPiece tempPiece = board.getPiece(tempPosition);
             if (tempPiece != null && tempPiece.getTeamColor() != pieceColor) {
                 possibleMoves.addAll(checkPromotionWhite(myPosition, tempPosition));
+                attacks.addAll(checkPromotionWhite(myPosition, tempPosition));
             }
         }
         return possibleMoves;
@@ -72,6 +73,7 @@ public class PawnMoves implements ChessMoveCalculator {
             ChessPiece tempPiece = board.getPiece(tempPosition);
             if (tempPiece != null && tempPiece.getTeamColor() != pieceColor) {
                 possibleMoves.addAll(checkPromotionBlack(myPosition, tempPosition));
+                attacks.addAll(checkPromotionBlack(myPosition, tempPosition));
             }
         }
         return possibleMoves;

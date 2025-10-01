@@ -8,7 +8,9 @@ public interface ChessMoveCalculator {
     Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition);
     Collection<ChessMove> attackMoves(ChessBoard board, ChessPosition myPosition);
 
-    default boolean getValidMovesWhile(Collection<ChessMove> possibleMoves, ChessBoard board, ChessPosition myPosition, int curRow, int curCol) {
+    default boolean getValidMovesWhile(Collection<ChessMove> possibleMoves,
+                                       Collection<ChessMove> attacks,
+                                       ChessBoard board, ChessPosition myPosition, int curRow, int curCol) {
         boolean validSpace = true;
         ChessPiece piece = board.getPiece(myPosition);
 
@@ -20,6 +22,7 @@ public interface ChessMoveCalculator {
             possibleMoves.add(new ChessMove(myPosition, curSpace, null));
         } else if (board.getPiece(curSpace).getTeamColor() != piece.getTeamColor()){
             possibleMoves.add(new ChessMove(myPosition, curSpace, null));
+            attacks.add(new ChessMove(myPosition, curSpace, null));
             validSpace = false;
         } else { validSpace = false; }
 
@@ -28,6 +31,7 @@ public interface ChessMoveCalculator {
 
     default void getValidMovesFor(Collection<ChessPosition> possiblePositions,
                               Collection<ChessMove> possibleMoves,
+                              Collection<ChessMove> attacks,
                               ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
         for (ChessPosition pos : possiblePositions) {
@@ -38,8 +42,13 @@ public interface ChessMoveCalculator {
                 continue;
             }
             ChessPiece tempPiece = board.getPiece(pos);
-            if (board.isSpaceEmpty(pos) || (tempPiece.getTeamColor() != piece.getTeamColor())) {
+            if (board.isSpaceEmpty(pos)) {
                 possibleMoves.add(new ChessMove(myPosition, pos, null));
+            }
+            else if(tempPiece.getTeamColor() != piece.getTeamColor()) {
+                possibleMoves.add(new ChessMove(myPosition, pos, null));
+                attacks.add(new ChessMove(myPosition, pos, null));
+
             }
         }
     }

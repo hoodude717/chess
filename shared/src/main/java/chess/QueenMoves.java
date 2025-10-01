@@ -22,7 +22,7 @@ public class QueenMoves implements ChessMoveCalculator{
         while (validSpace) {
             --curCol;
             --curRow;
-            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
+            validSpace = getValidMovesWhile(possibleMoves,attacks, board, myPosition, curRow, curCol);
         }
 
         validSpace = true;
@@ -32,7 +32,7 @@ public class QueenMoves implements ChessMoveCalculator{
         while (validSpace) {
             --curCol;
             ++curRow;
-            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
+            validSpace = getValidMovesWhile(possibleMoves,attacks, board, myPosition, curRow, curCol);
 
         }
 
@@ -43,7 +43,7 @@ public class QueenMoves implements ChessMoveCalculator{
         while (validSpace) {
             ++curCol;
             --curRow;
-            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
+            validSpace = getValidMovesWhile(possibleMoves,attacks, board, myPosition, curRow, curCol);
 
         }
 
@@ -54,7 +54,7 @@ public class QueenMoves implements ChessMoveCalculator{
         while (validSpace) {
             ++curCol;
             ++curRow;
-            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
+            validSpace = getValidMovesWhile(possibleMoves,attacks, board, myPosition, curRow, curCol);
         }
         validSpace = true;
         curRow = myPosition.getRow();
@@ -62,7 +62,7 @@ public class QueenMoves implements ChessMoveCalculator{
         // Check the front spaces
         while (validSpace) {
             ++curRow;
-            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
+            validSpace = getValidMovesWhile(possibleMoves,attacks, board, myPosition, curRow, curCol);
 
         }
 
@@ -72,7 +72,7 @@ public class QueenMoves implements ChessMoveCalculator{
         // Check the left spaces
         while (validSpace) {
             --curCol;
-            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
+            validSpace = getValidMovesWhile(possibleMoves,attacks, board, myPosition, curRow, curCol);
         }
 
         validSpace = true;
@@ -81,7 +81,7 @@ public class QueenMoves implements ChessMoveCalculator{
         // Check the behind spaces
         while (validSpace) {
             --curRow;
-            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
+            validSpace = getValidMovesWhile(possibleMoves,attacks, board, myPosition, curRow, curCol);
         }
 
         validSpace = true;
@@ -90,13 +90,14 @@ public class QueenMoves implements ChessMoveCalculator{
         // Check the right spaces
         while (validSpace) {
             ++curCol;
-            validSpace = getValidMovesWhile(possibleMoves, board, myPosition, curRow, curCol);
+            validSpace = getValidMovesWhile(possibleMoves, attacks, board, myPosition, curRow, curCol);
         }
         return possibleMoves;
     }
 
     @Override
     public Collection<ChessMove> attackMoves(ChessBoard board, ChessPosition myPosition) {
+        pieceMoves(board, myPosition);
         return attacks;
     }
 }
