@@ -65,7 +65,7 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = board.getPiece(startPosition);
-        Collection<ChessMove> moves = new ArrayList<>();
+        Collection<ChessMove> moves;
         if (piece == null) return List.of();
         TeamColor pieceColor = piece.getTeamColor();
         moves = piece.pieceMoves(board, startPosition);
@@ -179,7 +179,6 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        boolean inCheckmate = false;
         if (getTeamTurn() != teamColor) return false; //Can only be in checkmate on your turn
         if (!isInCheck(teamColor)) return false; // Can only be in checkmate if check first.
         //Can only be in checkmate if no valid moves for all pieces on the teamColor team
@@ -204,7 +203,20 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return false;
+        if (getTeamTurn() != teamColor) return false; //Can only be in stalemate on your turn
+        if (isInCheck(teamColor)) return false; // Can only be in stalemate if not in check.
+        //Can only be in stalemate if no valid moves for all pieces on the teamColor team
+        for (int i=1; i<=8; i++ ) { // Check row by row
+            for (int j=1; j<=8; j++) { // Check columns
+                ChessPiece piece =  board.getPiece(new ChessPosition(i, j));
+                if (board.isSpaceEmpty(new ChessPosition(i,j))) continue; //Check empty space
+                if (piece.getTeamColor() != teamColor) continue; //Check if opposite team
+
+                if (!validMoves(new ChessPosition(i, j)).isEmpty()) return false;
+
+            }
+        }
+        return true;
     }
 
     /**
