@@ -89,7 +89,7 @@ public class ChessPiece {
     }
 
     public Collection<ChessMove> attackMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> attacks = new ArrayList<>();
+        Collection<ChessMove> attacks;
         ChessPiece piece = board.getPiece(myPosition);
 
         switch (piece.getPieceType()) {
