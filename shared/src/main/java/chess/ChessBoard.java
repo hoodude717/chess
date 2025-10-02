@@ -23,8 +23,20 @@ public class ChessBoard {
     ChessPiece [][] grid = new ChessPiece[8][8];
     public ChessBoard() {
         // Fill the 16 White pieces into the board
-
     }
+    public ChessBoard(ChessBoard original) {
+        for(int row=0; row<8; row++) {
+            for (int col=0; col<8; col++) {
+                if(original.isSpaceEmpty(new ChessPosition(row+1,col+1))) {
+                    this.grid[row][col] = null;
+                } else  {
+                    this.grid[row][col] = new ChessPiece(original.getPiece(new ChessPosition(row+1,col+1)));
+                }
+            }
+        }
+    }
+
+
 
     /**
      * Adds a chess piece to the chessboard

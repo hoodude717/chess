@@ -129,6 +129,7 @@ public class PawnMoves implements ChessMoveCalculator {
 
     @Override
     public Collection<ChessMove> attackMoves(ChessBoard board, ChessPosition myPosition) {
+        pieceMoves(board, myPosition);
         return attacks;
     }
 }
