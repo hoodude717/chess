@@ -9,7 +9,7 @@ public interface AuthDAO {
     //Reads in the user data by username
     AuthData getAuth(String username) throws DataAccessException;
     //Updates the userdata inside the database
-    void updateAuth(AuthData newAuth);
+    void updateAuth(AuthData newAuth)  throws DataAccessException;
     //Deletes the UserData
     void clearAuth(AuthData a) throws DataAccessException;
 
