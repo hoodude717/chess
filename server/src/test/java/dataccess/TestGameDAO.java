@@ -1,4 +1,4 @@
-package passoff.dataccess;
+package dataccess;
 
 public class TestGameDAO {
 }

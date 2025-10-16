@@ -1,4 +1,8 @@
 package service.serviceResults;
 
-public record ListGameResult() {
+import model.GameData;
+
+import java.util.Collection;
+
+public record ListGameResult(Collection<GameData> gamesList) {
 }
