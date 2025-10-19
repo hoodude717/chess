@@ -1,0 +1,68 @@
+package service;
+
+import dataaccess.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import service.serviceRequests.RegisterRequest;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class UserServiceTest {
+
+    private GameDAO gameDAO = new MemoryGameDAO();
+    private UserDAO userDAO = new MemoryUserDAO();
+    private AuthDAO authDAO = new MemoryAuthDAO();
+
+
+    UserService userService = new UserService(authDAO, gameDAO, userDAO);
+    ClearService clearService = new ClearService(authDAO, gameDAO, userDAO);
+
+    @BeforeEach
+    void setClearDatabases() {
+        clearService.clear();
+    }
+
+    @Test
+    void successfulRegister() {
+        //We want to test if the register function throws an exception
+        // We also want to test if the register function adds a person to the database and returns the right things
+        Assertions.assertDoesNotThrow(() -> userService.register(
+                        new RegisterRequest("bradford", "12345", "bradford@byu.edu")));
+
+
+    }
+
+    @Test
+    void successfulLogin() {
+    }
+
+    @Test
+    void successfulLogout() {
+    }
+
+
+    @Test
+    void failedRegister() {
+
+        try {
+            userService.register(
+                    new RegisterRequest("bradford", "12345", "bradford@byu.edu"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        Assertions.assertThrows(DataAccessException.class, () -> userService.register(
+                new RegisterRequest("bradford", "12345", "bradford@byu.edu")));
+
+    }
+
+    @Test
+    void failedLogin() {
+    }
+
+    @Test
+    void failedLogout() {
+    }
+}
