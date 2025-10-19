@@ -5,6 +5,7 @@ import model.GameData;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class MemoryGameDAO implements GameDAO{
     ArrayList<GameData> allGames = new ArrayList<>();
@@ -48,6 +49,20 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public void clear() {
+        allGames.clear();
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MemoryGameDAO that = (MemoryGameDAO) o;
+        return Objects.equals(allGames, that.allGames);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(allGames);
     }
 }
