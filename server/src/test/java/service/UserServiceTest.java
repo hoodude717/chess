@@ -1,10 +1,12 @@
 package service;
 
 import dataaccess.*;
+import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import service.serviceRequests.LoginRequest;
 import service.serviceRequests.RegisterRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,13 +31,21 @@ class UserServiceTest {
         //We want to test if the register function throws an exception
         // We also want to test if the register function adds a person to the database and returns the right things
         Assertions.assertDoesNotThrow(() -> userService.register(
-                        new RegisterRequest("bradford", "12345", "bradford@byu.edu")));
+                new RegisterRequest("bradford", "12345", "bradford@byu.edu")));
 
 
     }
 
     @Test
     void successfulLogin() {
+        Assertions.assertDoesNotThrow(() -> userDAO.createUser(
+                new UserData("bradford", "12345", "bradford@byu.edu")));
+//        Assertions.assertDoesNotThrow(() -> userService.register(
+//                new RegisterRequest("bradford", "12345", "bradford@byu.edu")));
+
+
+        Assertions.assertDoesNotThrow(() -> userService.login(new LoginRequest("bradford", "12345")));
+
     }
 
     @Test
@@ -60,6 +70,17 @@ class UserServiceTest {
 
     @Test
     void failedLogin() {
+
+        Assertions.assertDoesNotThrow(() -> userDAO.createUser(
+                new UserData("bradford", "12345", "bradford@byu.edu")));
+//        Assertions.assertDoesNotThrow(() -> userService.register(
+//                new RegisterRequest("bradford", "12345", "bradford@byu.edu")));
+
+
+        Assertions.assertThrows(DataAccessException.class,
+                () -> userService.login(new LoginRequest("bradford", "1234")));
+
+
     }
 
     @Test

@@ -4,6 +4,7 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
+import io.javalin.http.HttpResponseException;
 import model.AuthData;
 import model.UserData;
 import service.serviceRequests.LoginRequest;
@@ -12,6 +13,7 @@ import service.serviceRequests.RegisterRequest;
 import service.serviceResults.LoginResult;
 import service.serviceResults.RegisterResult;
 
+import javax.xml.crypto.Data;
 import java.util.UUID;
 
 public class UserService {
@@ -42,8 +44,20 @@ public class UserService {
         return new RegisterResult(username, authToken);
     }
 
-    public LoginResult login(LoginRequest loginRequest) {
-        return null;
+    public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
+        String username = loginRequest.username();
+        String password = loginRequest.password();
+
+        var user = userDAO.getUser(username);
+        String authToken = null;
+        if (user.password().equals(password)) {
+            authToken = generateToken();
+            authDAO.createAuth(new AuthData(username, authToken));
+        } else {
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+        return new LoginResult(username, authToken);
+
     }
     public void logout(LogoutRequest logoutRequest) {}
 }

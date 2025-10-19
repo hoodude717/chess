@@ -5,10 +5,10 @@ import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
 import io.javalin.router.Endpoint;
-import service.ClearService;
-import service.GameService;
-import service.UserService;
+import service.*;
+import service.serviceRequests.LoginRequest;
 import service.serviceRequests.RegisterRequest;
+import service.serviceResults.LoginResult;
 import service.serviceResults.RegisterResult;
 
 public class Server {
@@ -42,6 +42,10 @@ public class Server {
         javalin.delete("/db", this::clearDatabase);
         javalin.post("/user", this::registerUser);
         javalin.post("/session", this::loginUser);
+        javalin.delete("/session", this::logoutUser);
+        javalin.get("/game", this::listGames);
+        javalin.post("/game", this::createGame);
+        javalin.put("/game", this::joinGame);
 
     }
 
@@ -73,6 +77,30 @@ public class Server {
     }
 
     public void loginUser(Context ctx) {
+        var loginRequest = new Gson().fromJson(ctx.body(), LoginRequest.class);
+        try {
+            LoginResult loginResult = userService.login(loginRequest);
+            ctx.json(new Gson().toJson(loginResult));
+            ctx.status(200);
+        } catch (BadRequestException e) {
+            ctx.status(400);
+            ctx.json(new Gson().toJson(e));
+        } catch (UnauthorizedException e) {
+            ctx.status(401);
+            ctx.json(new Gson().toJson(e));
+        } catch (DataAccessException e) {
+            ctx.status(403);
+            ctx.json(new Gson().toJson(e));
+        }
 
+    }
+
+    public void logoutUser(Context ctx) {
+    }
+    public void listGames(Context ctx) {
+    }
+    public void createGame(Context ctx) {
+    }
+    public void joinGame(Context ctx) {
     }
 }

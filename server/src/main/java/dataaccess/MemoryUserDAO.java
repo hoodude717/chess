@@ -1,6 +1,8 @@
 package dataaccess;
 
 import model.UserData;
+import service.AlreadyTakenException;
+import service.BadRequestException;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -12,10 +14,10 @@ public class MemoryUserDAO implements UserDAO{
     public void createUser(UserData u) throws DataAccessException {
         for (UserData user : allUsers) {
             if (user.equals(u)) {
-                throw new DataAccessException("already taken");
+                throw new AlreadyTakenException("Error: already taken");
             }
             if (user.username().equals(u.username())) {
-                throw new DataAccessException("already taken");
+                throw new AlreadyTakenException("Error: already taken");
             }
         }
         allUsers.add(u);
@@ -29,7 +31,7 @@ public class MemoryUserDAO implements UserDAO{
                 return user;
             }
         }
-        throw new DataAccessException("No User with the username: " + username);
+        throw new BadRequestException("Error: bad request"); // No user with that name
     }
 
     @Override
@@ -43,7 +45,7 @@ public class MemoryUserDAO implements UserDAO{
                 allUsers.remove(user);
             }
         }
-        throw new DataAccessException("No User with the username: " + u.username());
+        throw new BadRequestException("Error: bad request"); // No user with that name
 
     }
 
