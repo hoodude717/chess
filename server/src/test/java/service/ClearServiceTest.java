@@ -9,7 +9,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ClearServiceTest {
-    private ClearService clearService = new ClearService();
+    private GameDAO gameDAO = new MemoryGameDAO();
+    private UserDAO userDAO = new MemoryUserDAO();
+    private AuthDAO authDAO = new MemoryAuthDAO();
+    private final ClearService clearService = new ClearService(authDAO, gameDAO, userDAO);
 
     @Test
     void successfulClearAuthData(){
@@ -53,19 +56,20 @@ public class ClearServiceTest {
     @Test
     void clear() {
         //First create a databse to clear
-        GameDAO databaseG = new MemoryGameDAO();
+        GameDAO databaseG = gameDAO;
+
         assertAll(() -> databaseG.createGame(
                 new GameData(12345, "bradford", "loly", "bradford white", new ChessGame())));
         assertAll(() -> databaseG.createGame(
                 new GameData(67890, "loly", "bradford", "loly white", new ChessGame())));
 
         //First create a databse to clear
-        AuthDAO databaseA = new MemoryAuthDAO();
+        AuthDAO databaseA = authDAO;
         assertAll(() -> databaseA.createAuth(new AuthData("12345", "bradford")));
         assertAll(() -> databaseA.createAuth(new AuthData("67890", "loly")));
 
         //First create a databse to clear
-        UserDAO databaseU = new MemoryUserDAO();
+        UserDAO databaseU = userDAO;
         assertAll(() -> databaseU.createUser(new UserData("bradford", "54321", "bradford@byu.edu")));
         assertAll(() -> databaseU.createUser(new UserData("loly", "09876", "loly@byu.edu")));
         //Assert it has been deleted
