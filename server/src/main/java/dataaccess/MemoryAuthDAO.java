@@ -20,13 +20,13 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     @Override
-    public AuthData getAuth(String username) throws DataAccessException {
+    public AuthData getAuth(String authToken) throws DataAccessException {
         for (AuthData auth : allAuths) {
-            if (auth.username().equals(username)) {
+            if (auth.authToken().equals(authToken)) {
                 return auth;
             }
         }
-        throw new DataAccessException("No AuthData with username: " + username);
+        throw new DataAccessException("Error: unauthorized");
     }
 
     @Override
@@ -34,13 +34,13 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void clearAuth(AuthData a) throws DataAccessException {
-        for (AuthData auth : allAuths) {
+    public void clearAuth(AuthData a) {
+        var allAuthCopy = new ArrayList<>(allAuths);
+        for (AuthData auth : allAuthCopy) {
             if (auth.equals(a)) {
                 allAuths.remove(auth);
             }
         }
-        throw new DataAccessException("AuthData does not exist in database");
     }
     @Override
     public void clear() {

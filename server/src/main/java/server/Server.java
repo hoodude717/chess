@@ -7,6 +7,7 @@ import io.javalin.http.Context;
 import io.javalin.router.Endpoint;
 import service.*;
 import service.serviceRequests.LoginRequest;
+import service.serviceRequests.LogoutRequest;
 import service.serviceRequests.RegisterRequest;
 import service.serviceResults.LoginResult;
 import service.serviceResults.RegisterResult;
@@ -96,6 +97,13 @@ public class Server {
     }
 
     public void logoutUser(Context ctx) {
+        var logoutRequest = new Gson().fromJson(ctx.body(), LogoutRequest.class);
+        try {
+            userService.logout(logoutRequest);
+        } catch (UnauthorizedException e) {
+            ctx.status(401);
+            ctx.json(new Gson().toJson(e));
+        }
     }
     public void listGames(Context ctx) {
     }

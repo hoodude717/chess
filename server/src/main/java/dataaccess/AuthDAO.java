@@ -11,7 +11,7 @@ public interface AuthDAO {
     //Updates the userdata inside the database
     void updateAuth(AuthData newAuth)  throws DataAccessException;
     //Deletes the UserData
-    void clearAuth(AuthData a) throws DataAccessException;
+    void clearAuth(AuthData a);
 
     void clear();
 }

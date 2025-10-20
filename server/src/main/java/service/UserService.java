@@ -59,5 +59,18 @@ public class UserService {
         return new LoginResult(username, authToken);
 
     }
-    public void logout(LogoutRequest logoutRequest) {}
+
+    public void logout(LogoutRequest logoutRequest) throws UnauthorizedException {
+        var authToken = logoutRequest.authToken();
+        AuthData authData = null;
+        try {
+            authData = authDAO.getAuth(authToken);
+        } catch (DataAccessException e) {
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+
+        authDAO.clearAuth(authData);
+
+
+    }
 }
