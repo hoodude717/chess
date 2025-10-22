@@ -36,12 +36,15 @@ public class UserService {
         String username = registerRequest.username();
         String password = registerRequest.password();
         String email = registerRequest.email();
+        if (username == null || password == null || email == null) {
+            throw new BadRequestException("Error: Bad Request");
+        }
         //Try creating a user it will throw exception if it already exists
         userDAO.createUser(new UserData(username, password, email));
 
         String authToken = generateToken();
         authDAO.createAuth(new AuthData(authToken, username));
-        return new RegisterResult(username, authToken);
+        return new RegisterResult(username, authToken, "");
     }
 
     public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
@@ -60,7 +63,10 @@ public class UserService {
 
     }
 
-    public void logout(LogoutRequest logoutRequest) throws UnauthorizedException {
+    public void logout(LogoutRequest logoutRequest) throws DataAccessException {
+        if (logoutRequest == null) {
+            throw new BadRequestException("Error: Bad Request");
+        }
         var authToken = logoutRequest.authToken();
         AuthData authData = null;
         try {

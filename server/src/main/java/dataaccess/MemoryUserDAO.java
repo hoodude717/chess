@@ -14,10 +14,10 @@ public class MemoryUserDAO implements UserDAO{
     public void createUser(UserData u) throws DataAccessException {
         for (UserData user : allUsers) {
             if (user.equals(u)) {
-                throw new AlreadyTakenException("Error: already taken");
+                throw new AlreadyTakenException("Error: Already Taken");
             }
             if (user.username().equals(u.username())) {
-                throw new AlreadyTakenException("Error: already taken");
+                throw new AlreadyTakenException("Error: Already Taken");
             }
         }
         allUsers.add(u);

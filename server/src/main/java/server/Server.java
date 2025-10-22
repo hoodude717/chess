@@ -1,16 +1,21 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
 import io.javalin.router.Endpoint;
 import service.*;
-import service.serviceRequests.LoginRequest;
-import service.serviceRequests.LogoutRequest;
-import service.serviceRequests.RegisterRequest;
+import service.serviceRequests.*;
+import service.serviceResults.CreateGameResult;
+import service.serviceResults.ListGameResult;
 import service.serviceResults.LoginResult;
 import service.serviceResults.RegisterResult;
+
+import java.util.Map;
 
 public class Server {
 
@@ -25,6 +30,7 @@ public class Server {
     private GameService gameService;
     private UserService userService;
 
+    private Gson serializer = new Gson();
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
@@ -59,6 +65,10 @@ public class Server {
         javalin.stop();
     }
 
+    private void printErrorMsg(Context ctx, Exception e, Integer code) {
+        String message = serializer.toJson(Map.of("message", e.getMessage()));
+        ctx.status(code).result(message).contentType("application/json");
+    }
 
     public void clearDatabase(Context ctx) {
         clearService.clear();
@@ -66,48 +76,82 @@ public class Server {
     }
 
     public void registerUser(Context ctx) {
-        var registerRequest = new Gson().fromJson(ctx.body(), RegisterRequest.class);
+        var registerRequest = serializer.fromJson(ctx.body(), RegisterRequest.class);
         try {
             RegisterResult registerResult = userService.register(registerRequest);
-            ctx.json(new Gson().toJson(registerResult));
-
-        } catch (DataAccessException ex) {
-            ctx.status(403);
-            ctx.json(new Gson().toJson(ex));
+            ctx.status(200).result(serializer.toJson(registerResult)).contentType("application/json");
+        } catch (AlreadyTakenException e) {
+            printErrorMsg(ctx, e, 403);
+        } catch (BadRequestException e) {
+            printErrorMsg(ctx, e, 400);
+        } catch (DataAccessException e) {
+            printErrorMsg(ctx, e, 500);
         }
     }
 
     public void loginUser(Context ctx) {
-        var loginRequest = new Gson().fromJson(ctx.body(), LoginRequest.class);
+        var loginRequest = serializer.fromJson(ctx.body(), LoginRequest.class);
         try {
             LoginResult loginResult = userService.login(loginRequest);
-            ctx.json(new Gson().toJson(loginResult));
+            ctx.json(serializer.toJson(loginResult));
             ctx.status(200);
         } catch (BadRequestException e) {
             ctx.status(400);
-            ctx.json(new Gson().toJson(e));
+            ctx.json(serializer.toJson(e));
         } catch (UnauthorizedException e) {
             ctx.status(401);
-            ctx.json(new Gson().toJson(e));
+            ctx.json(serializer.toJson(e));
         } catch (DataAccessException e) {
             ctx.status(403);
-            ctx.json(new Gson().toJson(e));
+            ctx.json(serializer.toJson(e));
         }
 
     }
 
     public void logoutUser(Context ctx) {
-        var logoutRequest = new Gson().fromJson(ctx.body(), LogoutRequest.class);
+        var logoutRequest = serializer.fromJson(ctx.body(), LogoutRequest.class);
         try {
             userService.logout(logoutRequest);
         } catch (UnauthorizedException e) {
             ctx.status(401);
-            ctx.json(new Gson().toJson(e));
+            ctx.json(serializer.toJson(e));
+        } catch (BadRequestException e) {
+            ctx.status(400);
+            ctx.json(serializer.toJson(e));
+        } catch (Exception e) {
+            ctx.status(500);
+            ctx.json(serializer.toJson(e));
         }
     }
+
     public void listGames(Context ctx) {
+        var listGamesRequest = serializer.fromJson(ctx.body(), ListGameRequest.class);
+
+        try {
+            ListGameResult gamesResult = gameService.listGames(listGamesRequest);
+            ctx.status(200);
+            ctx.json(serializer.toJson(gamesResult));
+        } catch (UnauthorizedException e) {
+            ctx.status(401);
+            ctx.json(serializer.toJson(e));
+        }
+
     }
     public void createGame(Context ctx) {
+        var createGameRequest = serializer.fromJson(ctx.body(), CreateGameRequest.class);
+        try {
+            CreateGameResult createGameResult = gameService.createGame(createGameRequest);
+            ctx.json(serializer.toJson(createGameResult));
+            ctx.status(200);
+        } catch (UnauthorizedException e) {
+            ctx.json(serializer.toJson(e));
+            ctx.status(401);
+        } catch (DataAccessException e) {
+            ctx.status(500);
+            ctx.json(serializer.toJson(e));
+        }
+
+
     }
     public void joinGame(Context ctx) {
     }
