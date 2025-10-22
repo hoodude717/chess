@@ -3,6 +3,7 @@ package dataaccess;
 import model.UserData;
 import service.AlreadyTakenException;
 import service.BadRequestException;
+import service.UnauthorizedException;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -31,7 +32,7 @@ public class MemoryUserDAO implements UserDAO{
                 return user;
             }
         }
-        throw new BadRequestException("Error: bad request"); // No user with that name
+        throw new UnauthorizedException("Error: Unauthorized"); // No user with that name
     }
 
     @Override

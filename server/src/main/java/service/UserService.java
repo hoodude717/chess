@@ -50,6 +50,9 @@ public class UserService {
     public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
         String username = loginRequest.username();
         String password = loginRequest.password();
+        if (username == null || password == null) {
+            throw new BadRequestException("Error: Bad Request");
+        }
 
         var user = userDAO.getUser(username);
         String authToken = null;
@@ -64,7 +67,7 @@ public class UserService {
     }
 
     public void logout(LogoutRequest logoutRequest) throws DataAccessException {
-        if (logoutRequest == null) {
+        if (logoutRequest == null || logoutRequest.authToken() == null) {
             throw new BadRequestException("Error: Bad Request");
         }
         var authToken = logoutRequest.authToken();

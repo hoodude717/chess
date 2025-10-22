@@ -96,44 +96,42 @@ public class Server {
             ctx.json(serializer.toJson(loginResult));
             ctx.status(200);
         } catch (BadRequestException e) {
-            ctx.status(400);
-            ctx.json(serializer.toJson(e));
+            printErrorMsg(ctx, e, 400);
         } catch (UnauthorizedException e) {
-            ctx.status(401);
-            ctx.json(serializer.toJson(e));
+            printErrorMsg(ctx, e, 401);
         } catch (DataAccessException e) {
-            ctx.status(403);
-            ctx.json(serializer.toJson(e));
+            printErrorMsg(ctx, e, 500);
         }
 
     }
 
     public void logoutUser(Context ctx) {
-        var logoutRequest = serializer.fromJson(ctx.body(), LogoutRequest.class);
         try {
+            String authToken = ctx.header("Authorization");
+            LogoutRequest logoutRequest = new LogoutRequest(authToken);
             userService.logout(logoutRequest);
+            ctx.status(200);
         } catch (UnauthorizedException e) {
-            ctx.status(401);
-            ctx.json(serializer.toJson(e));
+            printErrorMsg(ctx, e, 401);
         } catch (BadRequestException e) {
-            ctx.status(400);
-            ctx.json(serializer.toJson(e));
+            printErrorMsg(ctx, e, 400);
         } catch (Exception e) {
-            ctx.status(500);
-            ctx.json(serializer.toJson(e));
+            printErrorMsg(ctx, e, 500);
         }
     }
 
     public void listGames(Context ctx) {
-        var listGamesRequest = serializer.fromJson(ctx.body(), ListGameRequest.class);
+        String authToken = ctx.header("Authorization");
+        var listGamesRequest = new ListGameRequest(authToken);
 
         try {
             ListGameResult gamesResult = gameService.listGames(listGamesRequest);
             ctx.status(200);
             ctx.json(serializer.toJson(gamesResult));
         } catch (UnauthorizedException e) {
-            ctx.status(401);
-            ctx.json(serializer.toJson(e));
+            printErrorMsg(ctx, e, 401);
+        } catch (Exception e) {
+            printErrorMsg(ctx, e, 500);
         }
 
     }
