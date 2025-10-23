@@ -2,9 +2,7 @@ package service;
 
 import dataaccess.*;
 import model.UserData;
-import org.eclipse.jetty.util.log.Log;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.serviceRequests.LoginRequest;
@@ -12,21 +10,18 @@ import service.serviceRequests.LogoutRequest;
 import service.serviceRequests.RegisterRequest;
 import service.serviceResults.RegisterResult;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
 
-    private GameDAO gameDAO = new MemoryGameDAO();
-    private UserDAO userDAO = new MemoryUserDAO();
-    private AuthDAO authDAO = new MemoryAuthDAO();
+    private final UserDAO userDAO = new MemoryUserDAO();
+    private final AuthDAO authDAO = new MemoryAuthDAO();
 
 
-    UserService userService = new UserService(authDAO, gameDAO, userDAO);
-    ClearService clearService = new ClearService(authDAO, gameDAO, userDAO);
+    UserService userService = new UserService(authDAO, userDAO);
 
     @BeforeEach
     void setClearDatabases() {
-        clearService.clear();
+        userService.clear();
     }
 
     @Test

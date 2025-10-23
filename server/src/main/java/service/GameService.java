@@ -4,7 +4,6 @@ import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
-import dataaccess.UserDAO;
 import model.AuthData;
 import model.GameData;
 import org.jetbrains.annotations.NotNull;
@@ -15,19 +14,16 @@ import service.serviceResults.CreateGameResult;
 import service.serviceResults.JoinGameResult;
 import service.serviceResults.ListGameResult;
 
-import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
 public class GameService {
 
-    private GameDAO gameDAO;
-    private UserDAO userDAO;
-    private AuthDAO authDAO;
+    private final GameDAO gameDAO;
+    private final AuthDAO authDAO;
 
-    public GameService(AuthDAO authDAO, GameDAO gameDAO, UserDAO userDAO) {
-        this.userDAO = userDAO;
+    public GameService(AuthDAO authDAO, GameDAO gameDAO) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
     }
@@ -54,8 +50,6 @@ public class GameService {
             var gameID = game.gameID();
             String whiteUser = game.whiteUsername();
             String blackUser = game.blackUsername();
-//            if(whiteUser ==null) { whiteUser = ""; }
-//            if(blackUser ==null) { blackUser = ""; }
             var gameName = game.gameName();
             var map = new GameDataSerializeable(gameID, whiteUser, blackUser, gameName);
             gameMap.add(map);
@@ -100,9 +94,9 @@ public class GameService {
         GameData game;
 
         try { game = gameDAO.getGame(gameID);
-        } catch (DataAccessException e) { throw new BadRequestException("Error: Bad Request"); }
+        } catch (DataAccessException e) {
+            throw new BadRequestException("Error: Bad Request"); }
 
-        String playerColorUsername;
         switch (playerColor) {
             case "WHITE":
                 if (game.whiteUsername() != null) {
@@ -125,6 +119,10 @@ public class GameService {
         }
 
         return new JoinGameResult();
+    }
+
+    public void clear() {
+        gameDAO.clear();
     }
 
 }

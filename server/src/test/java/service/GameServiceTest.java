@@ -13,21 +13,16 @@ import service.serviceResults.CreateGameResult;
 import service.serviceResults.ListGameResult;
 import service.serviceResults.RegisterResult;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 class GameServiceTest {
-    private GameDAO gameDAO = new MemoryGameDAO();
-    private UserDAO userDAO = new MemoryUserDAO();
-    private AuthDAO authDAO = new MemoryAuthDAO();
+    private final GameDAO gameDAO = new MemoryGameDAO();
+    private final UserDAO userDAO = new MemoryUserDAO();
+    private final AuthDAO authDAO = new MemoryAuthDAO();
 
 
-    GameService gameService = new GameService(authDAO, gameDAO, userDAO);
-    UserService userService = new UserService(authDAO, gameDAO, userDAO);
+    GameService gameService = new GameService(authDAO, gameDAO);
+    UserService userService = new UserService(authDAO, userDAO);
 
 
 
@@ -67,9 +62,9 @@ class GameServiceTest {
              });
             String json = new Gson().toJson(listResult[0]);
             var correctList = """
-                    {"games":[{"gameID":1402838791,"whiteUsername":"","blackUsername":"b1","gameName":"gameWithBlack"}]}
+                    {"games":[{"gameID":1,"whiteUsername":"","blackUsername":"b1","gameName":"gameWithBlack"}]}
                     """;
-            Assertions.assertEquals((String)correctList, (String)json);
+            Assertions.assertEquals(correctList, json);
 
         } catch (Exception e) {
             throw new RuntimeException("Failed Register or Make Game", e);

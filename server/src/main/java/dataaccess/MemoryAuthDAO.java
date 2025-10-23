@@ -1,8 +1,6 @@
 package dataaccess;
 
 import model.AuthData;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -27,10 +25,6 @@ public class MemoryAuthDAO implements AuthDAO {
             }
         }
         throw new DataAccessException("Error: unauthorized");
-    }
-
-    @Override
-    public void updateAuth(AuthData newAuth) throws DataAccessException {
     }
 
     @Override

@@ -2,9 +2,7 @@ package service;
 
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
 import dataaccess.UserDAO;
-import io.javalin.http.HttpResponseException;
 import model.AuthData;
 import model.UserData;
 import service.serviceRequests.LoginRequest;
@@ -13,14 +11,13 @@ import service.serviceRequests.RegisterRequest;
 import service.serviceResults.LoginResult;
 import service.serviceResults.RegisterResult;
 
-import javax.xml.crypto.Data;
 import java.util.UUID;
 
 public class UserService {
-    private UserDAO userDAO;
-    private AuthDAO authDAO;
+    private final UserDAO userDAO;
+    private final AuthDAO authDAO;
 
-    public UserService(AuthDAO authDAO, GameDAO gameDAO, UserDAO userDAO) {
+    public UserService(AuthDAO authDAO, UserDAO userDAO) {
         this.userDAO = userDAO;
         this.authDAO = authDAO;
     }
@@ -76,7 +73,10 @@ public class UserService {
         }
 
         authDAO.clearAuth(authData);
+    }
 
-
+    public void clear() {
+        userDAO.clear();
+        authDAO.clear();
     }
 }

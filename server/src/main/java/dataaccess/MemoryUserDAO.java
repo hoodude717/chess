@@ -36,21 +36,6 @@ public class MemoryUserDAO implements UserDAO{
     }
 
     @Override
-    public void updateUser(UserData newUser) {
-    }
-
-    @Override
-    public void clearUser(UserData u) throws DataAccessException {
-        for (UserData user : allUsers) {
-            if (user.equals(u)) {
-                allUsers.remove(user);
-            }
-        }
-        throw new BadRequestException("Error: bad request"); // No user with that name
-
-    }
-
-    @Override
     public void clear() {
         allUsers.clear();
     }

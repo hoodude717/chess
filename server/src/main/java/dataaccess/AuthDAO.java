@@ -8,8 +8,6 @@ public interface AuthDAO {
     void createAuth(AuthData a) throws DataAccessException;
     //Reads in the user data by username
     AuthData getAuth(String authToken) throws DataAccessException;
-    //Updates the userdata inside the database
-    void updateAuth(AuthData newAuth)  throws DataAccessException;
     //Deletes the UserData
     void clearAuth(AuthData a);
 
