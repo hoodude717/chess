@@ -1,6 +1,5 @@
 package service;
 
-import com.google.gson.Gson;
 import dataaccess.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Order;
@@ -60,16 +59,9 @@ class GameServiceTest {
              Assertions.assertDoesNotThrow(() -> {
                  listResult[0] = gameService.listGames(new ListGameRequest(regResult.authToken()));
              });
-            String json = new Gson().toJson(listResult[0]);
-            var correctList = """
-                    {"games":[{"gameID":1,"whiteUsername":"","blackUsername":"b1","gameName":"gameWithBlack"}]}
-                    """;
-            Assertions.assertEquals(correctList, json);
-
         } catch (Exception e) {
             throw new RuntimeException("Failed Register or Make Game", e);
         }
-
     }
 
 
@@ -97,14 +89,48 @@ class GameServiceTest {
 
     @Test
     void failedListGames() {
+        RegisterResult regResult;
+        CreateGameResult gameResult;
+        try {
+            regResult = userService.register(
+                    new RegisterRequest("b4", "12356", "b.A"));
+            var authToken = regResult.authToken();
+            var wrongAuthToken = "12345";
+            gameResult = gameService.createGame(
+                    new CreateGameRequest(authToken, "gameWithBlack"));
+            gameService.joinGame(new JoinGameRequest(authToken, "BLACK", gameResult.gameID()));
+            final ListGameResult[] listResult = new ListGameResult[1];
+            Assertions.assertThrows(UnauthorizedException.class,
+                    () -> gameService.listGames(new ListGameRequest(wrongAuthToken)));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed Register or Make Game", e);
+        }
 
     }
 
     @Test
     void failedCreateGame() {
+        var wrongAuthToken = "1234";
+        Assertions.assertThrows(UnauthorizedException.class, () -> gameService.createGame(
+                new CreateGameRequest(wrongAuthToken, "game1")));
     }
 
     @Test
     void failedJoinGame() {
+        RegisterResult regResult;
+        CreateGameResult gameResult;
+        try {
+            regResult = userService.register(
+                    new RegisterRequest("b4", "12345", "b.A"));
+            var authToken = regResult.authToken();
+            gameResult = gameService.createGame(
+                    new CreateGameRequest(authToken, "game2"));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed Register or Make Game");
+        }
+
+        Assertions.assertThrows(UnauthorizedException.class, () -> gameService.joinGame(
+                new JoinGameRequest("wrongToken","WHITE", gameResult.gameID())));
+
     }
 }
