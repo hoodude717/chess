@@ -2,7 +2,6 @@ package dataaccess;
 
 import model.UserData;
 import service.AlreadyTakenException;
-import service.BadRequestException;
 import service.UnauthorizedException;
 
 import java.util.ArrayList;

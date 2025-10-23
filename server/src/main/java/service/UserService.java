@@ -49,7 +49,7 @@ public class UserService {
         }
 
         var user = userDAO.getUser(username);
-        String authToken = null;
+        String authToken;
         if (user.password().equals(password)) {
             authToken = generateToken();
             authDAO.createAuth(new AuthData(authToken, username));
@@ -65,7 +65,7 @@ public class UserService {
             throw new BadRequestException("Error: Bad Request");
         }
         var authToken = logoutRequest.authToken();
-        AuthData authData = null;
+        AuthData authData;
         try {
             authData = authDAO.getAuth(authToken);
         } catch (DataAccessException e) {
