@@ -1,8 +1,9 @@
 package service.serviceResults;
 
-import model.GameData;
+import service.GameDataSerializeable;
 
 import java.util.Collection;
+import java.util.Map;
 
-public record ListGameResult(Collection<GameData> gamesList) {
+public record ListGameResult(Collection<GameDataSerializeable> games) {
 }

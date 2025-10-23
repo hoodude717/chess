@@ -43,9 +43,6 @@ class UserServiceTest {
     void successfulLogin() {
         Assertions.assertDoesNotThrow(() -> userDAO.createUser(
                 new UserData("bradford", "12345", "bradford@byu.edu")));
-//        Assertions.assertDoesNotThrow(() -> userService.register(
-//                new RegisterRequest("bradford", "12345", "bradford@byu.edu")));
-
 
         Assertions.assertDoesNotThrow(() -> userService.login(new LoginRequest("bradford", "12345")));
 
@@ -62,13 +59,11 @@ class UserServiceTest {
         }
 
         Assertions.assertDoesNotThrow(() -> userService.logout(new LogoutRequest(result.authToken())));
-
     }
 
 
     @Test
     void failedRegister() {
-
         try {
             userService.register(
                     new RegisterRequest("bradford", "12345", "bradford@byu.edu"));
@@ -78,7 +73,6 @@ class UserServiceTest {
 
         Assertions.assertThrows(DataAccessException.class, () -> userService.register(
                 new RegisterRequest("bradford", "12345", "bradford@byu.edu")));
-
     }
 
     @Test
@@ -86,20 +80,14 @@ class UserServiceTest {
 
         Assertions.assertDoesNotThrow(() -> userDAO.createUser(
                 new UserData("bradford", "12345", "bradford@byu.edu")));
-//        Assertions.assertDoesNotThrow(() -> userService.register(
-//                new RegisterRequest("bradford", "12345", "bradford@byu.edu")));
-
 
         Assertions.assertThrows(DataAccessException.class,
                 () -> userService.login(new LoginRequest("bradford", "1234")));
-
-
     }
 
     @Test
     void failedLogout() {
         Assertions.assertThrows(UnauthorizedException.class,
                 () -> userService.logout(new LogoutRequest("123456789")));
-
     }
 }

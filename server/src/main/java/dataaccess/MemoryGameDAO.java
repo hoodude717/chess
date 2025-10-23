@@ -9,6 +9,7 @@ import java.util.Objects;
 
 public class MemoryGameDAO implements GameDAO{
     ArrayList<GameData> allGames = new ArrayList<>();
+    int totalGames = 1;
 
     @Override
     public void createGame(GameData g) throws DataAccessException {
@@ -17,8 +18,11 @@ public class MemoryGameDAO implements GameDAO{
                 throw new DataAccessException("Game already exists");
             }
         }
+        totalGames++;
         allGames.add(g);
     }
+
+    public int getTotalGames() { return totalGames; }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
@@ -32,16 +36,18 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public Collection<GameData> listGames() throws DataAccessException {
+    public Collection<GameData> listGames(){
         return allGames;
     }
 
     @Override
     public void updateGame(int gameID, GameData updatedGame) throws DataAccessException {
-        for (GameData game : allGames) {
+        for (int i=0; i<allGames.size(); i++) {
+            GameData game = allGames.get(i);
             var curID = game.gameID();
             if (curID == gameID) {
-                game = updatedGame;
+                allGames.set(i, updatedGame);
+                return;
             }
         }
         throw new DataAccessException("No Game with ID: " + gameID);

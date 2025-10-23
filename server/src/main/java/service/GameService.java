@@ -1,14 +1,24 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
+import model.AuthData;
+import model.GameData;
+import org.jetbrains.annotations.NotNull;
 import service.serviceRequests.CreateGameRequest;
 import service.serviceRequests.JoinGameRequest;
 import service.serviceRequests.ListGameRequest;
 import service.serviceResults.CreateGameResult;
 import service.serviceResults.JoinGameResult;
 import service.serviceResults.ListGameResult;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
 
 public class GameService {
 
@@ -22,14 +32,99 @@ public class GameService {
         this.gameDAO = gameDAO;
     }
 
-    public ListGameResult listGames(ListGameRequest listRequest) {
-        return null;
+    public ListGameResult listGames(ListGameRequest listRequest) throws DataAccessException {
+        if (listRequest == null || listRequest.authToken() == null) {
+            throw new BadRequestException("Error: Bad Request");
+        }
+        try {
+            authDAO.getAuth(listRequest.authToken());
+        } catch (DataAccessException e) {
+            throw new UnauthorizedException("Error: Unauthorized");
+        }
+
+        Collection<GameData> games = gameDAO.listGames();
+        Collection<GameDataSerializeable> gameMap = getGameMaps(games);
+        return new ListGameResult(gameMap);
     }
-    public CreateGameResult createGame(CreateGameRequest createGameRequest) {
-        return null;
+
+    @NotNull
+    private static Collection<GameDataSerializeable> getGameMaps(Collection<GameData> games) {
+        Collection<GameDataSerializeable> gameMap = new ArrayList<>();
+        for (GameData game : games) {
+            var gameID = game.gameID();
+            String whiteUser = game.whiteUsername();
+            String blackUser = game.blackUsername();
+//            if(whiteUser ==null) { whiteUser = ""; }
+//            if(blackUser ==null) { blackUser = ""; }
+            var gameName = game.gameName();
+            var map = new GameDataSerializeable(gameID, whiteUser, blackUser, gameName);
+            gameMap.add(map);
+        }
+        return gameMap;
     }
-    public JoinGameResult joinGame(JoinGameRequest joinGameRequest) {
-        return null;
+
+    public CreateGameResult createGame(CreateGameRequest createGameRequest) throws DataAccessException {
+        var authToken = createGameRequest.authToken();
+        var gameName = createGameRequest.gameName();
+        if (authToken == null || gameName == null) {
+            throw new BadRequestException("Error: Bad Request");
+        }
+        try {
+            authDAO.getAuth(authToken);
+        } catch (DataAccessException e) {
+            throw new UnauthorizedException("Error: Unauthorized");
+        }
+        int gameID = gameDAO.getTotalGames(); // Unique for each game name
+        try {
+            gameDAO.createGame(new GameData(gameID, null, null, gameName, new ChessGame()));
+        } catch (DataAccessException e) {
+            throw new BadRequestException("Error: Bad Request");
+        }
+        return new CreateGameResult(gameID);
+    }
+
+    public JoinGameResult joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
+        var authToken = joinGameRequest.authToken();
+        var gameID = joinGameRequest.gameID();
+        var playerColor = joinGameRequest.playerColor();
+        if (authToken == null || gameID <= 0 || playerColor == null) {
+            throw new BadRequestException("Error: Bad Request");
+        }
+        AuthData auth;
+        try {
+            auth = authDAO.getAuth(authToken);
+        } catch(DataAccessException e) {
+            throw new UnauthorizedException("Error: Unauthorized");
+        }
+        var playerUsername = auth.username();
+        GameData game;
+
+        try { game = gameDAO.getGame(gameID);
+        } catch (DataAccessException e) { throw new BadRequestException("Error: Bad Request"); }
+
+        String playerColorUsername;
+        switch (playerColor) {
+            case "WHITE":
+                if (game.whiteUsername() != null) {
+                    throw new AlreadyTakenException("Error: Already Taken");
+                } else {
+                    gameDAO.updateGame(gameID,
+                            new GameData(gameID, playerUsername, game.blackUsername(), game.gameName(), game.game()));
+                }
+                break;
+            case "BLACK":
+                if (game.blackUsername() != null) {
+                    throw new AlreadyTakenException("Error: Already Taken");
+                } else {
+                    gameDAO.updateGame(gameID,
+                            new GameData(gameID, game.whiteUsername(), playerUsername, game.gameName(), game.game()));
+                }
+                break;
+            default:
+                throw new BadRequestException("Error: Bad Request");
+        }
+
+        return new JoinGameResult();
     }
 
 }

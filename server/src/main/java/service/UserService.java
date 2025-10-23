@@ -17,15 +17,12 @@ import javax.xml.crypto.Data;
 import java.util.UUID;
 
 public class UserService {
-
-    private GameDAO gameDAO;
     private UserDAO userDAO;
     private AuthDAO authDAO;
 
     public UserService(AuthDAO authDAO, GameDAO gameDAO, UserDAO userDAO) {
         this.userDAO = userDAO;
         this.authDAO = authDAO;
-        this.gameDAO = gameDAO;
     }
 
     public static String generateToken() {
@@ -58,7 +55,7 @@ public class UserService {
         String authToken = null;
         if (user.password().equals(password)) {
             authToken = generateToken();
-            authDAO.createAuth(new AuthData(username, authToken));
+            authDAO.createAuth(new AuthData(authToken, username));
         } else {
             throw new UnauthorizedException("Error: unauthorized");
         }

@@ -10,10 +10,7 @@ import io.javalin.http.Context;
 import io.javalin.router.Endpoint;
 import service.*;
 import service.serviceRequests.*;
-import service.serviceResults.CreateGameResult;
-import service.serviceResults.ListGameResult;
-import service.serviceResults.LoginResult;
-import service.serviceResults.RegisterResult;
+import service.serviceResults.*;
 
 import java.util.Map;
 
@@ -121,10 +118,9 @@ public class Server {
     }
 
     public void listGames(Context ctx) {
-        String authToken = ctx.header("Authorization");
-        var listGamesRequest = new ListGameRequest(authToken);
-
         try {
+            String authToken = ctx.header("Authorization");
+            var listGamesRequest = new ListGameRequest(authToken);
             ListGameResult gamesResult = gameService.listGames(listGamesRequest);
             ctx.status(200);
             ctx.json(serializer.toJson(gamesResult));
@@ -136,21 +132,38 @@ public class Server {
 
     }
     public void createGame(Context ctx) {
-        var createGameRequest = serializer.fromJson(ctx.body(), CreateGameRequest.class);
+        String authToken = ctx.header("Authorization");
+        var partialRequest = serializer.fromJson(ctx.body(), CreateGameRequest.class);
+        var createGameRequest = new CreateGameRequest(authToken, partialRequest.gameName());
         try {
             CreateGameResult createGameResult = gameService.createGame(createGameRequest);
             ctx.json(serializer.toJson(createGameResult));
             ctx.status(200);
         } catch (UnauthorizedException e) {
-            ctx.json(serializer.toJson(e));
-            ctx.status(401);
+            printErrorMsg(ctx, e, 401);
+        } catch (BadRequestException e) {
+            printErrorMsg(ctx, e, 400);
         } catch (DataAccessException e) {
-            ctx.status(500);
-            ctx.json(serializer.toJson(e));
+            printErrorMsg(ctx, e, 500);
         }
-
-
     }
+
     public void joinGame(Context ctx) {
+        String authToken = ctx.header("Authorization");
+        var partialRequest = serializer.fromJson(ctx.body(), JoinGameRequest.class);
+        var joinGameRequest = new JoinGameRequest(authToken, partialRequest.playerColor(), partialRequest.gameID());
+        try {
+            JoinGameResult joinGameResult = gameService.joinGame(joinGameRequest);
+            ctx.json(serializer.toJson(joinGameResult));
+            ctx.status(200);
+        } catch (UnauthorizedException e) {
+            printErrorMsg(ctx, e, 401);
+        } catch (BadRequestException e) {
+            printErrorMsg(ctx, e, 400);
+        } catch (AlreadyTakenException e) {
+            printErrorMsg(ctx, e, 403);
+        } catch (DataAccessException e) {
+            printErrorMsg(ctx, e, 500);
+        }
     }
 }
