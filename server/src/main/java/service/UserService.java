@@ -5,11 +5,11 @@ import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.AuthData;
 import model.UserData;
-import service.serviceRequests.LoginRequest;
-import service.serviceRequests.LogoutRequest;
-import service.serviceRequests.RegisterRequest;
-import service.serviceResults.LoginResult;
-import service.serviceResults.RegisterResult;
+import service.servicerequests.LoginRequest;
+import service.servicerequests.LogoutRequest;
+import service.servicerequests.RegisterRequest;
+import service.serviceresults.LoginResult;
+import service.serviceresults.RegisterResult;
 
 import java.util.UUID;
 

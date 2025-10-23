@@ -5,13 +5,13 @@ import dataaccess.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import service.serviceRequests.CreateGameRequest;
-import service.serviceRequests.JoinGameRequest;
-import service.serviceRequests.ListGameRequest;
-import service.serviceRequests.RegisterRequest;
-import service.serviceResults.CreateGameResult;
-import service.serviceResults.ListGameResult;
-import service.serviceResults.RegisterResult;
+import service.servicerequests.CreateGameRequest;
+import service.servicerequests.JoinGameRequest;
+import service.servicerequests.ListGameRequest;
+import service.servicerequests.RegisterRequest;
+import service.serviceresults.CreateGameResult;
+import service.serviceresults.ListGameResult;
+import service.serviceresults.RegisterResult;
 
 
 

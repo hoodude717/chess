@@ -7,12 +7,12 @@ import dataaccess.GameDAO;
 import model.AuthData;
 import model.GameData;
 import org.jetbrains.annotations.NotNull;
-import service.serviceRequests.CreateGameRequest;
-import service.serviceRequests.JoinGameRequest;
-import service.serviceRequests.ListGameRequest;
-import service.serviceResults.CreateGameResult;
-import service.serviceResults.JoinGameResult;
-import service.serviceResults.ListGameResult;
+import service.servicerequests.CreateGameRequest;
+import service.servicerequests.JoinGameRequest;
+import service.servicerequests.ListGameRequest;
+import service.serviceresults.CreateGameResult;
+import service.serviceresults.JoinGameResult;
+import service.serviceresults.ListGameResult;
 
 
 import java.util.ArrayList;

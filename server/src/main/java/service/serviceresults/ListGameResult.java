@@ -1,4 +1,4 @@
-package service.serviceResults;
+package service.serviceresults;
 
 import service.GameDataSerializeable;
 

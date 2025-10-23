@@ -6,8 +6,8 @@ import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
 import service.*;
-import service.serviceRequests.*;
-import service.serviceResults.*;
+import service.servicerequests.*;
+import service.serviceresults.*;
 
 import java.util.Map;
 
