@@ -29,6 +29,23 @@ public class DatabaseManager {
         }
     }
 
+    static public void createUser() throws DataAccessException {
+        String createStr = String.format(
+                "CREATE USER '%s'@'%s' IDENTIFIED BY '%s'", dbUsername, connectionUrl, dbPassword);
+        String propertyStr = String.format("GRANT ALL on %s.* to '%s'@'%s'", databaseName, dbUsername, connectionUrl);
+        String[] userDBCreateStatements = {createStr, propertyStr};
+        try (Connection conn = DatabaseManager.getConnection()) {
+            for (String statement : userDBCreateStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("User Database not created properly", e);
+        }
+    }
+
+
     /**
      * Create a connection to the database and sets the catalog based upon the
      * properties specified in db.properties. Connections to the database should
