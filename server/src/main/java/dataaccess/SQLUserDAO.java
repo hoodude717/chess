@@ -7,6 +7,8 @@ import service.UnauthorizedException;
 
 import javax.xml.crypto.Data;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class SQLUserDAO implements UserDAO{
@@ -19,16 +21,21 @@ public class SQLUserDAO implements UserDAO{
     public void createUser(UserData u) throws DataAccessException {
         //change the allusers to a table in the database and search for the row that matches the same values
         // if the table returns anything except an emptytable then its a already taken
-        for (UserData user : allUsers) {
-            if (user.equals(u)) {
-                throw new AlreadyTakenException("Error: Already Taken");
+        String sql = "SELECT username, password FROM user WHERE username = ?";
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try(PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, u.username());
+                ResultSet rs = stmt.executeQuery();
+                if (!rs.next()) {
+                    storeUserPassword(u.username(), u.password());
+                } else {
+                    throw new AlreadyTakenException("Error: Already Taken");
+                }
             }
-            if (user.username().equals(u.username())) {
-                throw new AlreadyTakenException("Error: Already Taken");
-            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error: Bad Request");
         }
-        //call insertUser(username, password, email); //Make sure the password is hashed
-        allUsers.add(u);
+
     }
 
     @Override
@@ -76,30 +83,43 @@ public class SQLUserDAO implements UserDAO{
 
     //Function which connects and writes to the database directly with the new hashed password
     private void writeHashedPasswordToDatabase(String username, String hashedPassword) throws DataAccessException {
-        String statement = "";
+        String statement = "INSERT INTO user (username, password) VALUES (?, ?)";;
         try (Connection conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, username);
+                preparedStatement.setString(2, hashedPassword);
+                if (preparedStatement.executeUpdate() == 1) {
+                    System.out.println("One User added to the User database");
+                } else {
+                    System.out.println("Error inserting user into user database");
+                }
 
             }
-
         } catch (SQLException e) {
             throw new DataAccessException("Could not write Password", e);
         }
-
     }
 
     //Function to read directly from SQL Database to get hahed
     private String readHashedPasswordFromDatabase(String username) throws DataAccessException {
-        String statement = "";
+        String statement = "SELECT password FROM user WHERE username = ?";
+        String returnString = "";
         try (Connection conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
-
+                preparedStatement.setString(1, username);
+                try (ResultSet rs = preparedStatement.executeQuery()) {
+                    if (rs.next()) {
+                        returnString = rs.getString("password");
+                    }
+                    else {
+                        throw new DataAccessException("No password found");
+                    }
+                }
             }
-
         } catch (SQLException e) {
-            throw new DataAccessException("Could not write Password", e);
+            throw new DataAccessException("Could not get Password", e);
         }
-        return "";
+        return returnString;
 
     }
 
