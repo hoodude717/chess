@@ -42,13 +42,13 @@ public class SQLUserDAO implements UserDAO{
     public UserData getUser(String username, String password) throws DataAccessException {
         //use a sql select cmd to return the user obj with ow that matches username. username will be primary key
         //hashed key will be value in other column that will need to be varified when logging in
-        for (UserData user : allUsers) {
-            var tempName = user.username();
-            if (username.equals(tempName)) {
-                return user;
-            }
-        }
-        throw new UnauthorizedException("Error: Unauthorized"); // No user with that name
+//        for (UserData user : allUsers) {
+//            var tempName = user.username();
+//            if (username.equals(tempName)) {
+//                return user;
+//            }
+//        }
+//        throw new UnauthorizedException("Error: Unauthorized"); // No user with that name
         return null;
     }
 

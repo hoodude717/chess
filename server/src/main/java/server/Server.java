@@ -18,12 +18,17 @@ public class Server {
 
     private final GameService gameService;
     private final UserService userService;
-    public static boolean sql = false;
+    public static boolean sql = true;
 
     private final Gson serializer = new Gson();
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
+        try {
+            DatabaseManager.createDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
 
         AuthDAO authDAO = new MemoryAuthDAO();
         GameDAO gameDAO = new MemoryGameDAO();
