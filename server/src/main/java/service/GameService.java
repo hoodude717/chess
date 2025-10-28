@@ -68,7 +68,7 @@ public class GameService {
         } catch (DataAccessException e) {
             throw new UnauthorizedException("Error: Unauthorized");
         }
-        int gameID = gameDAO.getTotalGames(); // Unique for each game name
+        int gameID = gameDAO.getGameID(); // Unique for each game name
         try {
             gameDAO.createGame(new GameData(gameID, null, null, gameName, new ChessGame()));
         } catch (DataAccessException e) {

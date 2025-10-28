@@ -9,6 +9,7 @@ import service.*;
 import service.servicerequests.*;
 import service.serviceresults.*;
 
+import java.io.Console;
 import java.util.Map;
 
 public class Server {
@@ -17,6 +18,7 @@ public class Server {
 
     private final GameService gameService;
     private final UserService userService;
+    public static boolean sql = false;
 
     private final Gson serializer = new Gson();
 
@@ -26,6 +28,16 @@ public class Server {
         AuthDAO authDAO = new MemoryAuthDAO();
         GameDAO gameDAO = new MemoryGameDAO();
         UserDAO userDAO = new MemoryUserDAO();
+        if (sql) {
+            try {
+                authDAO = new SQLAuthDAO();
+                userDAO = new SQLUserDAO();
+                gameDAO = new SQLGameDAO();
+            } catch (Exception ex) {
+                System.out.println("One or more of the databases did not get created properly");
+            }
+
+        }
 
         // Register your endpoints and exception handlers here.
         gameService = new GameService(authDAO, gameDAO);
@@ -154,5 +166,9 @@ public class Server {
         } catch (DataAccessException e) {
             printErrorMsg(ctx, e, 500);
         }
+    }
+
+    public static void activateSQL() {
+        sql = true;
     }
 }

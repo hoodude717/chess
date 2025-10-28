@@ -21,7 +21,7 @@ public class MemoryGameDAO implements GameDAO{
         allGames.add(g);
     }
 
-    public int getTotalGames() { return totalGames; }
+    public int getGameID() { return totalGames; }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {

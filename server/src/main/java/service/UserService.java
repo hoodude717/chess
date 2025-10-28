@@ -22,7 +22,7 @@ public class UserService {
         this.authDAO = authDAO;
     }
 
-    public static String generateToken() {
+    private static String generateToken() {
         return UUID.randomUUID().toString();
     }
 
@@ -48,7 +48,7 @@ public class UserService {
             throw new BadRequestException("Error: Bad Request");
         }
 
-        var user = userDAO.getUser(username);
+        var user = userDAO.getUser(username, password);
         String authToken;
         if (user.password().equals(password)) {
             authToken = generateToken();

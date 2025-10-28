@@ -6,7 +6,7 @@ import java.util.Collection;
 public interface GameDAO {
 
     // Get game number for id number
-    int getTotalGames();
+    int getGameID();
     //    createGame: Create a new game.
     void createGame(GameData g) throws DataAccessException;
     //    getGame: Retrieve a specified game with the given game ID.
