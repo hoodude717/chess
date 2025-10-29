@@ -30,10 +30,10 @@ public class DatabaseManager {
     }
 
     static public void createUser() throws DataAccessException {
-        String createStr = String.format(
-                "CREATE USER '%s'@'%s' IDENTIFIED BY '%s'", dbUsername, connectionUrl, dbPassword);
+//        String createStr = String.format(
+//                "CREATE USER '%s'@'%s' IDENTIFIED BY '%s'", dbUsername, connectionUrl, dbPassword);
         String propertyStr = String.format("GRANT ALL on %s.* to '%s'@'%s'", databaseName, dbUsername, connectionUrl);
-        String[] userDBCreateStatements = {createStr, propertyStr};
+        String[] userDBCreateStatements = {propertyStr};
         try (Connection conn = DatabaseManager.getConnection()) {
             for (String statement : userDBCreateStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {

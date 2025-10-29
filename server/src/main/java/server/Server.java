@@ -18,7 +18,7 @@ public class Server {
 
     private final GameService gameService;
     private final UserService userService;
-    public static boolean sql = true;
+    public static boolean sql;
 
     private final Gson serializer = new Gson();
 
@@ -27,19 +27,19 @@ public class Server {
         try {
             DatabaseManager.createDatabase();
         } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Database not created", e);
         }
 
         AuthDAO authDAO = new MemoryAuthDAO();
         GameDAO gameDAO = new MemoryGameDAO();
         UserDAO userDAO = new MemoryUserDAO();
-        if (sql) {
+        if (true) { //FIXME Change to sql when done testing
             try {
                 authDAO = new SQLAuthDAO();
                 userDAO = new SQLUserDAO();
                 gameDAO = new SQLGameDAO();
             } catch (Exception ex) {
-                System.out.println("One or more of the databases did not get created properly");
+                System.out.println("One or more of the databases did not get created properly" + ex);
             }
 
         }
