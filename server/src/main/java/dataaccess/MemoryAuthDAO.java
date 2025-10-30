@@ -1,7 +1,9 @@
 package dataaccess;
 
 import model.AuthData;
+import service.BadRequestException;
 
+import javax.xml.crypto.Data;
 import java.util.*;
 
 public class MemoryAuthDAO implements AuthDAO {
@@ -28,12 +30,15 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void clearAuth(AuthData a) {
+    public void clearAuth(AuthData a) throws BadRequestException {
         var allAuthCopy = new ArrayList<>(allAuths);
         for (AuthData auth : allAuthCopy) {
             if (auth.equals(a)) {
                 allAuths.remove(auth);
             }
+        }
+        if (allAuthCopy.size() == allAuths.size()) {
+            throw new BadRequestException("Error: Bad Request");
         }
     }
     @Override

@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
+import service.BadRequestException;
 
 public interface AuthDAO {
 
@@ -9,7 +10,7 @@ public interface AuthDAO {
     //Reads in the user data by username
     AuthData getAuth(String authToken) throws DataAccessException;
     //Deletes the UserData
-    void clearAuth(AuthData a);
+    void clearAuth(AuthData a) throws BadRequestException;
 
     void clear();
 }
