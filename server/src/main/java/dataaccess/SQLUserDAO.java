@@ -15,6 +15,7 @@ import java.sql.SQLException;
 public class SQLUserDAO implements UserDAO{
 
     public SQLUserDAO() throws DataAccessException{
+
         configureDatabase();
     }
 
@@ -35,15 +36,15 @@ public class SQLUserDAO implements UserDAO{
     public void createUser(UserData u) throws DataAccessException {
         //change the allusers to a table in the database and search for the row that matches the same values
         // if the table returns anything except an emptytable then its a already taken
-        String sql = "SELECT username, password, email FROM user WHERE username = ?";
+        String sql = "SELECT username, password, email FROM users WHERE username = ?";
         try (Connection conn = DatabaseManager.getConnection()) {
             try(PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, u.username());
                 ResultSet rs = stmt.executeQuery();
-                if (!rs.next()) {
-                    storeUserPassword(u.username(), u.password(), u.email());
-                } else {
+                if (rs.next()) {
                     throw new AlreadyTakenException("Error: Already Taken");
+                } else {
+                    storeUserPassword(u.username(), u.password(), u.email());
                 }
             }
         } catch (SQLException e) {
@@ -57,7 +58,7 @@ public class SQLUserDAO implements UserDAO{
     public UserData getUser(String username, String password) throws DataAccessException {
         //use a sql select cmd to return the user obj with ow that matches username. username will be primary key
         //hashed key will be value in other column that will need to be varified when logging in
-        String sql = "SELECT username, password, email FROM user WHERE username = ?";
+        String sql = "SELECT username, password, email FROM users WHERE username = ?";
         if (!verifyUser(username, password)) { throw new UnauthorizedException("Error: Unauthorized"); }
         try (Connection conn = DatabaseManager.getConnection()) {
             try(PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -79,7 +80,7 @@ public class SQLUserDAO implements UserDAO{
     @Override
     public void clear() {
         //Clear tables in databases
-        String sql = "DROP TABLE IF EXISTS user";
+        String sql = "DROP TABLE IF EXISTS users";
         try (Connection conn = DatabaseManager.getConnection();
             var stmt = conn.prepareStatement(sql)) {
             stmt.executeUpdate();
@@ -102,7 +103,6 @@ public class SQLUserDAO implements UserDAO{
 
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
-        DatabaseManager.createUser();
         try (Connection conn = DatabaseManager.getConnection()) {
             for (String statement : userDBCreateStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
@@ -116,7 +116,7 @@ public class SQLUserDAO implements UserDAO{
 
     //Function which connects and writes to the database directly with the new hashed password
     private void writeHashedPasswordToDatabase(String username, String hashedPassword, String email) throws DataAccessException {
-        String statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";;
+        String statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";;
         try (Connection conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, username);
@@ -136,7 +136,7 @@ public class SQLUserDAO implements UserDAO{
 
     //Function to read directly from SQL Database to get hahed
     private String readHashedPasswordFromDatabase(String username) throws DataAccessException {
-        String statement = "SELECT password FROM user WHERE username = ?";
+        String statement = "SELECT password FROM users WHERE username = ?";
         String returnString = "";
         try (Connection conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {

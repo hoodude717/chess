@@ -9,6 +9,7 @@ import service.*;
 import service.servicerequests.*;
 import service.serviceresults.*;
 
+import javax.xml.crypto.Data;
 import java.io.Console;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ public class Server {
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
         try {
+            DatabaseManager.clearDatabase();
             DatabaseManager.createDatabase();
         } catch (DataAccessException e) {
             throw new RuntimeException("Database not created", e);
