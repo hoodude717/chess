@@ -40,6 +40,9 @@ public class SQLGameDAO implements GameDAO{
                 preparedStatement.setString(2, whiteUser);
                 preparedStatement.setString(3, blackUser);
                 preparedStatement.setString(4, gameName);
+                if (game == null) {
+                    throw new DataAccessException("Error: no null game field");
+                }
                 String gameStr = gson.toJson(game);
                 preparedStatement.setString(5, gameStr);
                 if (preparedStatement.executeUpdate() == 1) {
@@ -118,6 +121,27 @@ public class SQLGameDAO implements GameDAO{
 
     @Override
     public void updateGame(int gameID, GameData updatedGame) throws DataAccessException {
+        String sql = """
+                UPDATE games
+                SET whiteUser = ?, blackUser = ?, gameName = ?, game = ?
+                WHERE gameID = ?;
+                """;
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            String gameStr = gson.toJson(updatedGame.game());
+            stmt.setInt(5, gameID);
+            stmt.setString(1, updatedGame.whiteUsername());
+            stmt.setString(2, updatedGame.blackUsername());
+            stmt.setString(3, updatedGame.gameName());
+            stmt.setString(4, gameStr);
+
+            int rowsChanged = stmt.executeUpdate();
+            if (rowsChanged != 1) {
+                throw new BadRequestException("Error: Bad Request No Games with that ID");
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new BadRequestException("Error: Bad Request");
+        }
 
     }
 

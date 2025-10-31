@@ -28,7 +28,7 @@ class SQLGameDAOTest {
     @BeforeAll
     static void init() {
         try {
-            expectedGame = new GameData(1, "player1", "player2", "expectedGame", new ChessGame());
+            expectedGame = new GameData(1, "player1", null, "expectedGame", new ChessGame());
             DatabaseManager.createDatabase();
             DatabaseManager.clearDatabase();
             gameDAO = new SQLGameDAO();
@@ -146,8 +146,7 @@ class SQLGameDAOTest {
     void listGamesFail() {
         //Assert throws an error
         GameData newGame = new GameData(4, null, null, "nullGame", null);
-        Assertions.assertDoesNotThrow(()->gameDAO.createGame(newGame));
-        Assertions.assertThrows(RuntimeException.class, ()->gameDAO.listGames());
+        Assertions.assertThrows(DataAccessException.class, ()->gameDAO.createGame(newGame));
 
     }
 
@@ -157,6 +156,8 @@ class SQLGameDAOTest {
         //Assert no error thrown
         Assertions.assertDoesNotThrow(()->gameDAO.clear());
         ChessGame chessGame = new ChessGame();
+
+        Assertions.assertDoesNotThrow(() -> gameDAO.createGame(expectedGame));
 
         Assertions.assertDoesNotThrow(()->chessGame.makeMove(
                 new ChessMove(new ChessPosition(2,3), new ChessPosition(3, 3), null)));
@@ -180,13 +181,14 @@ class SQLGameDAOTest {
                         String.format("whiteUser did not match. Expected: %s Actual: %s",
                                 expectedGame.whiteUsername(), rs.getString("whiteUser")));
 
-                Assertions.assertEquals(expectedGame.blackUsername(), rs.getString("blackUser"),
+                Assertions.assertEquals("player2", rs.getString("blackUser"),
                         String.format("blackUser did not match. Expected: %s Actual: %s",
                                 expectedGame.blackUsername(), rs.getString("blackUser")));
 
                 Assertions.assertEquals(expectedGameStr, rs.getString("game"),
                         String.format("game did not match. Expected: %s Actual: %s",
                                 expectedGameStr, rs.getString("game")));
+                System.out.println(expectedGameStr);
 
             } else {
                 fail("User was not updated in Table");
