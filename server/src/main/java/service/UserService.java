@@ -66,17 +66,19 @@ public class UserService {
         }
         var authToken = logoutRequest.authToken();
         AuthData authData;
-        try {
-            authData = authDAO.getAuth(authToken);
-        } catch (DataAccessException e) {
-            throw new UnauthorizedException("Error: unauthorized");
-        }
+
+        authData = authDAO.getAuth(authToken);
+
 
         authDAO.clearAuth(authData);
     }
 
     public void clear() {
-        userDAO.clear();
-        authDAO.clear();
+        try {
+            userDAO.clear();
+            authDAO.clear();
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error: Bad Connection", e);
+        }
     }
 }

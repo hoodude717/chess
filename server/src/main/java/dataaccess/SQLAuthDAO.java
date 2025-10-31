@@ -31,7 +31,7 @@ public class SQLAuthDAO implements AuthDAO{
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Could not add AuthData", e);
+            throw new DataAccessException("Error: Could not add AuthData", e);
         }
     }
 
@@ -99,7 +99,7 @@ public class SQLAuthDAO implements AuthDAO{
              var stmt = conn.prepareStatement(sql)) {
             stmt.executeUpdate();
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException("Failed to clear database", e);
+            throw new RuntimeException("Error: Failed to clear database", e);
         }
     }
 

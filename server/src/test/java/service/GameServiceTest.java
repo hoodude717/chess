@@ -100,7 +100,7 @@ class GameServiceTest {
                     new CreateGameRequest(authToken, "gameWithBlack"));
             gameService.joinGame(new JoinGameRequest(authToken, "BLACK", gameResult.gameID()));
             final ListGameResult[] listResult = new ListGameResult[1];
-            Assertions.assertThrows(UnauthorizedException.class,
+            Assertions.assertThrows(DataAccessException.class,
                     () -> gameService.listGames(new ListGameRequest(wrongAuthToken)));
         } catch (Exception e) {
             throw new RuntimeException("Failed Register or Make Game", e);
@@ -111,7 +111,7 @@ class GameServiceTest {
     @Test
     void failedCreateGame() {
         var wrongAuthToken = "1234";
-        Assertions.assertThrows(UnauthorizedException.class, () -> gameService.createGame(
+        Assertions.assertThrows(DataAccessException.class, () -> gameService.createGame(
                 new CreateGameRequest(wrongAuthToken, "game1")));
     }
 
@@ -129,7 +129,7 @@ class GameServiceTest {
             throw new RuntimeException("Failed Register or Make Game");
         }
 
-        Assertions.assertThrows(UnauthorizedException.class, () -> gameService.joinGame(
+        Assertions.assertThrows(DataAccessException.class, () -> gameService.joinGame(
                 new JoinGameRequest("wrongToken","WHITE", gameResult.gameID())));
 
     }

@@ -9,8 +9,6 @@ import service.*;
 import service.servicerequests.*;
 import service.serviceresults.*;
 
-import javax.xml.crypto.Data;
-import java.io.Console;
 import java.util.Map;
 
 public class Server {
@@ -26,7 +24,6 @@ public class Server {
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
         try {
-            DatabaseManager.clearDatabase();
             DatabaseManager.createDatabase();
         } catch (DataAccessException e) {
             throw new RuntimeException("Database not created", e);
@@ -35,15 +32,12 @@ public class Server {
         AuthDAO authDAO = new MemoryAuthDAO();
         GameDAO gameDAO = new MemoryGameDAO();
         UserDAO userDAO = new MemoryUserDAO();
-        if (true) { //FIXME Change to sql when done testing
-            try {
-                authDAO = new SQLAuthDAO();
-                userDAO = new SQLUserDAO();
-                gameDAO = new SQLGameDAO();
-            } catch (Exception ex) {
-                System.out.println("One or more of the databases did not get created properly" + ex);
-            }
-
+        try {
+            authDAO = new SQLAuthDAO();
+            userDAO = new SQLUserDAO();
+            gameDAO = new SQLGameDAO();
+        } catch (Exception ex) {
+            System.out.println("One or more of the databases did not get created properly" + ex);
         }
 
         // Register your endpoints and exception handlers here.
@@ -75,9 +69,16 @@ public class Server {
     }
 
     public void clearDatabase(Context ctx) {
-        userService.clear();
-        gameService.clear();
-        ctx.status(200);
+        try {
+            userService.clear();
+            gameService.clear();
+            ctx.status(200);
+        } catch (Exception e) {
+            String message = serializer.toJson(Map.of("message", e.getMessage()));
+            ctx.status(500).result(message).contentType("application/json");
+        }
+
+
     }
 
     public void registerUser(Context ctx) {

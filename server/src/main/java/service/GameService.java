@@ -32,11 +32,9 @@ public class GameService {
         if (listRequest == null || listRequest.authToken() == null) {
             throw new BadRequestException("Error: Bad Request");
         }
-        try {
-            authDAO.getAuth(listRequest.authToken());
-        } catch (DataAccessException e) {
-            throw new UnauthorizedException("Error: Unauthorized");
-        }
+
+        authDAO.getAuth(listRequest.authToken());
+
 
         Collection<GameData> games = gameDAO.listGames();
         Collection<GameDataSerializeable> gameMap = getGameMaps(games);
@@ -64,11 +62,8 @@ public class GameService {
             throw new BadRequestException("Error: Bad Request");
         }
 
-        try {
-            authDAO.getAuth(authToken);
-        } catch (DataAccessException e) {
-            throw new UnauthorizedException("Error: Unauthorized");
-        }
+        authDAO.getAuth(authToken);
+
 
         int gameID = gameDAO.getGameID(); // Unique for each game name
         try {
@@ -86,12 +81,8 @@ public class GameService {
         if (authToken == null || gameID <= 0 || playerColor == null) {
             throw new BadRequestException("Error: Bad Request");
         }
-        AuthData auth;
-        try {
-            auth = authDAO.getAuth(authToken);
-        } catch(DataAccessException e) {
-            throw new UnauthorizedException("Error: Unauthorized");
-        }
+        AuthData auth = authDAO.getAuth(authToken);
+
         var playerUsername = auth.username();
         GameData game;
 

@@ -3,10 +3,8 @@ package dataaccess;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import service.AlreadyTakenException;
-import service.BadRequestException;
 import service.UnauthorizedException;
 
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,14 +17,16 @@ public class SQLUserDAO implements UserDAO{
         configureDatabase();
     }
 
-    //Helper function for verifying clear passowrd with hashed
-    private boolean verifyUser(String username, String providedClearTextPassword) throws UnauthorizedException {
+    //Helper function for verifying clear password with hashed
+    private boolean verifyUser(String username, String providedClearTextPassword) throws DataAccessException {
         // read the previously hashed password from the database
         String hashedPassword;
         try {
             hashedPassword = readHashedPasswordFromDatabase(username);
-        } catch (DataAccessException e) {
+        } catch (UnauthorizedException | SQLException e) {
             throw new UnauthorizedException("Error: Unauthorized");
+        } catch (DataAccessException e) {
+            throw new DataAccessException("Error: Bad Connection");
         }
 
         return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
@@ -34,8 +34,8 @@ public class SQLUserDAO implements UserDAO{
     
     @Override
     public void createUser(UserData u) throws DataAccessException {
-        //change the allusers to a table in the database and search for the row that matches the same values
-        // if the table returns anything except an emptytable then its a already taken
+        //change the all users to a table in the database and search for the row that matches the same values
+        // if the table returns anything except an empty table then it's already taken
         String sql = "SELECT username, password, email FROM users WHERE username = ?";
         try (Connection conn = DatabaseManager.getConnection()) {
             try(PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -85,7 +85,7 @@ public class SQLUserDAO implements UserDAO{
             var stmt = conn.prepareStatement(sql)) {
             stmt.executeUpdate();
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException("Failed to clear database", e);
+            throw new RuntimeException("Error: Bad Connection", e);
         }
 
     }
@@ -116,7 +116,7 @@ public class SQLUserDAO implements UserDAO{
 
     //Function which connects and writes to the database directly with the new hashed password
     private void writeHashedPasswordToDatabase(String username, String hashedPassword, String email) throws DataAccessException {
-        String statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";;
+        String statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, username);
@@ -134,10 +134,10 @@ public class SQLUserDAO implements UserDAO{
         }
     }
 
-    //Function to read directly from SQL Database to get hahed
-    private String readHashedPasswordFromDatabase(String username) throws DataAccessException {
+    //Function to read directly from SQL Database to get hashed
+    private String readHashedPasswordFromDatabase(String username) throws DataAccessException , SQLException {
         String statement = "SELECT password FROM users WHERE username = ?";
-        String returnString = "";
+        String returnString;
         try (Connection conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, username);
@@ -146,12 +146,12 @@ public class SQLUserDAO implements UserDAO{
                         returnString = rs.getString("password");
                     }
                     else {
-                        throw new DataAccessException("No password found");
+                        throw new UnauthorizedException("No password found");
                     }
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Could not get Password", e);
+            throw new SQLException("Error: Could not get Password", e);
         }
         return returnString;
 

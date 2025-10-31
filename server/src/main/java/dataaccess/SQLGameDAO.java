@@ -53,7 +53,7 @@ public class SQLGameDAO implements GameDAO{
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Could not add AuthData", e);
+            throw new DataAccessException("Error: Could not add AuthData", e);
         }
     }
 
@@ -152,7 +152,7 @@ public class SQLGameDAO implements GameDAO{
              var stmt = conn.prepareStatement(sql)) {
             stmt.executeUpdate();
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException("Failed to clear database", e);
+            throw new RuntimeException("Error: Failed to clear games table", e);
         }
     }
 
@@ -178,7 +178,7 @@ public class SQLGameDAO implements GameDAO{
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("User Database not created properly", e);
+            throw new DataAccessException("Error: User Database not created properly", e);
         }
     }
 

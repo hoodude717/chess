@@ -82,7 +82,7 @@ class UserServiceTest {
 
     @Test
     void failedLogout() {
-        Assertions.assertThrows(UnauthorizedException.class,
+        Assertions.assertThrows(DataAccessException.class,
                 () -> userService.logout(new LogoutRequest("123456789")));
     }
 }
