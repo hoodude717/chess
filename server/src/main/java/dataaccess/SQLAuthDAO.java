@@ -94,7 +94,7 @@ public class SQLAuthDAO implements AuthDAO{
     @Override
     public void clear() {
         //Clear tables in databases
-        String sql = "DROP TABLE IF EXISTS auths";
+        String sql = "TRUNCATE TABLE auths";
         try (Connection conn = DatabaseManager.getConnection();
              var stmt = conn.prepareStatement(sql)) {
             stmt.executeUpdate();

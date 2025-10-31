@@ -4,11 +4,8 @@ import model.GameData;
 import java.util.Collection;
 
 public interface GameDAO {
-    int gameID = 1;
     // Get game number for id number
-    default int getGameID() {
-        return gameID;
-    }
+    int getGameID();
     //    createGame: Create a new game.
     void createGame(GameData g) throws DataAccessException;
     //    getGame: Retrieve a specified game with the given game ID.

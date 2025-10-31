@@ -63,11 +63,13 @@ public class GameService {
         if (authToken == null || gameName == null) {
             throw new BadRequestException("Error: Bad Request");
         }
+
         try {
             authDAO.getAuth(authToken);
         } catch (DataAccessException e) {
             throw new UnauthorizedException("Error: Unauthorized");
         }
+
         int gameID = gameDAO.getGameID(); // Unique for each game name
         try {
             gameDAO.createGame(new GameData(gameID, null, null, gameName, new ChessGame()));

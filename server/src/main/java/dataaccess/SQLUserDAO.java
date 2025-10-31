@@ -80,7 +80,7 @@ public class SQLUserDAO implements UserDAO{
     @Override
     public void clear() {
         //Clear tables in databases
-        String sql = "DROP TABLE IF EXISTS users";
+        String sql = "TRUNCATE TABLE users";
         try (Connection conn = DatabaseManager.getConnection();
             var stmt = conn.prepareStatement(sql)) {
             stmt.executeUpdate();
