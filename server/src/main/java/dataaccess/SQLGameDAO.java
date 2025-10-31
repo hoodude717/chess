@@ -3,19 +3,18 @@ package dataaccess;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
-import model.UserData;
 import service.AlreadyTakenException;
 import service.BadRequestException;
 import service.UnauthorizedException;
 
-import javax.xml.transform.Result;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+
 
 public class SQLGameDAO implements GameDAO{
 
@@ -32,11 +31,11 @@ public class SQLGameDAO implements GameDAO{
         return gameCount;
     }
 
-    private void storeGameData(int ID, String whiteUser, String blackUser, String gameName, ChessGame game) throws DataAccessException {
-        String statement = "INSERT INTO games (gameID, whiteUser, blackUser, gameName, game) VALUES (?, ?, ?, ?, ?)";;
+    private void storeGameData(int id, String whiteUser, String blackUser, String gameName, ChessGame game) throws DataAccessException {
+        String statement = "INSERT INTO games (gameID, whiteUser, blackUser, gameName, game) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.setInt(1, ID);
+                preparedStatement.setInt(1, id);
                 preparedStatement.setString(2, whiteUser);
                 preparedStatement.setString(3, blackUser);
                 preparedStatement.setString(4, gameName);
@@ -61,7 +60,7 @@ public class SQLGameDAO implements GameDAO{
     public void createGame(GameData g) throws DataAccessException {
         //Look for existing game with game id if it exists then store Data in table
         try {
-            GameData existingGame = getGame(g.gameID());
+            getGame(g.gameID());
             throw new AlreadyTakenException("Error: Already Taken");
         } catch (DataAccessException e) {
             storeGameData(g.gameID(), g.whiteUsername(), g.blackUsername(), g.gameName(), g.game());
