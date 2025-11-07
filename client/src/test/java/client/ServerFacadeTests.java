@@ -4,6 +4,7 @@ import exceptions.ResponseException;
 import org.junit.jupiter.api.*;
 import server.Server;
 import client.ServerFacade;
+import servicerequests.ListGameRequest;
 import servicerequests.LoginRequest;
 import servicerequests.LogoutRequest;
 import servicerequests.RegisterRequest;
@@ -16,6 +17,7 @@ public class ServerFacadeTests {
     private static Server server;
     static ServerFacade serverFacade;
     private static LoginResult result;
+    private static RegisterResult regResult;
 
     @BeforeAll
     public static void init() {
@@ -39,7 +41,7 @@ public class ServerFacadeTests {
     @Order(1)
     public void registerGood() {
         RegisterRequest request = new RegisterRequest("bradford", "bradford", "bradford");
-        Assertions.assertDoesNotThrow(()->serverFacade.register(request));
+        regResult = Assertions.assertDoesNotThrow(()->serverFacade.register(request));
     }
 
     @Test
@@ -51,31 +53,47 @@ public class ServerFacadeTests {
 
     @Test
     @Order(3)
+    public void logoutBad() {
+        LogoutRequest request = new LogoutRequest("112345");
+        Assertions.assertDoesNotThrow(()->serverFacade.logout(request));
+    }
+
+    @Test
+    @Order(4)
     public void loginBad() {
         LoginRequest request = new LoginRequest("bradford", "12345");
         Assertions.assertThrows(ResponseException.class, ()->serverFacade.login(request));
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     public void loginGood() {
         LoginRequest request = new LoginRequest("bradford", "bradford");
         result = Assertions.assertDoesNotThrow(()->serverFacade.login(request));
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     public void logoutGood() {
-        LogoutRequest request = new LogoutRequest(result.authToken());
+        LogoutRequest request = new LogoutRequest(regResult.authToken());
         Assertions.assertDoesNotThrow(()->serverFacade.logout(request));
     }
 
     @Test
-    @Order(6)
-    public void logoutBad() {
-        LogoutRequest request = new LogoutRequest("112345");
-        Assertions.assertDoesNotThrow(()->serverFacade.logout(request));
+    @Order(7)
+    public void listGood() {
+        ListGameRequest request = new ListGameRequest(result.authToken());
+        Assertions.assertDoesNotThrow(()->serverFacade.listGames(request));
     }
+
+    @Test
+    @Order(8)
+    public void listBad() {
+        ListGameRequest request = new ListGameRequest("112345");
+        Assertions.assertThrows(ResponseException.class, ()->serverFacade.listGames(request));
+    }
+
+
 
 
 

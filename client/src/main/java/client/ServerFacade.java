@@ -38,6 +38,12 @@ public class ServerFacade {
         sendRequest(request);
     }
 
+    public ListGameResult listGames(ListGameRequest req) throws ResponseException{
+        var request = buildRequest("GET", "/game", req);
+        var result = sendRequest(request);
+        return handleResponse(result, ListGameResult.class);
+    }
+
     public void clear() throws ResponseException{
         var request = buildRequest("DELETE", "/db", null);
         var result = sendRequest(request);
@@ -49,6 +55,20 @@ public class ServerFacade {
                 .method(method, makeRequestBody(body));
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
+        }
+
+        // Add Authorization header for specific request types
+        String authToken = switch (body) {
+            case ListGameRequest req -> req.authToken();
+            case CreateGameRequest req -> req.authToken();
+            case JoinGameRequest req -> req.authToken();
+            case LogoutRequest req -> req.authToken();
+            // Add more authenticated request types here
+            case null, default -> null;
+        };
+
+        if (authToken != null) {
+            request.setHeader("Authorization", authToken);
         }
         return request.build();
     }
