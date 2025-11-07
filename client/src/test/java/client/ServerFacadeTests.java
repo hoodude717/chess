@@ -99,10 +99,25 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @Order(9)
+    @Order(10)
     public void createBad() {
         CreateGameRequest request = new CreateGameRequest("12345", "newGame");
         Assertions.assertThrows(ResponseException.class, ()->serverFacade.createGame(request));
+    }
+
+    @Test
+    @Order(11)
+    public void joinGood() {
+        JoinGameRequest request = new JoinGameRequest(result.authToken(), "WHITE", 1);
+        Assertions.assertDoesNotThrow(()->serverFacade.joinGame(request));
+
+    }
+
+    @Test
+    @Order(12)
+    public void joinBad() {
+        JoinGameRequest request = new JoinGameRequest(result.authToken(), "WHITE", 1);
+        Assertions.assertThrows(ResponseException.class, ()->serverFacade.joinGame(request));
     }
 
 
