@@ -27,6 +27,17 @@ public class ServerFacade {
         return handleResponse(result, RegisterResult.class);
     }
 
+    public LoginResult login(LoginRequest req) throws ResponseException{
+        var request = buildRequest("POST", "/session", req);
+        var result = sendRequest(request);
+        return handleResponse(result, LoginResult.class);
+    }
+
+    public void clear() throws ResponseException{
+        var request = buildRequest("DELETE", "/db", null);
+        var result = sendRequest(request);
+    }
+
     private HttpRequest buildRequest(String method, String path, Object body) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
