@@ -4,11 +4,9 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
+import exceptions.DataAccessException;
 import model.GameData;
-import model.UserData;
 import org.junit.jupiter.api.*;
-
-import javax.xml.crypto.Data;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

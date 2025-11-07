@@ -1,11 +1,9 @@
 package dataaccess;
 
+import exceptions.DataAccessException;
 import model.AuthData;
-import model.UserData;
 import org.junit.jupiter.api.*;
-import service.AlreadyTakenException;
-
-import javax.xml.crypto.Data;
+import exceptions.AlreadyTakenException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -1,6 +1,4 @@
-package service;
-
-import dataaccess.DataAccessException;
+package exceptions;
 
 public class UnauthorizedException extends DataAccessException {
     public UnauthorizedException(String message) {

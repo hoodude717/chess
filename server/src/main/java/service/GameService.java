@@ -2,17 +2,20 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
+import exceptions.AlreadyTakenException;
+import exceptions.BadRequestException;
+import exceptions.DataAccessException;
 import dataaccess.GameDAO;
 import model.AuthData;
 import model.GameData;
+import model.GameDataSerializeable;
 import org.jetbrains.annotations.NotNull;
-import service.servicerequests.CreateGameRequest;
-import service.servicerequests.JoinGameRequest;
-import service.servicerequests.ListGameRequest;
-import service.serviceresults.CreateGameResult;
-import service.serviceresults.JoinGameResult;
-import service.serviceresults.ListGameResult;
+import servicerequests.CreateGameRequest;
+import servicerequests.JoinGameRequest;
+import servicerequests.ListGameRequest;
+import serviceresults.CreateGameResult;
+import serviceresults.JoinGameResult;
+import serviceresults.ListGameResult;
 
 
 import java.util.ArrayList;

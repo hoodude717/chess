@@ -2,10 +2,11 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import exceptions.DataAccessException;
 import model.GameData;
-import service.AlreadyTakenException;
-import service.BadRequestException;
-import service.UnauthorizedException;
+import exceptions.AlreadyTakenException;
+import exceptions.BadRequestException;
+import exceptions.UnauthorizedException;
 
 
 import java.sql.Connection;
@@ -21,7 +22,7 @@ public class SQLGameDAO implements GameDAO{
     int gameCount = 1;
     private final Gson gson = new Gson();
 
-    public SQLGameDAO() throws DataAccessException{
+    public SQLGameDAO() throws DataAccessException {
         configureDatabase();
     }
 

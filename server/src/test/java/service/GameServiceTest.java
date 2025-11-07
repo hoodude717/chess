@@ -1,16 +1,17 @@
 package service;
 
 import dataaccess.*;
+import exceptions.DataAccessException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import service.servicerequests.CreateGameRequest;
-import service.servicerequests.JoinGameRequest;
-import service.servicerequests.ListGameRequest;
-import service.servicerequests.RegisterRequest;
-import service.serviceresults.CreateGameResult;
-import service.serviceresults.ListGameResult;
-import service.serviceresults.RegisterResult;
+import servicerequests.CreateGameRequest;
+import servicerequests.JoinGameRequest;
+import servicerequests.ListGameRequest;
+import servicerequests.RegisterRequest;
+import serviceresults.CreateGameResult;
+import serviceresults.ListGameResult;
+import serviceresults.RegisterResult;
 
 
 

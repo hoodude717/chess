@@ -1,6 +1,4 @@
-package service;
-
-import dataaccess.DataAccessException;
+package exceptions;
 
 public class BadRequestException extends DataAccessException {
     public BadRequestException(String message) {

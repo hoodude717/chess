@@ -3,11 +3,15 @@ package server;
 import com.google.gson.Gson;
 
 import dataaccess.*;
+import exceptions.AlreadyTakenException;
+import exceptions.BadRequestException;
+import exceptions.DataAccessException;
+import exceptions.UnauthorizedException;
 import io.javalin.*;
 import io.javalin.http.Context;
 import service.*;
-import service.servicerequests.*;
-import service.serviceresults.*;
+import servicerequests.*;
+import serviceresults.*;
 
 import java.util.Map;
 

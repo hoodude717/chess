@@ -1,9 +1,10 @@
 package dataaccess;
 
+import exceptions.DataAccessException;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-import service.AlreadyTakenException;
-import service.UnauthorizedException;
+import exceptions.AlreadyTakenException;
+import exceptions.UnauthorizedException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,7 +13,7 @@ import java.sql.SQLException;
 
 public class SQLUserDAO implements UserDAO{
 
-    public SQLUserDAO() throws DataAccessException{
+    public SQLUserDAO() throws DataAccessException {
 
         configureDatabase();
     }

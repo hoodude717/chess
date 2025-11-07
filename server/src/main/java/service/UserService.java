@@ -1,15 +1,17 @@
 package service;
 
 import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
+import exceptions.BadRequestException;
+import exceptions.DataAccessException;
 import dataaccess.UserDAO;
+import exceptions.UnauthorizedException;
 import model.AuthData;
 import model.UserData;
-import service.servicerequests.LoginRequest;
-import service.servicerequests.LogoutRequest;
-import service.servicerequests.RegisterRequest;
-import service.serviceresults.LoginResult;
-import service.serviceresults.RegisterResult;
+import servicerequests.LoginRequest;
+import servicerequests.LogoutRequest;
+import servicerequests.RegisterRequest;
+import serviceresults.LoginResult;
+import serviceresults.RegisterResult;
 
 import java.util.UUID;
 

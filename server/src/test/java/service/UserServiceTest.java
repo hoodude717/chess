@@ -1,14 +1,15 @@
 package service;
 
 import dataaccess.*;
+import exceptions.DataAccessException;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.servicerequests.LoginRequest;
-import service.servicerequests.LogoutRequest;
-import service.servicerequests.RegisterRequest;
-import service.serviceresults.RegisterResult;
+import servicerequests.LoginRequest;
+import servicerequests.LogoutRequest;
+import servicerequests.RegisterRequest;
+import serviceresults.RegisterResult;
 
 
 class UserServiceTest {

@@ -1,12 +1,11 @@
 package dataaccess;
 
+import exceptions.DataAccessException;
 import model.AuthData;
-import model.UserData;
-import service.AlreadyTakenException;
-import service.BadRequestException;
-import service.UnauthorizedException;
+import exceptions.AlreadyTakenException;
+import exceptions.BadRequestException;
+import exceptions.UnauthorizedException;
 
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

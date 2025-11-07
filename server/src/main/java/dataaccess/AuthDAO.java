@@ -1,7 +1,8 @@
 package dataaccess;
 
+import exceptions.DataAccessException;
 import model.AuthData;
-import service.BadRequestException;
+import exceptions.BadRequestException;
 
 public interface AuthDAO {
 

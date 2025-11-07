@@ -1,9 +1,9 @@
 package dataaccess;
 
+import exceptions.DataAccessException;
 import model.AuthData;
-import service.BadRequestException;
+import exceptions.BadRequestException;
 
-import javax.xml.crypto.Data;
 import java.util.*;
 
 public class MemoryAuthDAO implements AuthDAO {

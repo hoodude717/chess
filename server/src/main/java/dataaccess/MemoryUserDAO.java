@@ -1,8 +1,9 @@
 package dataaccess;
 
+import exceptions.DataAccessException;
 import model.UserData;
-import service.AlreadyTakenException;
-import service.UnauthorizedException;
+import exceptions.AlreadyTakenException;
+import exceptions.UnauthorizedException;
 
 import java.util.ArrayList;
 import java.util.Objects;

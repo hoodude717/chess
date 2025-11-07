@@ -1,6 +1,6 @@
-package service.serviceresults;
+package serviceresults;
 
-import service.GameDataSerializeable;
+import model.GameDataSerializeable;
 
 import java.util.Collection;
 
