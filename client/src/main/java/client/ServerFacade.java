@@ -44,6 +44,12 @@ public class ServerFacade {
         return handleResponse(result, ListGameResult.class);
     }
 
+    public CreateGameResult createGame(CreateGameRequest req) throws ResponseException{
+        var request = buildRequest("POST", "/game", req);
+        var result = sendRequest(request);
+        return handleResponse(result, CreateGameResult.class);
+    }
+
     public void clear() throws ResponseException{
         var request = buildRequest("DELETE", "/db", null);
         var result = sendRequest(request);

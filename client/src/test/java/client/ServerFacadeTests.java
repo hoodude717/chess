@@ -4,10 +4,7 @@ import exceptions.ResponseException;
 import org.junit.jupiter.api.*;
 import server.Server;
 import client.ServerFacade;
-import servicerequests.ListGameRequest;
-import servicerequests.LoginRequest;
-import servicerequests.LogoutRequest;
-import servicerequests.RegisterRequest;
+import servicerequests.*;
 import serviceresults.LoginResult;
 import serviceresults.RegisterResult;
 
@@ -91,6 +88,21 @@ public class ServerFacadeTests {
     public void listBad() {
         ListGameRequest request = new ListGameRequest("112345");
         Assertions.assertThrows(ResponseException.class, ()->serverFacade.listGames(request));
+    }
+
+    @Test
+    @Order(9)
+    public void createGood() {
+        CreateGameRequest request = new CreateGameRequest(result.authToken(), "newGame");
+        Assertions.assertDoesNotThrow(()->serverFacade.createGame(request));
+
+    }
+
+    @Test
+    @Order(9)
+    public void createBad() {
+        CreateGameRequest request = new CreateGameRequest("12345", "newGame");
+        Assertions.assertThrows(ResponseException.class, ()->serverFacade.createGame(request));
     }
 
 
