@@ -5,7 +5,9 @@ import org.junit.jupiter.api.*;
 import server.Server;
 import client.ServerFacade;
 import servicerequests.LoginRequest;
+import servicerequests.LogoutRequest;
 import servicerequests.RegisterRequest;
+import serviceresults.LoginResult;
 import serviceresults.RegisterResult;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -13,6 +15,7 @@ public class ServerFacadeTests {
 
     private static Server server;
     static ServerFacade serverFacade;
+    private static LoginResult result;
 
     @BeforeAll
     public static void init() {
@@ -57,12 +60,24 @@ public class ServerFacadeTests {
     @Order(4)
     public void loginGood() {
         LoginRequest request = new LoginRequest("bradford", "bradford");
-        Assertions.assertDoesNotThrow(()->serverFacade.login(request));
+        result = Assertions.assertDoesNotThrow(()->serverFacade.login(request));
     }
 
     @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
+    @Order(5)
+    public void logoutGood() {
+        LogoutRequest request = new LogoutRequest(result.authToken());
+        Assertions.assertDoesNotThrow(()->serverFacade.logout(request));
     }
+
+    @Test
+    @Order(6)
+    public void logoutBad() {
+        LogoutRequest request = new LogoutRequest("112345");
+        Assertions.assertDoesNotThrow(()->serverFacade.logout(request));
+    }
+
+
+
 
 }
