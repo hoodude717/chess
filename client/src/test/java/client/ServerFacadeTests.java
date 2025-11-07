@@ -120,6 +120,12 @@ public class ServerFacadeTests {
         Assertions.assertThrows(ResponseException.class, ()->serverFacade.joinGame(request));
     }
 
+    @Test
+    @Order(13)
+    public void clearGood() {
+        Assertions.assertDoesNotThrow(()->serverFacade.clear());
+    }
+
 
 
 
