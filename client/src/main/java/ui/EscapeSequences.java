@@ -12,7 +12,6 @@ public class EscapeSequences {
     public static final String ERASE_SCREEN = UNICODE_ESCAPE + "[H" + UNICODE_ESCAPE + "[2J";
     public static final String ERASE_LINE = UNICODE_ESCAPE + "[2K";
 
-    public static final String RESET = UNICODE_ESCAPE + "0m";
 
     public static final String SET_TEXT_BOLD = UNICODE_ESCAPE + "[1m";
     public static final String SET_TEXT_FAINT = UNICODE_ESCAPE + "[2m";
@@ -64,6 +63,7 @@ public class EscapeSequences {
     public static final String BLACK_PAWN = " ♟ ";
     public static final String EMPTY = " \u2003 ";
 
+    public static final String RESET = SET_BG_COLOR_BLACK + SET_TEXT_COLOR_WHITE;
     public static final String LOGO = UNICODE_ESCAPE + "1F1FA" + UNICODE_ESCAPE + "1F1F8";
 
 

@@ -11,15 +11,16 @@ import static ui.EscapeSequences.*;
 
 public class PreLoginClient {
     private final ServerFacade server;
-    private State state = State.PRELOGIN;
+    private PostLoginClient post;
 
 
     public PreLoginClient(String url) {
         server = new ServerFacade(url);
+        post = new PostLoginClient(url);
     }
 
     public void run() {
-        System.out.println(SET_BG_COLOR_DARK_GREEN+ BLACK_PAWN + " En Puissant on the Croissant" + BLACK_PAWN);
+        System.out.println(RESET+ BLACK_PAWN + " En Puissant on the Croissant" + BLACK_PAWN);
         System.out.print(help());
 
         Scanner scanner = new Scanner(System.in);
@@ -64,11 +65,15 @@ public class PreLoginClient {
             var user = params[0];
             var pass = params[1];
             var request = new LoginRequest(user, pass);
+
             var result = server.login(request);
-            return "Login Successful";
+            post.setAuthToken(result.authToken());
+            System.out.print(SET_TEXT_COLOR_BLUE + "Login Successful\n");
+            post.run();
+            return "";
 
         } else  {
-            return "Login requires Username and Password";
+            return "Login requires Username and Password\n";
         }
     }
 
@@ -78,14 +83,16 @@ public class PreLoginClient {
             var pass = params[1];
             var email = params[2];
             var request = new RegisterRequest(user, pass, email);
-            server.register(request);
-            return "Register Successful";
+            var result = server.register(request);
+            post.setAuthToken(result.authToken());
+            post.run();
+            return "Register Successful\n";
         } else  {
-            return "\nRegister requires Username, Password and Email";
+            return "Register requires Username, Password and Email\n";
         }
     }
 
     private void printPrompt() {
-        System.out.print("\n" + RESET + ">>> " + SET_TEXT_COLOR_GREEN);
+        System.out.print(RESET + "[Logged Out] >>> " );
     }
 }
