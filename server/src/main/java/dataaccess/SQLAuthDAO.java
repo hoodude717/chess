@@ -112,6 +112,9 @@ public class SQLAuthDAO implements AuthDAO{
               PRIMARY KEY (`authToken`),
               INDEX(username)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """,
+            """
+            INSERT IGNORE INTO auths (authToken, username) VALUES ('hoodoo17', 'admin')
             """
     };
 

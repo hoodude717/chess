@@ -1,14 +1,13 @@
 package client;
 
+import exceptions.DataAccessException;
 import exceptions.ResponseException;
 import model.GameDataSerializeable;
+import servicerequests.CreateGameRequest;
 import servicerequests.ListGameRequest;
 import servicerequests.LogoutRequest;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 import static ui.EscapeSequences.*;
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
@@ -17,11 +16,30 @@ public class PostLoginClient {
     private ServerFacade server;
     private GameplayClient gameplay;
     private String authToken = "";
-    private Map<Integer, Integer> gameIdToListNum;
+    private Map<Integer, Integer> gameIdToListNum = new HashMap<>();
+    private Map<Integer, Integer> listNumToGameId = new HashMap<>();
+
 
     public PostLoginClient(String url) {
         server = new ServerFacade(url);
         gameplay = new GameplayClient(url);
+        var request = new ListGameRequest("hoodoo17");
+        try {
+            var result = server.listGames(request);
+            var list = result.games();
+            for (var game : list) {
+                if (gameIdToListNum.isEmpty()) {
+                    gameIdToListNum.put(game.gameID(), 1);
+                    listNumToGameId.put(1, game.gameID());
+                } else {
+                    gameIdToListNum.put(game.gameID(), gameIdToListNum.size() + 1);
+                    listNumToGameId.put(gameIdToListNum.size() + 1, game.gameID());
+                }
+            }
+        } catch (ResponseException ex) {
+            throw new RuntimeException("Did not set up admin auth");
+        }
+
     }
 
     public void setAuthToken(String auth) {
@@ -77,10 +95,11 @@ public class PostLoginClient {
 
         for (var game : gameList) {
             var ID = game.gameID();
+            var listID = gameIdToListNum.get(ID);
             var name = game.gameName();
             var playerWhite = game.whiteUsername();
             var playerBlack = game.blackUsername();
-            returnStr = returnStr + ID +": Name: " + name + " WHITE: " + playerWhite + " BLACK: " + playerBlack + "\n";
+            returnStr = returnStr + listID.toString() +": Name: " + name + " WHITE: " + playerWhite + " BLACK: " + playerBlack + "\n";
         }
         if (gameList.isEmpty()) {
             returnStr += SET_TEXT_COLOR_RED + "There are no games active. Use create to start a new one\n"
@@ -91,7 +110,21 @@ public class PostLoginClient {
     }
 
     private String createGame(String[] params) throws ResponseException {
-        return "";
+        if (params.length > 0) {
+            var name = params[0];
+            var request = new CreateGameRequest(authToken, name);
+            var result = server.createGame(request);
+            if (gameIdToListNum.isEmpty()) {
+                gameIdToListNum.put(result.gameID(), 1);
+                listNumToGameId.put(1, result.gameID());
+            } else {
+                gameIdToListNum.put(result.gameID(), gameIdToListNum.size() + 1);
+                listNumToGameId.put(gameIdToListNum.size() + 1, result.gameID());
+            }
+
+            return SET_TEXT_COLOR_DARK_GREEN + "Game Created: " + name + RESET_POST + "\n";
+        }
+        return  SET_TEXT_COLOR_RED + "No Game name provided\n" + RESET_POST;
     }
 
     private String logout(String[] params) throws ResponseException {
