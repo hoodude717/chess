@@ -1,8 +1,13 @@
 package client;
 
 import exceptions.ResponseException;
+import model.GameDataSerializeable;
+import servicerequests.ListGameRequest;
+import servicerequests.LogoutRequest;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
@@ -12,16 +17,16 @@ public class PostLoginClient {
     private ServerFacade server;
     private GameplayClient gameplay;
     private String authToken = "";
+    private Map<Integer, Integer> gameIdToListNum;
 
     public PostLoginClient(String url) {
         server = new ServerFacade(url);
-        gameplay = new GameplayClient();
+        gameplay = new GameplayClient(url);
     }
 
     public void setAuthToken(String auth) {
         authToken = auth;
     }
-
 
     public void run() {
         System.out.println(RESET + SET_TEXT_COLOR_BLUE + BLACK_PAWN + " You are logged in!" + BLACK_PAWN);
@@ -65,7 +70,24 @@ public class PostLoginClient {
     }
 
     private String listGames(String[] params) throws ResponseException {
-        return "";
+        var request = new ListGameRequest(authToken);
+        var result = server.listGames(request);
+        Collection<GameDataSerializeable> gameList = result.games();
+        var returnStr = "Games:\n";
+
+        for (var game : gameList) {
+            var ID = game.gameID();
+            var name = game.gameName();
+            var playerWhite = game.whiteUsername();
+            var playerBlack = game.blackUsername();
+            returnStr = returnStr + ID +": Name: " + name + " WHITE: " + playerWhite + " BLACK: " + playerBlack + "\n";
+        }
+        if (gameList.isEmpty()) {
+            returnStr += SET_TEXT_COLOR_RED + "There are no games active. Use create to start a new one\n"
+                    + RESET_POST + help();
+        }
+
+        return returnStr;
     }
 
     private String createGame(String[] params) throws ResponseException {
@@ -73,6 +95,8 @@ public class PostLoginClient {
     }
 
     private String logout(String[] params) throws ResponseException {
+        var request = new LogoutRequest(authToken);
+        server.logout(request);
         return "logout";
     }
 

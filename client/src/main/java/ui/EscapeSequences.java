@@ -64,6 +64,7 @@ public class EscapeSequences {
     public static final String EMPTY = " \u2003 ";
 
     public static final String RESET = SET_BG_COLOR_BLACK + SET_TEXT_COLOR_WHITE;
+    public static final String RESET_POST = SET_BG_COLOR_BLACK + SET_TEXT_COLOR_BLUE;
     public static final String LOGO = UNICODE_ESCAPE + "1F1FA" + UNICODE_ESCAPE + "1F1F8";
 
 

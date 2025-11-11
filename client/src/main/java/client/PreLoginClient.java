@@ -37,14 +37,18 @@ public class PreLoginClient {
                     case "login" -> result = login(params);
                     case "register" -> result = register(params);
                     case "quit" -> result = "quit";
+                    case "clear" -> {
+                        clear(params);
+                        result = "quit";
+                    }
                     default -> result = help();
                 }
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
+                System.out.print(SET_TEXT_COLOR_BLUE + result + "\n");
             } catch (ResponseException ex) {
-                System.out.print(SET_TEXT_COLOR_BLUE + ex.getMessage());
+                System.out.print(SET_TEXT_COLOR_RED + ex.getMessage() + "\n");
             } catch (Throwable e) {
                 var msg = e.toString();
-                System.out.print(msg);
+                System.out.print(SET_TEXT_COLOR_RED + msg);
             }
         }
         System.out.println();
@@ -60,6 +64,12 @@ public class PreLoginClient {
                 """;
     }
 
+    private void clear(String[] adminPass) throws ResponseException {
+        if (adminPass.length > 0 && adminPass[0].equals("hoodoo17")) {
+            server.clear();
+        }
+    }
+
     private String login(String[] params) throws ResponseException {
         if (params.length >= 2) {
             var user = params[0];
@@ -70,10 +80,10 @@ public class PreLoginClient {
             post.setAuthToken(result.authToken());
             System.out.print(SET_TEXT_COLOR_BLUE + "Login Successful\n");
             post.run();
-            return "";
+            return "\n";
 
         } else  {
-            return "Login requires Username and Password\n";
+            return SET_TEXT_COLOR_RED + "";
         }
     }
 
