@@ -36,6 +36,9 @@ public class ChessBoard {
         }
     }
 
+    public ChessPiece[] getRow(int rowIdx) {
+        return grid[rowIdx-1];
+    }
 
 
     /**

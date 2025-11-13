@@ -18,10 +18,9 @@ public class MemoryGameDAO implements GameDAO{
                 throw new DataAccessException("Game already exists");
             }
         }
-        totalGames++;
 
         allGames.add(g);
-        return totalGames;
+        return totalGames++;
     }
 
     public int getGameID() { return totalGames; }

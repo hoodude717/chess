@@ -4,8 +4,11 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import exceptions.ResponseException;
 import servicerequests.ListGameRequest;
+import serviceresults.ListGameResult;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
@@ -16,9 +19,18 @@ public class GameplayClient {
 
     private ServerFacade server;
     private String authToken;
+    private Map<Integer, Integer> gameIdToListNum;
+    private Map<Integer, Integer> listNumToGameId;
 
-    public GameplayClient(String url) {
+    public GameplayClient(String url, Map<Integer, Integer> idToList, Map<Integer, Integer> listToID) {
         server = new ServerFacade(url);
+        gameIdToListNum = idToList;
+        listNumToGameId = listToID;
+    }
+
+    public void updateMaps(Map<Integer, Integer> newIDMap, Map<Integer, Integer> newListMap) {
+        gameIdToListNum = newIDMap;
+        listNumToGameId = newListMap;
     }
 
     public void setAuthToken(String auth) {
@@ -57,9 +69,15 @@ public class GameplayClient {
         System.out.println();
     }
 
-    private ChessGame getChessGame(int gameID) {
-        var request = new ListGameRequest(authToken);
-//        server.listGames(request);
+    private ChessGame getChessGame(int userGameID) {
+        var realGameID = listNumToGameId.get(userGameID);
+        ListGameResult list;
+        try {
+            var request = new ListGameRequest(authToken);
+            list = server.listGames(request);
+        } catch (ResponseException ex) {
+            System.out.println(SET_TEXT_COLOR_RED + "ERROR: Failed to get board from game" + RESET_GAME + "\n");
+        }
         return null;
     }
 

@@ -24,7 +24,6 @@ public class PostLoginClient {
 
     public PostLoginClient(String url) {
         server = new ServerFacade(url);
-        gameplay = new GameplayClient(url);
         var request = new ListGameRequest("hoodoo17");
         try {
             var result = server.listGames(request);
@@ -41,6 +40,8 @@ public class PostLoginClient {
         } catch (ResponseException ex) {
             throw new RuntimeException("Did not set up admin auth");
         }
+        gameplay = new GameplayClient(url, gameIdToListNum, listNumToGameId);
+
 
     }
 
@@ -142,6 +143,7 @@ public class PostLoginClient {
             } else {
                 gameIdToListNum.put(result.gameID(), gameIdToListNum.size() + 1);
                 listNumToGameId.put(listNumToGameId.size() + 1, result.gameID());
+                gameplay.updateMaps(gameIdToListNum, listNumToGameId);
             }
 
             return SET_TEXT_COLOR_DARK_GREEN + "Game Created: " + name + RESET_POST + "\n";
