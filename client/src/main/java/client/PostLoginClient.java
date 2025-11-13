@@ -35,7 +35,7 @@ public class PostLoginClient {
                     listNumToGameId.put(1, game.gameID());
                 } else {
                     gameIdToListNum.put(game.gameID(), gameIdToListNum.size() + 1);
-                    listNumToGameId.put(gameIdToListNum.size() + 1, game.gameID());
+                    listNumToGameId.put(listNumToGameId.size() + 1, game.gameID());
                 }
             }
         } catch (ResponseException ex) {
@@ -85,7 +85,7 @@ public class PostLoginClient {
         JoinGameRequest request;
         if (params.length >0 ) {
             var gameID = Integer.parseInt(params[0]);
-//            gameplay.run(gameID, "WHITE");
+            gameplay.run(gameID, "WHITE");
         }
         else { return SET_TEXT_COLOR_RED + "Play requires gameID and playerColor \n" + RESET_POST;}
 
@@ -102,7 +102,7 @@ public class PostLoginClient {
         else { return SET_TEXT_COLOR_RED + "Play requires gameID and playerColor \n" + RESET_POST;}
         try {
             server.joinGame(request);
-//            gameplay.run(request.gameID(), request.playerColor());
+            gameplay.run(request.gameID(), request.playerColor());
         } catch (ResponseException ex) {
             return SET_TEXT_COLOR_RED + ex.getMessage() + " You cannot join this game. You can use observe to watch it\n" + RESET_POST;
         }
@@ -141,7 +141,7 @@ public class PostLoginClient {
                 listNumToGameId.put(1, result.gameID());
             } else {
                 gameIdToListNum.put(result.gameID(), gameIdToListNum.size() + 1);
-                listNumToGameId.put(gameIdToListNum.size() + 1, result.gameID());
+                listNumToGameId.put(listNumToGameId.size() + 1, result.gameID());
             }
 
             return SET_TEXT_COLOR_DARK_GREEN + "Game Created: " + name + RESET_POST + "\n";

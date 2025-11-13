@@ -1,5 +1,8 @@
 package ui;
 
+import chess.ChessGame;
+import chess.ChessPiece;
+
 /**
  * This class contains constants and functions relating to ANSI Escape Sequences that are useful in the Client display
  */
@@ -36,7 +39,10 @@ public class EscapeSequences {
     public static final String SET_TEXT_COLOR_MAGENTA = SET_TEXT_COLOR + "5m";
     public static final String SET_TEXT_COLOR_WHITE = SET_TEXT_COLOR + "15m";
     public static final String RESET_TEXT_COLOR = UNICODE_ESCAPE + "[39m";
+    public static final String SET_TEXT_COLOR_DARK_BROWN = SET_TEXT_COLOR + "52m";
     public static final String SET_TEXT_COLOR_DARK_GREEN = SET_TEXT_COLOR + "22m";
+    public static final String SET_TEXT_COLOR_TAN = SET_TEXT_COLOR + "180m";
+
 
     public static final String SET_BG_COLOR_BLACK = SET_BG_COLOR + "0m";
     public static final String SET_BG_COLOR_LIGHT_GREY = SET_BG_COLOR + "242m";
@@ -48,6 +54,35 @@ public class EscapeSequences {
     public static final String SET_BG_COLOR_BLUE = SET_BG_COLOR + "12m";
     public static final String SET_BG_COLOR_MAGENTA = SET_BG_COLOR + "5m";
     public static final String SET_BG_COLOR_WHITE = SET_BG_COLOR + "15m";
+    public static final String SET_BG_COLOR_BROWN = SET_BG_COLOR + "94m";
+    public static final String SET_BG_COLOR_DARK_BROWN = SET_BG_COLOR + "52m";
+    public static final String SET_BG_COLOR_TAN = SET_BG_COLOR + "180m";
+    public static final String SET_BG_COLOR_BEIGE = SET_BG_COLOR + "230m";
+    public static final String SET_BG_COLOR_ORANGE = SET_BG_COLOR + "208m";
+    public static final String SET_BG_COLOR_DARK_ORANGE = SET_BG_COLOR + "166m";
+    public static final String SET_BG_COLOR_PURPLE = SET_BG_COLOR + "93m";
+    public static final String SET_BG_COLOR_DARK_PURPLE = SET_BG_COLOR + "54m";
+    public static final String SET_BG_COLOR_PINK = SET_BG_COLOR + "218m";
+    public static final String SET_BG_COLOR_HOT_PINK = SET_BG_COLOR + "198m";
+    public static final String SET_BG_COLOR_CYAN = SET_BG_COLOR + "51m";
+    public static final String SET_BG_COLOR_DARK_CYAN = SET_BG_COLOR + "30m";
+    public static final String SET_BG_COLOR_TEAL = SET_BG_COLOR + "38m";
+    public static final String SET_BG_COLOR_LIGHT_BLUE = SET_BG_COLOR + "117m";
+    public static final String SET_BG_COLOR_NAVY = SET_BG_COLOR + "17m";
+    public static final String SET_BG_COLOR_SKY_BLUE = SET_BG_COLOR + "87m";
+    public static final String SET_BG_COLOR_LIME = SET_BG_COLOR + "118m";
+    public static final String SET_BG_COLOR_FOREST_GREEN = SET_BG_COLOR + "28m";
+    public static final String SET_BG_COLOR_OLIVE = SET_BG_COLOR + "100m";
+    public static final String SET_BG_COLOR_DARK_RED = SET_BG_COLOR + "88m";
+    public static final String SET_BG_COLOR_CRIMSON = SET_BG_COLOR + "124m";
+    public static final String SET_BG_COLOR_MAROON = SET_BG_COLOR + "52m";
+    public static final String SET_BG_COLOR_GRAY_236 = SET_BG_COLOR + "236m";
+    public static final String SET_BG_COLOR_GRAY_238 = SET_BG_COLOR + "238m";
+    public static final String SET_BG_COLOR_GRAY_240 = SET_BG_COLOR + "240m";
+    public static final String SET_BG_COLOR_GRAY_244 = SET_BG_COLOR + "244m";
+    public static final String SET_BG_COLOR_GRAY_248 = SET_BG_COLOR + "248m";
+    public static final String SET_BG_COLOR_CREAM = SET_BG_COLOR + "230m";
+    public static final String SET_BG_COLOR_SAND = SET_BG_COLOR + "223m";
     public static final String RESET_BG_COLOR = UNICODE_ESCAPE + "[49m";
 
     public static final String WHITE_KING = " ♔ ";
@@ -64,10 +99,55 @@ public class EscapeSequences {
     public static final String BLACK_PAWN = " ♟ ";
     public static final String EMPTY = " \u2003 ";
 
+
     public static final String RESET = SET_BG_COLOR_BLACK + SET_TEXT_COLOR_WHITE;
     public static final String RESET_POST = SET_BG_COLOR_BLACK + SET_TEXT_COLOR_BLUE;
+    public static final String RESET_GAME = RESET + SET_TEXT_COLOR_MAGENTA;
     public static final String LOGO = UNICODE_ESCAPE + "1F1FA" + UNICODE_ESCAPE + "1F1F8";
 
 
     public static String moveCursorToLocation(int x, int y) { return UNICODE_ESCAPE + "[" + y + ";" + x + "H"; }
+
+    //Strings for printing the entire board
+    public static final String ABCD_ROW = SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED +
+            EMPTY + " a  b  c  d  e  f  g  h " + EMPTY + RESET_GAME;
+    public static final String HGFE_ROW = SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED +
+            EMPTY + " h  g  f  e  d  c  b  a " + EMPTY + RESET_GAME;
+    public static String row1WhiteSide(ChessPiece[] rowPieces) {
+        String rowString = SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + " 1 ";
+        for (int i = 0; i < 8; i++) {
+            if (i%2 == 0) {
+                rowString += SET_BG_COLOR_BROWN;
+            } else {
+                rowString += SET_BG_COLOR_CREAM;
+            }
+            var type = rowPieces[i].getPieceType();
+            var color = rowPieces[i].getTeamColor();
+            if (color == ChessGame.TeamColor.WHITE) {
+                rowString += SET_TEXT_COLOR_TAN;
+                switch (type) {
+                    case KING -> rowString += WHITE_KING;
+                    case QUEEN -> rowString += WHITE_QUEEN;
+                    case BISHOP-> rowString += WHITE_BISHOP;
+                    case KNIGHT -> rowString += WHITE_KNIGHT;
+                    case ROOK -> rowString += WHITE_ROOK;
+                    case PAWN -> rowString += WHITE_PAWN;
+                    default -> rowString += EMPTY;
+                }
+            } else {
+                rowString += SET_TEXT_COLOR_DARK_BROWN;
+                switch (type) {
+                    case KING -> rowString += BLACK_KING;
+                    case QUEEN -> rowString += BLACK_QUEEN;
+                    case BISHOP-> rowString += BLACK_BISHOP;
+                    case KNIGHT -> rowString += BLACK_KNIGHT;
+                    case ROOK -> rowString += BLACK_ROOK;
+                    case PAWN -> rowString += BLACK_PAWN;
+                    default -> rowString += EMPTY;
+                }
+            }
+        }
+        rowString += SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + " 1 " + RESET_GAME;
+        return rowString;
+    }
 }
