@@ -12,14 +12,16 @@ public class MemoryGameDAO implements GameDAO{
     int totalGames = 1;
 
     @Override
-    public void createGame(GameData g) throws DataAccessException {
+    public int createGame(GameData g) throws DataAccessException {
         for (GameData game : allGames) {
             if (game.equals(g)) {
                 throw new DataAccessException("Game already exists");
             }
         }
         totalGames++;
+
         allGames.add(g);
+        return totalGames;
     }
 
     public int getGameID() { return totalGames; }

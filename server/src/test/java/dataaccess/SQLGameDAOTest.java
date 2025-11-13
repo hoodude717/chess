@@ -75,9 +75,9 @@ class SQLGameDAOTest {
     @Order(2)
     void createGameFail() {
         //If it fails it will not have the game in the table and it will throw an exception
-        GameData badGame = new GameData(1, null, null, "badGame", new ChessGame());
+        GameData badGame = new GameData(1, null, null, "badGame", null);
         //Assert throws error
-        Assertions.assertThrows(DataAccessException.class, ()->gameDAO.createGame(expectedGame));
+        Assertions.assertThrows(DataAccessException.class, ()->gameDAO.createGame(badGame));
         //Assert that there is not a game with the game data in the table
         String sql = "SELECT * FROM games WHERE gameID = '" + expectedGame.gameID() + "'";
         try (Connection conn = DatabaseManager.getConnection();

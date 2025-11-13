@@ -19,7 +19,7 @@ import java.util.Collection;
 
 public class SQLGameDAO implements GameDAO{
 
-    int gameCount = 1;
+    static int gameCount = 1;
     private final Gson gson = new Gson();
 
     public SQLGameDAO() throws DataAccessException {
@@ -32,25 +32,30 @@ public class SQLGameDAO implements GameDAO{
         return gameCount;
     }
 
-    private void storeGameData(int id, String whiteUser, String blackUser, String gameName, ChessGame game) throws DataAccessException {
-        String statement = "INSERT INTO games (gameID, whiteUser, blackUser, gameName, game) VALUES (?, ?, ?, ?, ?)";
+    private int storeGameData(String whiteUser, String blackUser, String gameName, ChessGame game) throws DataAccessException {
+        String statement = "INSERT INTO games (whiteUser, blackUser, gameName, game) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.setInt(1, id);
-                preparedStatement.setString(2, whiteUser);
-                preparedStatement.setString(3, blackUser);
-                preparedStatement.setString(4, gameName);
+            try (var preparedStatement = conn.prepareStatement(statement, PreparedStatement.RETURN_GENERATED_KEYS)) {
+//                preparedStatement.setInt(1, id);
+                preparedStatement.setString(1, whiteUser);
+                preparedStatement.setString(2, blackUser);
+                preparedStatement.setString(3, gameName);
                 if (game == null) {
                     throw new DataAccessException("Error: no null game field");
                 }
                 String gameStr = gson.toJson(game);
-                preparedStatement.setString(5, gameStr);
+                preparedStatement.setString(4, gameStr);
                 if (preparedStatement.executeUpdate() == 1) {
                     System.out.println("One Auth added to the Auths table");
                     gameCount += 1;
+                    var resultSet = preparedStatement.getGeneratedKeys();
+                    resultSet.next();
+                    return resultSet.getInt(1);
                 } else {
                     System.out.println("Error inserting auth into user database");
+                    throw new DataAccessException("Error: Bad Request Did not insert into game table");
                 }
+
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error: Could not add AuthData", e);
@@ -58,15 +63,34 @@ public class SQLGameDAO implements GameDAO{
     }
 
     @Override
-    public void createGame(GameData g) throws DataAccessException {
+    public int createGame(GameData g) throws DataAccessException {
         //Look for existing game with game id if it exists then store Data in table
-        try {
-            getGame(g.gameID());
-            throw new AlreadyTakenException("Error: Already Taken");
-        } catch (DataAccessException e) {
-            storeGameData(g.gameID(), g.whiteUsername(), g.blackUsername(), g.gameName(), g.game());
-        }
+        return storeGameData(g.whiteUsername(), g.blackUsername(), g.gameName(), g.game());
+    }
 
+    public GameData getGame(String gameName) throws DataAccessException {
+        //Look for game with game id
+        //hashed key will be value in other column that will need to be varified when logging in
+        String sql = "SELECT * FROM games WHERE gameName = ?";
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try(PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, gameName);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    ChessGame receivedGame = gson.fromJson(rs.getString("game"), ChessGame.class);
+                    return new GameData(
+                            rs.getInt("gameID"),
+                            rs.getString("whiteUser"),
+                            rs.getString("blackUser"),
+                            rs.getString("gameName"),
+                            receivedGame);
+                } else {
+                    throw new UnauthorizedException("Error: Unauthorized");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error: Bad Request");
+        }
     }
 
     @Override
@@ -159,7 +183,7 @@ public class SQLGameDAO implements GameDAO{
     private final String[] userDBCreateStatements = {
             """
             CREATE TABLE IF NOT EXISTS  games (
-              `gameID` int NOT NULL,
+              `gameID` int NOT NULL AUTO_INCREMENT,
               `whiteUser` varchar(256),
               `blackUser` varchar(256),
               `gameName` varchar(256) NOT NULL,

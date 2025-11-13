@@ -70,7 +70,7 @@ public class GameService {
 
         int gameID = gameDAO.getGameID(); // Unique for each game name
         try {
-            gameDAO.createGame(new GameData(gameID, null, null, gameName, new ChessGame()));
+            gameID = gameDAO.createGame(new GameData(0, null, null, gameName, new ChessGame()));
         } catch (DataAccessException e) {
             throw new BadRequestException("Error: Bad Request");
         }
