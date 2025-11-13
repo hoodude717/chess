@@ -7,13 +7,11 @@ import servicerequests.ListGameRequest;
 import serviceresults.ListGameResult;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 import static ui.EscapeSequences.BLACK_PAWN;
-import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
 
 public class GameplayClient {
 
@@ -21,6 +19,7 @@ public class GameplayClient {
     private String authToken;
     private Map<Integer, Integer> gameIdToListNum;
     private Map<Integer, Integer> listNumToGameId;
+    private String colorSide;
 
     public GameplayClient(String url, Map<Integer, Integer> idToList, Map<Integer, Integer> listToID) {
         server = new ServerFacade(url);
@@ -40,6 +39,7 @@ public class GameplayClient {
     public void run(int gameID, String color) {
         System.out.println(RESET_GAME + BLACK_PAWN + " You are in game "+ gameID + "!" + BLACK_PAWN);
         var curGame = getChessGame(gameID);
+        colorSide = color;
 
         printGameBoard(curGame);
         System.out.print(help());
@@ -103,18 +103,37 @@ public class GameplayClient {
         ChessPiece[] row1;
         //Fix this to dynamically get the row not to make random rows.
         row1 = board.getRow(1);
-//        row1 = new ChessPiece[8];
-//        for (int i =0; i<8; i++) {
-//            if (i%2 == 0) {
-//                row1[i] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
-//            } else {
-//                row1[i] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
-//            }
-//
-//        }
-        System.out.println(ABCD_ROW);
-        System.out.println(row1WhiteSide(row1));
-        System.out.println(HGFE_ROW);
+        var row2 = board.getRow(2);
+        var row3 = board.getRow(3);
+        var row4 = board.getRow(4);
+        var row5 = board.getRow(5);
+        var row6 = board.getRow(6);
+        var row7 = board.getRow(7);
+        var row8 = board.getRow(8);
+        if (colorSide.equals("white")) {
+            System.out.println(ABCD_ROW);
+            System.out.println(whiteSquareFirstRow(row8, " 8 "));
+            System.out.println(blackSquareFirstRow(row7, " 7 "));
+            System.out.println(whiteSquareFirstRow(row6, " 6 "));
+            System.out.println(blackSquareFirstRow(row5, " 5 "));
+            System.out.println(whiteSquareFirstRow(row4, " 4 "));
+            System.out.println(blackSquareFirstRow(row3, " 3 "));
+            System.out.println(whiteSquareFirstRow(row2, " 2 "));
+            System.out.println(blackSquareFirstRow(row1, " 1 "));
+            System.out.println(ABCD_ROW);
+        } else {
+            System.out.println(HGFE_ROW);
+            System.out.println(blackSquareFirstRow(row1, " 1 "));
+            System.out.println(whiteSquareFirstRow(row2, " 2 "));
+            System.out.println(blackSquareFirstRow(row3, " 3 "));
+            System.out.println(whiteSquareFirstRow(row4, " 4 "));
+            System.out.println(blackSquareFirstRow(row5, " 5 "));
+            System.out.println(whiteSquareFirstRow(row6, " 6 "));
+            System.out.println(blackSquareFirstRow(row7, " 7 "));
+            System.out.println(whiteSquareFirstRow(row8, " 8 "));
+            System.out.println(HGFE_ROW);
+        }
+
 
 
     }

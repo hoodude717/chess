@@ -3,6 +3,8 @@ package ui;
 import chess.ChessGame;
 import chess.ChessPiece;
 
+import static chess.ChessPiece.PieceType.BLANK;
+
 /**
  * This class contains constants and functions relating to ANSI Escape Sequences that are useful in the Client display
  */
@@ -113,16 +115,25 @@ public class EscapeSequences {
             EMPTY + " a  b  c  d  e  f  g  h " + EMPTY + RESET_GAME;
     public static final String HGFE_ROW = SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED +
             EMPTY + " h  g  f  e  d  c  b  a " + EMPTY + RESET_GAME;
-    public static String row1WhiteSide(ChessPiece[] rowPieces) {
-        String rowString = SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + " 1 ";
+
+    // Takes in String rowNum and the pieces in that row, rowNum must be padded with one space on each side
+    public static String blackSquareFirstRow(ChessPiece[] rowPieces, String rowNum) {
+        String rowString = SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowNum;
         for (int i = 0; i < 8; i++) {
             if (i%2 == 0) {
                 rowString += SET_BG_COLOR_BROWN;
             } else {
                 rowString += SET_BG_COLOR_CREAM;
             }
-            var type = rowPieces[i].getPieceType();
-            var color = rowPieces[i].getTeamColor();
+            ChessPiece.PieceType type;
+            ChessGame.TeamColor color;
+            if (rowPieces[i] != null) {
+                type = rowPieces[i].getPieceType();
+                color = rowPieces[i].getTeamColor();
+            } else {
+                type = BLANK;
+                color = ChessGame.TeamColor.BLACK;
+            }
             if (color == ChessGame.TeamColor.WHITE) {
                 rowString += SET_TEXT_COLOR_TAN;
                 switch (type) {
@@ -147,7 +158,52 @@ public class EscapeSequences {
                 }
             }
         }
-        rowString += SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + " 1 " + RESET_GAME;
+        rowString += SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowNum + RESET_GAME;
+        return rowString;
+    }
+
+    public static String whiteSquareFirstRow(ChessPiece[] rowPieces, String rowNum) {
+        String rowString = SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowNum;
+        for (int i = 0; i < 8; i++) {
+            if (i%2 == 0) {
+                rowString += SET_BG_COLOR_CREAM;
+            } else {
+                rowString += SET_BG_COLOR_BROWN;
+            }
+            ChessPiece.PieceType type;
+            ChessGame.TeamColor color;
+            if (rowPieces[i] != null) {
+                type = rowPieces[i].getPieceType();
+                color = rowPieces[i].getTeamColor();
+            } else {
+                type = BLANK;
+                color = ChessGame.TeamColor.BLACK;
+            }
+            if (color == ChessGame.TeamColor.WHITE) {
+                rowString += SET_TEXT_COLOR_TAN;
+                switch (type) {
+                    case KING -> rowString += WHITE_KING;
+                    case QUEEN -> rowString += WHITE_QUEEN;
+                    case BISHOP-> rowString += WHITE_BISHOP;
+                    case KNIGHT -> rowString += WHITE_KNIGHT;
+                    case ROOK -> rowString += WHITE_ROOK;
+                    case PAWN -> rowString += WHITE_PAWN;
+                    default -> rowString += EMPTY;
+                }
+            } else {
+                rowString += SET_TEXT_COLOR_DARK_BROWN;
+                switch (type) {
+                    case KING -> rowString += BLACK_KING;
+                    case QUEEN -> rowString += BLACK_QUEEN;
+                    case BISHOP-> rowString += BLACK_BISHOP;
+                    case KNIGHT -> rowString += BLACK_KNIGHT;
+                    case ROOK -> rowString += BLACK_ROOK;
+                    case PAWN -> rowString += BLACK_PAWN;
+                    default -> rowString += EMPTY;
+                }
+            }
+        }
+        rowString += SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowNum + RESET_GAME;
         return rowString;
     }
 }
