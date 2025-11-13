@@ -91,19 +91,20 @@ public class GameService {
 
         try { game = gameDAO.getGame(gameID);
         } catch (DataAccessException e) {
-            throw new BadRequestException("Error: Bad Request"); }
+            throw new BadRequestException("Error: Bad Request");
+        }
 
-        switch (playerColor) {
-            case "WHITE", "white":
-                if (game.whiteUsername() != null) {
+        switch (playerColor.toLowerCase()) {
+            case "white":
+                if (game.whiteUsername() != null && !playerUsername.equals(game.whiteUsername())) {
                     throw new AlreadyTakenException("Error: Already Taken");
                 } else {
                     gameDAO.updateGame(gameID,
                             new GameData(gameID, playerUsername, game.blackUsername(), game.gameName(), game.game()));
                 }
                 break;
-            case "BLACK", "black":
-                if (game.blackUsername() != null) {
+            case "black":
+                if (game.blackUsername() != null && !playerUsername.equals(game.blackUsername())) {
                     throw new AlreadyTakenException("Error: Already Taken");
                 } else {
                     gameDAO.updateGame(gameID,

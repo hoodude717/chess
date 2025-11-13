@@ -39,7 +39,7 @@ public class GameplayClient {
     public void run(int gameID, String color) {
         System.out.println(RESET_GAME + BLACK_PAWN + " You are in game "+ gameID + "!" + BLACK_PAWN);
         var curGame = getChessGame(gameID);
-        colorSide = color;
+        colorSide = color.toLowerCase();
 
         printGameBoard(curGame);
         System.out.print(help());
@@ -82,8 +82,6 @@ public class GameplayClient {
                 }
             }
             throw new Exception();
-        } catch (ResponseException ex) {
-            System.out.println(SET_TEXT_COLOR_RED + "ERROR: Failed to get board from game" + RESET_GAME + "\n");
         } catch (Exception e) {
             System.out.println(SET_TEXT_COLOR_RED + "ERROR: Failed to get board from game" + RESET_GAME + "\n");
         }
