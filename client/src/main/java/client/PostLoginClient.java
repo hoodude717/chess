@@ -4,8 +4,10 @@ import exceptions.DataAccessException;
 import exceptions.ResponseException;
 import model.GameDataSerializeable;
 import servicerequests.CreateGameRequest;
+import servicerequests.JoinGameRequest;
 import servicerequests.ListGameRequest;
 import servicerequests.LogoutRequest;
+import serviceresults.JoinGameResult;
 
 import java.util.*;
 
@@ -70,7 +72,7 @@ public class PostLoginClient {
                 }
                 System.out.print(SET_TEXT_COLOR_BLUE + result);
             } catch (ResponseException ex) {
-                System.out.print(SET_TEXT_COLOR_BLUE + ex.getMessage());
+                System.out.print(SET_TEXT_COLOR_BLUE + ex.getMessage() + "\n");
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -80,10 +82,30 @@ public class PostLoginClient {
     }
 
     private String observeGame(String[] params) throws ResponseException {
+        JoinGameRequest request;
+        if (params.length >0 ) {
+            var gameID = Integer.parseInt(params[0]);
+//            gameplay.run(gameID, "WHITE");
+        }
+        else { return SET_TEXT_COLOR_RED + "Play requires gameID and playerColor \n" + RESET_POST;}
+
         return "";
     }
 
     private String playGame(String[] params) throws ResponseException {
+        JoinGameRequest request;
+        if (params.length >0 ) {
+            var gameID = Integer.parseInt(params[0]);
+            var color = params[1];
+            request = new JoinGameRequest(authToken, color, listNumToGameId.get(gameID));
+        }
+        else { return SET_TEXT_COLOR_RED + "Play requires gameID and playerColor \n" + RESET_POST;}
+        try {
+            server.joinGame(request);
+//            gameplay.run(request.gameID(), request.playerColor());
+        } catch (ResponseException ex) {
+            return SET_TEXT_COLOR_RED + ex.getMessage() + " You cannot join this game. You can use observe to watch it\n" + RESET_POST;
+        }
         return "";
     }
 

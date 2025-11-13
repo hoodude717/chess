@@ -94,7 +94,7 @@ public class GameService {
             throw new BadRequestException("Error: Bad Request"); }
 
         switch (playerColor) {
-            case "WHITE":
+            case "WHITE", "white":
                 if (game.whiteUsername() != null) {
                     throw new AlreadyTakenException("Error: Already Taken");
                 } else {
@@ -102,7 +102,7 @@ public class GameService {
                             new GameData(gameID, playerUsername, game.blackUsername(), game.gameName(), game.game()));
                 }
                 break;
-            case "BLACK":
+            case "BLACK", "black":
                 if (game.blackUsername() != null) {
                     throw new AlreadyTakenException("Error: Already Taken");
                 } else {
