@@ -139,16 +139,8 @@ public class Server {
             String authToken = ctx.header("Authorization");
             var listGamesRequest = new ListGameRequest(authToken);
             ListGameResult gamesResult = gameService.listGames(listGamesRequest);
-            Collection<GameDataSerializeable> list = new ArrayList<>();
-            for (GameData game : gamesResult.games()) {
-                var newGame = new GameDataSerializeable(game.gameID(), game.whiteUsername(),
-                        game.blackUsername(), game.gameName());
-                list.add(newGame);
-            }
-
-            ListResultSerialize result = new ListResultSerialize(list);
             ctx.status(200);
-            ctx.json(serializer.toJson(result));
+            ctx.json(serializer.toJson(gamesResult));
         } catch (UnauthorizedException e) {
             printErrorMsg(ctx, e, 401);
         } catch (Exception e) {

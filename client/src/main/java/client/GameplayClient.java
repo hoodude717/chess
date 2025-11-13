@@ -40,6 +40,7 @@ public class GameplayClient {
     public void run(int gameID, String color) {
         System.out.println(RESET_GAME + BLACK_PAWN + " You are in game "+ gameID + "!" + BLACK_PAWN);
         var curGame = getChessGame(gameID);
+
         printGameBoard(curGame);
         System.out.print(help());
 
@@ -75,10 +76,18 @@ public class GameplayClient {
         try {
             var request = new ListGameRequest(authToken);
             list = server.listGames(request);
+            for (var game : list.games()) {
+                if (game.gameID() == realGameID) {
+                    return game.game();
+                }
+            }
+            throw new Exception();
         } catch (ResponseException ex) {
             System.out.println(SET_TEXT_COLOR_RED + "ERROR: Failed to get board from game" + RESET_GAME + "\n");
+        } catch (Exception e) {
+            System.out.println(SET_TEXT_COLOR_RED + "ERROR: Failed to get board from game" + RESET_GAME + "\n");
         }
-        return null;
+        return new ChessGame();
     }
 
 
@@ -90,18 +99,19 @@ public class GameplayClient {
     }
 
     private void printGameBoard(ChessGame gameboard) {
-//        var board = gameboard.getBoard();
+        var board = gameboard.getBoard();
         ChessPiece[] row1;
         //Fix this to dynamically get the row not to make random rows.
-        row1 = new ChessPiece[8];
-        for (int i =0; i<8; i++) {
-            if (i%2 == 0) {
-                row1[i] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
-            } else {
-                row1[i] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
-            }
-
-        }
+        row1 = board.getRow(1);
+//        row1 = new ChessPiece[8];
+//        for (int i =0; i<8; i++) {
+//            if (i%2 == 0) {
+//                row1[i] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+//            } else {
+//                row1[i] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+//            }
+//
+//        }
         System.out.println(ABCD_ROW);
         System.out.println(row1WhiteSide(row1));
         System.out.println(HGFE_ROW);

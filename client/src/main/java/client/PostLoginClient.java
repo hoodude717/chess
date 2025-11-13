@@ -2,6 +2,7 @@ package client;
 
 import exceptions.DataAccessException;
 import exceptions.ResponseException;
+import model.GameData;
 import model.GameDataSerializeable;
 import servicerequests.CreateGameRequest;
 import servicerequests.JoinGameRequest;
@@ -47,6 +48,7 @@ public class PostLoginClient {
 
     public void setAuthToken(String auth) {
         authToken = auth;
+        gameplay.setAuthToken(authToken);
     }
 
     public void run() {
@@ -113,7 +115,7 @@ public class PostLoginClient {
     private String listGames(String[] params) throws ResponseException {
         var request = new ListGameRequest(authToken);
         var result = server.listGames(request);
-        Collection<GameDataSerializeable> gameList = result.games();
+        Collection<GameData> gameList = result.games();
         var returnStr = "Games:\n";
 
         for (var game : gameList) {
