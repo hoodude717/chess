@@ -13,6 +13,11 @@ public class EscapeSequences {
 
     private static final String UNICODE_ESCAPE = "\u001b";
     private static final String ANSI_ESCAPE = "\033";
+    public static final String FLAG_USA = "🇺🇸";
+    public static final String FLAG_UK = "🇬🇧";
+    public static final String FLAG_MEXICO = "🇲🇽";
+    public static final String FLAG_DR = "🇩🇴";
+
 
     public static final String ERASE_SCREEN = UNICODE_ESCAPE + "[H" + UNICODE_ESCAPE + "[2J";
     public static final String ERASE_LINE = UNICODE_ESCAPE + "[2K";
@@ -118,12 +123,12 @@ public class EscapeSequences {
 
     // Takes in String rowNum and the pieces in that row, rowNum must be padded with one space on each side
     public static String blackSquareFirstRow(ChessPiece[] rowPieces, String rowNum) {
-        String rowString = SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowNum;
+        StringBuilder rowString = new StringBuilder(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowNum);
         for (int i = 0; i < 8; i++) {
             if (i%2 == 0) {
-                rowString += SET_BG_COLOR_BROWN;
+                rowString.append(SET_BG_COLOR_BROWN);
             } else {
-                rowString += SET_BG_COLOR_CREAM;
+                rowString.append(SET_BG_COLOR_CREAM);
             }
             ChessPiece.PieceType type;
             ChessGame.TeamColor color;
@@ -135,40 +140,40 @@ public class EscapeSequences {
                 color = ChessGame.TeamColor.BLACK;
             }
             if (color == ChessGame.TeamColor.WHITE) {
-                rowString += SET_TEXT_COLOR_TAN;
+                rowString.append(SET_TEXT_COLOR_TAN);
                 switch (type) {
-                    case KING -> rowString += WHITE_KING;
-                    case QUEEN -> rowString += WHITE_QUEEN;
-                    case BISHOP-> rowString += WHITE_BISHOP;
-                    case KNIGHT -> rowString += WHITE_KNIGHT;
-                    case ROOK -> rowString += WHITE_ROOK;
-                    case PAWN -> rowString += WHITE_PAWN;
-                    default -> rowString += EMPTY;
+                    case KING -> rowString.append(WHITE_KING);
+                    case QUEEN -> rowString.append(WHITE_QUEEN);
+                    case BISHOP-> rowString.append(WHITE_BISHOP);
+                    case KNIGHT -> rowString.append(WHITE_KNIGHT);
+                    case ROOK -> rowString.append(WHITE_ROOK);
+                    case PAWN -> rowString.append(WHITE_PAWN);
+                    default -> rowString.append(EMPTY);
                 }
             } else {
-                rowString += SET_TEXT_COLOR_DARK_BROWN;
+                rowString.append(SET_TEXT_COLOR_DARK_BROWN);
                 switch (type) {
-                    case KING -> rowString += BLACK_KING;
-                    case QUEEN -> rowString += BLACK_QUEEN;
-                    case BISHOP-> rowString += BLACK_BISHOP;
-                    case KNIGHT -> rowString += BLACK_KNIGHT;
-                    case ROOK -> rowString += BLACK_ROOK;
-                    case PAWN -> rowString += BLACK_PAWN;
-                    default -> rowString += EMPTY;
+                    case KING -> rowString.append(BLACK_KING);
+                    case QUEEN -> rowString.append(BLACK_QUEEN);
+                    case BISHOP-> rowString.append(BLACK_BISHOP);
+                    case KNIGHT -> rowString.append(BLACK_KNIGHT);
+                    case ROOK -> rowString.append(BLACK_ROOK);
+                    case PAWN -> rowString.append(BLACK_PAWN);
+                    default -> rowString.append(EMPTY);
                 }
             }
         }
-        rowString += SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowNum + RESET_GAME;
-        return rowString;
+        rowString.append(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED).append(rowNum).append(RESET_GAME);
+        return rowString.toString();
     }
 
     public static String whiteSquareFirstRow(ChessPiece[] rowPieces, String rowNum) {
-        String rowString = SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowNum;
+        StringBuilder rowString = new StringBuilder(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowNum);
         for (int i = 0; i < 8; i++) {
             if (i%2 == 0) {
-                rowString += SET_BG_COLOR_CREAM;
+                rowString.append(SET_BG_COLOR_CREAM);
             } else {
-                rowString += SET_BG_COLOR_BROWN;
+                rowString.append(SET_BG_COLOR_BROWN);
             }
             ChessPiece.PieceType type;
             ChessGame.TeamColor color;
@@ -180,30 +185,30 @@ public class EscapeSequences {
                 color = ChessGame.TeamColor.BLACK;
             }
             if (color == ChessGame.TeamColor.WHITE) {
-                rowString += SET_TEXT_COLOR_TAN;
+                rowString.append(SET_TEXT_COLOR_TAN);
                 switch (type) {
-                    case KING -> rowString += WHITE_KING;
-                    case QUEEN -> rowString += WHITE_QUEEN;
-                    case BISHOP-> rowString += WHITE_BISHOP;
-                    case KNIGHT -> rowString += WHITE_KNIGHT;
-                    case ROOK -> rowString += WHITE_ROOK;
-                    case PAWN -> rowString += WHITE_PAWN;
-                    default -> rowString += EMPTY;
+                    case KING -> rowString.append(WHITE_KING);
+                    case QUEEN -> rowString.append(WHITE_QUEEN);
+                    case BISHOP-> rowString.append(WHITE_BISHOP);
+                    case KNIGHT -> rowString.append(WHITE_KNIGHT);
+                    case ROOK -> rowString.append(WHITE_ROOK);
+                    case PAWN -> rowString.append(WHITE_PAWN);
+                    default -> rowString.append(EMPTY);
                 }
             } else {
-                rowString += SET_TEXT_COLOR_DARK_BROWN;
+                rowString.append(SET_TEXT_COLOR_DARK_BROWN);
                 switch (type) {
-                    case KING -> rowString += BLACK_KING;
-                    case QUEEN -> rowString += BLACK_QUEEN;
-                    case BISHOP-> rowString += BLACK_BISHOP;
-                    case KNIGHT -> rowString += BLACK_KNIGHT;
-                    case ROOK -> rowString += BLACK_ROOK;
-                    case PAWN -> rowString += BLACK_PAWN;
-                    default -> rowString += EMPTY;
+                    case KING -> rowString.append(BLACK_KING);
+                    case QUEEN -> rowString.append(BLACK_QUEEN);
+                    case BISHOP-> rowString.append(BLACK_BISHOP);
+                    case KNIGHT -> rowString.append(BLACK_KNIGHT);
+                    case ROOK -> rowString.append(BLACK_ROOK);
+                    case PAWN -> rowString.append(BLACK_PAWN);
+                    default -> rowString.append(EMPTY);
                 }
             }
         }
-        rowString += SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowNum + RESET_GAME;
-        return rowString;
+        rowString.append(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED).append(rowNum).append(RESET_GAME);
+        return rowString.toString();
     }
 }

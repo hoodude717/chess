@@ -1,29 +1,25 @@
 package client;
 
-import exceptions.DataAccessException;
 import exceptions.ResponseException;
 import model.GameData;
-import model.GameDataSerializeable;
 import servicerequests.CreateGameRequest;
 import servicerequests.JoinGameRequest;
 import servicerequests.ListGameRequest;
 import servicerequests.LogoutRequest;
-import serviceresults.JoinGameResult;
 
 import java.util.*;
 
 import static ui.EscapeSequences.*;
-import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
 
-public class PostLoginClient {
+public class PostLoginClientSpan {
     private ServerFacade server;
-    private GameplayClient gameplay;
+    private GameplayClientSpan gameplay;
     private String authToken = "";
     private Map<Integer, Integer> gameIdToListNum = new HashMap<>();
     private Map<Integer, Integer> listNumToGameId = new HashMap<>();
 
 
-    public PostLoginClient(String url) {
+    public PostLoginClientSpan(String url) {
         server = new ServerFacade(url);
         var request = new ListGameRequest("hoodoo17");
         try {
@@ -39,9 +35,9 @@ public class PostLoginClient {
                 }
             }
         } catch (ResponseException ex) {
-            throw new RuntimeException("Did not set up admin auth");
+            throw new RuntimeException("No puso usuario de admin");
         }
-        gameplay = new GameplayClient(url, gameIdToListNum, listNumToGameId);
+        gameplay = new GameplayClientSpan(url, gameIdToListNum, listNumToGameId);
 
 
     }
@@ -52,7 +48,7 @@ public class PostLoginClient {
     }
 
     public void run() {
-        System.out.println(RESET + SET_TEXT_COLOR_BLUE + BLACK_PAWN + " You are logged in!" + BLACK_PAWN);
+        System.out.println(RESET + SET_TEXT_COLOR_BLUE + BLACK_PAWN + " Inició Sesión!" + BLACK_PAWN);
         System.out.print(help());
 
         Scanner scanner = new Scanner(System.in);
@@ -66,11 +62,11 @@ public class PostLoginClient {
                 String cmd = (tokens.length > 0) ? tokens[0] : "help";
                 String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (cmd) {
-                    case "logout", "quit" -> result = logout(params);
-                    case "create" -> result = createGame(params);
-                    case "list" -> result = listGames(params);
-                    case "play" -> result = playGame(params);
-                    case "observe" -> result = observeGame(params);
+                    case "logout", "quit", "salir" -> result = logout(params);
+                    case "create", "crear" -> result = createGame(params);
+                    case "list", "listar" -> result = listGames(params);
+                    case "play", "jugar" -> result = playGame(params);
+                    case "observe", "mirar" -> result = observeGame(params);
                     default -> result = help();
                 }
                 System.out.print(SET_TEXT_COLOR_BLUE + result);
@@ -78,7 +74,7 @@ public class PostLoginClient {
                 System.out.print(SET_TEXT_COLOR_BLUE + ex.getMessage() + "\n");
             } catch (Throwable e) {
                 var msg = e.toString();
-                System.out.print(SET_TEXT_COLOR_RED+ "ERROR Unknown Error has occurred");
+                System.out.print(SET_TEXT_COLOR_RED+ "Error desconocido ha ocurrido");
             }
         }
         System.out.println();
@@ -88,9 +84,9 @@ public class PostLoginClient {
         JoinGameRequest request;
         if (params.length >0 ) {
             var gameID = Integer.parseInt(params[0]);
-            gameplay.run(gameID, "WHITE");
+            gameplay.run(gameID, "BLANCO");
         }
-        else { return SET_TEXT_COLOR_RED + "Play requires gameID and playerColor \n" + RESET_POST;}
+        else { return SET_TEXT_COLOR_RED + "Mirar requiere ID de Juego\n" + RESET_POST;}
 
         return "";
     }
@@ -102,12 +98,12 @@ public class PostLoginClient {
             var color = params[1];
             request = new JoinGameRequest(authToken, color, listNumToGameId.get(gameID));
         }
-        else { return SET_TEXT_COLOR_RED + "Play requires gameID and playerColor \n" + RESET_POST;}
+        else { return SET_TEXT_COLOR_RED + "Jugar requiere ID de Juego y Color (blanco o negro)\n" + RESET_POST;}
         try {
             server.joinGame(request);
             gameplay.run(request.gameID(), request.playerColor());
         } catch (ResponseException ex) {
-            return SET_TEXT_COLOR_RED + ex.getMessage() + " You cannot join this game. You can use observe to watch it\n" + RESET_POST;
+            return SET_TEXT_COLOR_RED + ex.getMessage() + " No puedes jugar en este juego. Puedes mirarlo con mirar <ID>\n" + RESET_POST;
         }
         return "";
     }
@@ -116,7 +112,7 @@ public class PostLoginClient {
         var request = new ListGameRequest(authToken);
         var result = server.listGames(request);
         Collection<GameData> gameList = result.games();
-        var returnStr = "Games:\n";
+        var returnStr = "Juegos:\n";
 
         for (var game : gameList) {
             var ID = game.gameID();
@@ -124,10 +120,10 @@ public class PostLoginClient {
             var name = game.gameName();
             var playerWhite = game.whiteUsername();
             var playerBlack = game.blackUsername();
-            returnStr = returnStr + listID.toString() +": Name: " + name + " WHITE: " + playerWhite + " BLACK: " + playerBlack + "\n";
+            returnStr = returnStr + listID.toString() +": Nombre: " + name + " BLANCO: " + playerWhite + " NEGRO: " + playerBlack + "\n";
         }
         if (gameList.isEmpty()) {
-            returnStr += SET_TEXT_COLOR_RED + "There are no games active. Use create to start a new one\n"
+            returnStr += SET_TEXT_COLOR_RED + "No hay juegos activos. Usa crear para crear uno nuevo\n"
                     + RESET_POST + help();
         }
 
@@ -148,32 +144,31 @@ public class PostLoginClient {
                 gameplay.updateMaps(gameIdToListNum, listNumToGameId);
             }
 
-            return SET_TEXT_COLOR_DARK_GREEN + "Game Created: " + name + RESET_POST + "\n";
+            return SET_TEXT_COLOR_DARK_GREEN + "Juego Creado: " + name + RESET_POST + "\n";
         }
-        return  SET_TEXT_COLOR_RED + "No Game name provided\n" + RESET_POST;
+        return  SET_TEXT_COLOR_RED + "Ningún nombre incluido\n" + RESET_POST;
     }
 
     private String logout(String[] params) throws ResponseException {
         var request = new LogoutRequest(authToken);
         server.logout(request);
-        return "logout";
+        return "quit";
     }
 
 
     public String help() {
         return """
-                - logout
-                - create <gameName> (Create a game without joining it)
-                - list (List all games that have been created)
-                - play <gameID> <playerColor> (Join specified game as the specified color)
-                - observe <gameID> (Join the specified game as a spectator)
-                - help
-                - quit
+                - salir (cerrar sesión)
+                - crear <nombreDeJuego> (Crear un juego sin jugar)
+                - listar (listar todos los juegos que han sido creados)
+                - jugar <juegoID> <BLANCO | NEGRO> (Jugar en juego especifcado con color especificado)
+                - observe <juegoID> (mirar especifico juego como espectador)
+                - ayuda (mostrar información)
                 """;
     }
 
     private void printPrompt() {
-        System.out.print("[Logged In] >>> ");
+        System.out.print("[Sesión Iniciada] >>> ");
     }
 
 

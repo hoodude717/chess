@@ -9,9 +9,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
-import static ui.EscapeSequences.BLACK_PAWN;
 
-public class GameplayClient {
+public class GameplayClientSpan {
 
     private final ServerFacade server;
     private String authToken;
@@ -19,7 +18,7 @@ public class GameplayClient {
     private Map<Integer, Integer> listNumToGameId;
     private String colorSide;
 
-    public GameplayClient(String url, Map<Integer, Integer> idToList, Map<Integer, Integer> listToID) {
+    public GameplayClientSpan(String url, Map<Integer, Integer> idToList, Map<Integer, Integer> listToID) {
         server = new ServerFacade(url);
         gameIdToListNum = idToList;
         listNumToGameId = listToID;
@@ -35,7 +34,7 @@ public class GameplayClient {
     }
 
     public void run(int gameID, String color) {
-        System.out.println(RESET_GAME + BLACK_PAWN + " You are in game "+ gameID + "!" + BLACK_PAWN);
+        System.out.println(RESET_GAME + BLACK_PAWN + " Estás en juego #"+ gameID + "!" + BLACK_PAWN);
         var curGame = getChessGame(gameID);
         colorSide = color.toLowerCase();
 
@@ -53,14 +52,14 @@ public class GameplayClient {
                 String cmd = (tokens.length > 0) ? tokens[0] : "help";
 //                String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (cmd) {
-                    case "logout", "quit" -> result = "quit";
+                    case "logout", "quit", "salir" -> result = "quit";
                     case "leave" -> result = "leave";
                     default -> result = help();
                 }
                 System.out.print(result);
             } catch (Throwable e) {
 //                var msg = e.toString();
-                System.out.print(SET_TEXT_COLOR_RED+"ERROR Unknown Error has occurred");
+                System.out.print(SET_TEXT_COLOR_RED+"ERROR desconocido ha ocurrido");
             }
         }
         System.out.println();
@@ -79,7 +78,7 @@ public class GameplayClient {
             }
             throw new Exception();
         } catch (Exception e) {
-            System.out.println(SET_TEXT_COLOR_RED + "ERROR: Failed to get board from game" + RESET_GAME + "\n");
+            System.out.println(SET_TEXT_COLOR_RED + "ERROR: No se pudo conseguir tabla de juego" + RESET_GAME + "\n");
         }
         return new ChessGame();
     }
@@ -104,7 +103,7 @@ public class GameplayClient {
         var row6 = board.getRow(6);
         var row7 = board.getRow(7);
         var row8 = board.getRow(8);
-        if (colorSide.equals("white")) {
+        if (colorSide.equals("white") || colorSide.equals("blanco")) {
             System.out.println(ABCD_ROW);
             System.out.println(whiteSquareFirstRow(row8, " 8 "));
             System.out.println(blackSquareFirstRow(row7, " 7 "));
@@ -133,6 +132,6 @@ public class GameplayClient {
     }
 
     private void printPrompt() {
-        System.out.print("[GameMode] >>> ");
+        System.out.print("[En el Juego] >>> ");
     }
 }

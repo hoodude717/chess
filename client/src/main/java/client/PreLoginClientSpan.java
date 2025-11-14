@@ -9,14 +9,14 @@ import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
-public class PreLoginClient {
+public class PreLoginClientSpan {
     private final ServerFacade server;
-    private PostLoginClient post;
+    private PostLoginClientSpan post;
 
 
-    public PreLoginClient(String url) {
+    public PreLoginClientSpan(String url) {
         server = new ServerFacade(url);
-        post = new PostLoginClient(url);
+        post = new PostLoginClientSpan(url);
     }
 
     public void run() {
@@ -34,21 +34,21 @@ public class PreLoginClient {
                 String cmd = (tokens.length > 0) ? tokens[0] : "help";
                 String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (cmd) {
-                    case "login" -> result = login(params);
-                    case "register" -> result = register(params);
-                    case "quit" -> result = "quit";
+                    case "login", "iniciar" -> result = login(params);
+                    case "register", "registrar" -> result = register(params);
+                    case "quit", "salir" -> result = "quit";
                     case "clear" -> {
-                        clear(params);
+//                        clear(params);
                         result = "quit";
                     }
                     default -> result = help();
                 }
-                System.out.print(SET_TEXT_COLOR_BLUE + result + "\n");
+                System.out.print(SET_TEXT_COLOR_GREEN + result + "\n");
             } catch (ResponseException ex) {
                 System.out.print(SET_TEXT_COLOR_RED + ex.getMessage() + "\n");
             } catch (Throwable e) {
                 var msg = e.toString();
-                System.out.print(SET_TEXT_COLOR_RED + "ERROR Unknown Error has occurred");
+                System.out.print(SET_TEXT_COLOR_RED + "ERROR Un error desconocido ha occurrido");
             }
         }
         System.out.println();
@@ -57,18 +57,14 @@ public class PreLoginClient {
 
     public String help() {
         return """
-                - register <username> <password> <email>
-                - login <username> <password>
-                - help
-                - quit
+                - registrar <usuario> <contraseña> <correo> (crear un usuario nuevo)
+                - iniciar <usuario> <contraseña> (entrar en la aplicación con usuario preexistente)
+                - ayuda (muestra las opciones)
+                - salir (terminar la aplicación)
                 """;
     }
 
-    private void clear(String[] adminPass) throws ResponseException {
-        if (adminPass.length > 0 && adminPass[0].equals("hoodoo17")) {
-            server.clear();
-        }
-    }
+
 
     private String login(String[] params) throws ResponseException {
         if (params.length >= 2) {
@@ -78,7 +74,7 @@ public class PreLoginClient {
 
             var result = server.login(request);
             post.setAuthToken(result.authToken());
-            System.out.print(SET_TEXT_COLOR_BLUE + "Login Successful\n");
+            System.out.print(SET_TEXT_COLOR_BLUE + "Sesión Iniciada\n");
             post.run();
             return "\n";
 
@@ -96,13 +92,13 @@ public class PreLoginClient {
             var result = server.register(request);
             post.setAuthToken(result.authToken());
             post.run();
-            return "Register Successful\n";
+            return "Registrado\n";
         } else  {
-            return "Register requires Username, Password and Email\n";
+            return "Registrar requiere Usuario, Contraseña y Correo\n";
         }
     }
 
     private void printPrompt() {
-        System.out.print(RESET + "[Logged Out] >>> " );
+        System.out.print(RESET + "[Sessión No Iniciada] >>> " );
     }
 }

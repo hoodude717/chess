@@ -1,4 +1,5 @@
 import chess.*;
+import client.LanguageSelect;
 import client.PreLoginClient;
 
 public class Main {
@@ -9,7 +10,7 @@ public class Main {
             serverUrl = args[0];
         }
 
-        var client = new PreLoginClient(serverUrl);
+        var client = new LanguageSelect(serverUrl);
 
         client.run();;
     }

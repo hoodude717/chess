@@ -9,14 +9,10 @@ import exceptions.DataAccessException;
 import exceptions.UnauthorizedException;
 import io.javalin.*;
 import io.javalin.http.Context;
-import model.GameData;
-import model.GameDataSerializeable;
 import service.*;
 import servicerequests.*;
 import serviceresults.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
 
 public class Server {
