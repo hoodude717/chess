@@ -103,6 +103,7 @@ public class SQLGameDAO implements GameDAO{
                 stmt.setInt(1, gameID);
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
+                    //create new Chess Game to serialize back into the gameData
                     ChessGame receivedGame = gson.fromJson(rs.getString("game"), ChessGame.class);
                     return new GameData(
                             rs.getInt("gameID"),
@@ -111,6 +112,7 @@ public class SQLGameDAO implements GameDAO{
                             rs.getString("gameName"),
                             receivedGame);
                 } else {
+                    //No new next thing
                     throw new UnauthorizedException("Error: Unauthorized");
                 }
             }

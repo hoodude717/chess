@@ -29,6 +29,7 @@ public class PostLoginClient {
         try {
             var result = server.listGames(request);
             var list = result.games();
+            //Loop through al the games to match the ids to a new list of ordered numbers
             for (var game : list) {
                 if (gameIdToListNum.isEmpty()) {
                     gameIdToListNum.put(game.gameID(), 1);
@@ -146,6 +147,7 @@ public class PostLoginClient {
             var request = new CreateGameRequest(authToken, name);
             var result = server.createGame(request);
             if (gameIdToListNum.isEmpty()) {
+                //Update the maps every time there is a new game created
                 gameIdToListNum.put(result.gameID(), 1);
                 listNumToGameId.put(1, result.gameID());
             } else {

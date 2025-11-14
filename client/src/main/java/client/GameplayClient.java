@@ -70,9 +70,11 @@ public class GameplayClient {
         var realGameID = listNumToGameId.get(userGameID);
         ListGameResult list;
         try {
+            //Create the request to get the list
             var request = new ListGameRequest(authToken);
             list = server.listGames(request);
             for (var game : list.games()) {
+                //Check the games to see the match
                 if (game.gameID() == realGameID) {
                     return game.game();
                 }
