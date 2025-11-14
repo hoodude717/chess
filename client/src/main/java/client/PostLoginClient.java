@@ -119,12 +119,19 @@ public class PostLoginClient {
         StringBuilder returnStr = new StringBuilder("Games:\n");
 
         for (var game : gameList) {
-            var ID = game.gameID();
-            var listID = gameIdToListNum.get(ID);
+            var id = game.gameID();
+            var listID = gameIdToListNum.get(id);
             var name = game.gameName();
             var playerWhite = game.whiteUsername();
             var playerBlack = game.blackUsername();
-            returnStr.append(listID.toString()).append(": Name: ").append(name).append(" WHITE: ").append(playerWhite).append(" BLACK: ").append(playerBlack).append("\n");
+            returnStr.append(listID.toString())
+                    .append(": Name: ")
+                    .append(name)
+                    .append(" WHITE: ")
+                    .append(playerWhite)
+                    .append(" BLACK: ")
+                    .append(playerBlack)
+                    .append("\n");
         }
         if (gameList.isEmpty()) {
             returnStr.append(SET_TEXT_COLOR_RED + "There are no games active. Use create to start a new one\n" + RESET_POST).append(help());

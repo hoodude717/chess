@@ -94,41 +94,7 @@ public class GameplayClient {
 
     private void printGameBoard(ChessGame gameboard) {
         var board = gameboard.getBoard();
-        ChessPiece[] row1;
-        //Fix this to dynamically get the row not to make random rows.
-        row1 = board.getRow(1);
-        var row2 = board.getRow(2);
-        var row3 = board.getRow(3);
-        var row4 = board.getRow(4);
-        var row5 = board.getRow(5);
-        var row6 = board.getRow(6);
-        var row7 = board.getRow(7);
-        var row8 = board.getRow(8);
-        if (colorSide.equals("white")) {
-            System.out.println(ABCD_ROW);
-            System.out.println(whiteSquareFirstRow(row8, " 8 "));
-            System.out.println(blackSquareFirstRow(row7, " 7 "));
-            System.out.println(whiteSquareFirstRow(row6, " 6 "));
-            System.out.println(blackSquareFirstRow(row5, " 5 "));
-            System.out.println(whiteSquareFirstRow(row4, " 4 "));
-            System.out.println(blackSquareFirstRow(row3, " 3 "));
-            System.out.println(whiteSquareFirstRow(row2, " 2 "));
-            System.out.println(blackSquareFirstRow(row1, " 1 "));
-            System.out.println(ABCD_ROW);
-        } else {
-            System.out.println(HGFE_ROW);
-            System.out.println(blackSquareFirstRow(row1, " 1 "));
-            System.out.println(whiteSquareFirstRow(row2, " 2 "));
-            System.out.println(blackSquareFirstRow(row3, " 3 "));
-            System.out.println(whiteSquareFirstRow(row4, " 4 "));
-            System.out.println(blackSquareFirstRow(row5, " 5 "));
-            System.out.println(whiteSquareFirstRow(row6, " 6 "));
-            System.out.println(blackSquareFirstRow(row7, " 7 "));
-            System.out.println(whiteSquareFirstRow(row8, " 8 "));
-            System.out.println(HGFE_ROW);
-        }
-
-
+        printBoard(board, colorSide);
 
     }
 

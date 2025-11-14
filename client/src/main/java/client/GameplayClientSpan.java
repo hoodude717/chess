@@ -1,7 +1,7 @@
 package client;
 
 import chess.ChessGame;
-import chess.ChessPiece;
+
 import servicerequests.ListGameRequest;
 import serviceresults.ListGameResult;
 
@@ -35,11 +35,11 @@ public class GameplayClientSpan {
 
     public void run(int gameID, String color) {
         System.out.println(RESET_GAME + BLACK_PAWN + " Estás en juego #"+ gameID + "!" + BLACK_PAWN);
-        var curGame = getChessGame(gameID);
+        var curGame = getChessGameSpan(gameID);
         colorSide = color.toLowerCase();
 
         printGameBoard(curGame);
-        System.out.print(help());
+        System.out.print(ayudar());
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -54,7 +54,7 @@ public class GameplayClientSpan {
                 switch (cmd) {
                     case "logout", "quit", "salir" -> result = "quit";
                     case "leave" -> result = "leave";
-                    default -> result = help();
+                    default -> result = ayudar();
                 }
                 System.out.print(result);
             } catch (Throwable e) {
@@ -65,7 +65,7 @@ public class GameplayClientSpan {
         System.out.println();
     }
 
-    private ChessGame getChessGame(int userGameID) {
+    private ChessGame getChessGameSpan(int userGameID) {
         var realGameID = listNumToGameId.get(userGameID);
         ListGameResult list;
         try {
@@ -84,51 +84,17 @@ public class GameplayClientSpan {
     }
 
 
-    public String help() {
+    public String ayudar() {
         return """
-                - help
-                - quit or leave (leave current game)
+                - ayudar
+                - salir (salir del juego)
                 """;
     }
 
     private void printGameBoard(ChessGame gameboard) {
+
         var board = gameboard.getBoard();
-        ChessPiece[] row1;
-        //Fix this to dynamically get the row not to make random rows.
-        row1 = board.getRow(1);
-        var row2 = board.getRow(2);
-        var row3 = board.getRow(3);
-        var row4 = board.getRow(4);
-        var row5 = board.getRow(5);
-        var row6 = board.getRow(6);
-        var row7 = board.getRow(7);
-        var row8 = board.getRow(8);
-        if (colorSide.equals("white") || colorSide.equals("blanco")) {
-            System.out.println(ABCD_ROW);
-            System.out.println(whiteSquareFirstRow(row8, " 8 "));
-            System.out.println(blackSquareFirstRow(row7, " 7 "));
-            System.out.println(whiteSquareFirstRow(row6, " 6 "));
-            System.out.println(blackSquareFirstRow(row5, " 5 "));
-            System.out.println(whiteSquareFirstRow(row4, " 4 "));
-            System.out.println(blackSquareFirstRow(row3, " 3 "));
-            System.out.println(whiteSquareFirstRow(row2, " 2 "));
-            System.out.println(blackSquareFirstRow(row1, " 1 "));
-            System.out.println(ABCD_ROW);
-        } else {
-            System.out.println(HGFE_ROW);
-            System.out.println(blackSquareFirstRow(row1, " 1 "));
-            System.out.println(whiteSquareFirstRow(row2, " 2 "));
-            System.out.println(blackSquareFirstRow(row3, " 3 "));
-            System.out.println(whiteSquareFirstRow(row4, " 4 "));
-            System.out.println(blackSquareFirstRow(row5, " 5 "));
-            System.out.println(whiteSquareFirstRow(row6, " 6 "));
-            System.out.println(blackSquareFirstRow(row7, " 7 "));
-            System.out.println(whiteSquareFirstRow(row8, " 8 "));
-            System.out.println(HGFE_ROW);
-        }
-
-
-
+        printBoard(board, colorSide);
     }
 
     private void printPrompt() {

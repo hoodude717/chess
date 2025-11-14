@@ -24,6 +24,7 @@ public class PostLoginClientSpan {
         var request = new ListGameRequest("hoodoo17");
         try {
             var result = server.listGames(request);
+
             var list = result.games();
             for (var game : list) {
                 if (gameIdToListNum.isEmpty()) {
@@ -63,7 +64,7 @@ public class PostLoginClientSpan {
                 String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (cmd) {
                     case "logout", "quit", "salir" -> result = logout();
-                    case "create", "crear" -> result = createGame(params);
+                    case "create", "crear" -> result = crearJuego(params);
                     case "list", "listar" -> result = listGames();
                     case "play", "jugar" -> result = playGame(params);
                     case "observe", "mirar" -> result = observeGame(params);
@@ -113,12 +114,19 @@ public class PostLoginClientSpan {
         StringBuilder returnStr = new StringBuilder("Juegos:\n");
 
         for (var game : gameList) {
-            var ID = game.gameID();
-            var listID = gameIdToListNum.get(ID);
+            var iD = game.gameID();
+            var listID = gameIdToListNum.get(iD);
             var name = game.gameName();
             var playerWhite = game.whiteUsername();
             var playerBlack = game.blackUsername();
-            returnStr.append(listID.toString()).append(": Nombre: ").append(name).append(" BLANCO: ").append(playerWhite).append(" NEGRO: ").append(playerBlack).append("\n");
+            returnStr.append(listID.toString())
+                    .append(": Nombre: ")
+                    .append(name)
+                    .append(" BLANCO: ")
+                    .append(playerWhite)
+                    .append(" NEGRO: ")
+                    .append(playerBlack)
+                    .append("\n");
         }
         if (gameList.isEmpty()) {
             returnStr.append(SET_TEXT_COLOR_RED + "No hay juegos activos. Usa crear para crear uno nuevo\n" + RESET_POST).append(help());
@@ -127,7 +135,7 @@ public class PostLoginClientSpan {
         return returnStr.toString();
     }
 
-    private String createGame(String[] params) throws ResponseException {
+    private String crearJuego(String[] params) throws ResponseException {
         if (params.length > 0) {
             var name = params[0];
             var request = new CreateGameRequest(authToken, name);

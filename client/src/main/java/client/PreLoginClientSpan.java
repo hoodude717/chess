@@ -35,7 +35,7 @@ public class PreLoginClientSpan {
                 String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (cmd) {
                     case "login", "iniciar" -> result = login(params);
-                    case "register", "registrar" -> result = register(params);
+                    case "register", "registrar" -> result = registrar(params);
                     case "quit", "salir", "clear" -> result = "quit";
                     default -> result = help();
                 }
@@ -72,13 +72,12 @@ public class PreLoginClientSpan {
             System.out.print(SET_TEXT_COLOR_BLUE + "Sesión Iniciada\n");
             post.run();
             return "\n";
-
         } else  {
             return SET_TEXT_COLOR_RED;
         }
     }
 
-    private String register(String[] params) throws ResponseException {
+    private String registrar(String[] params) throws ResponseException {
         if (params.length >= 3) {
             var user = params[0];
             var pass = params[1];

@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 
@@ -121,6 +122,43 @@ public class EscapeSequences {
     public static final String HGFE_ROW = SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED +
             EMPTY + " h  g  f  e  d  c  b  a " + EMPTY + RESET_GAME;
 
+
+    private static String printPiecesByRow(ChessPiece[] rowPieces, int itr) {
+        ChessPiece.PieceType type;
+        ChessGame.TeamColor color;
+        StringBuilder rowString = new StringBuilder();
+        if (rowPieces[itr] != null) {
+            type = rowPieces[itr].getPieceType();
+            color = rowPieces[itr].getTeamColor();
+        } else {
+            type = BLANK;
+            color = ChessGame.TeamColor.BLACK;
+        }
+        if (color == ChessGame.TeamColor.WHITE) {
+            rowString.append(SET_TEXT_COLOR_TAN);
+            switch (type) {
+                case KING -> rowString.append(WHITE_KING);
+                case QUEEN -> rowString.append(WHITE_QUEEN);
+                case BISHOP-> rowString.append(WHITE_BISHOP);
+                case KNIGHT -> rowString.append(WHITE_KNIGHT);
+                case ROOK -> rowString.append(WHITE_ROOK);
+                case PAWN -> rowString.append(WHITE_PAWN);
+                default -> rowString.append(EMPTY);
+            }
+        } else {
+            rowString.append(SET_TEXT_COLOR_DARK_BROWN);
+            switch (type) {
+                case KING -> rowString.append(BLACK_KING);
+                case QUEEN -> rowString.append(BLACK_QUEEN);
+                case BISHOP-> rowString.append(BLACK_BISHOP);
+                case KNIGHT -> rowString.append(BLACK_KNIGHT);
+                case ROOK -> rowString.append(BLACK_ROOK);
+                case PAWN -> rowString.append(BLACK_PAWN);
+                default -> rowString.append(EMPTY);
+            }
+        }
+        return rowString.toString();
+    }
     // Takes in String rowNum and the pieces in that row, rowNum must be padded with one space on each side
     public static String blackSquareFirstRow(ChessPiece[] rowPieces, String rowNum) {
         StringBuilder rowString = new StringBuilder(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowNum);
@@ -130,38 +168,7 @@ public class EscapeSequences {
             } else {
                 rowString.append(SET_BG_COLOR_CREAM);
             }
-            ChessPiece.PieceType type;
-            ChessGame.TeamColor color;
-            if (rowPieces[i] != null) {
-                type = rowPieces[i].getPieceType();
-                color = rowPieces[i].getTeamColor();
-            } else {
-                type = BLANK;
-                color = ChessGame.TeamColor.BLACK;
-            }
-            if (color == ChessGame.TeamColor.WHITE) {
-                rowString.append(SET_TEXT_COLOR_TAN);
-                switch (type) {
-                    case KING -> rowString.append(WHITE_KING);
-                    case QUEEN -> rowString.append(WHITE_QUEEN);
-                    case BISHOP-> rowString.append(WHITE_BISHOP);
-                    case KNIGHT -> rowString.append(WHITE_KNIGHT);
-                    case ROOK -> rowString.append(WHITE_ROOK);
-                    case PAWN -> rowString.append(WHITE_PAWN);
-                    default -> rowString.append(EMPTY);
-                }
-            } else {
-                rowString.append(SET_TEXT_COLOR_DARK_BROWN);
-                switch (type) {
-                    case KING -> rowString.append(BLACK_KING);
-                    case QUEEN -> rowString.append(BLACK_QUEEN);
-                    case BISHOP-> rowString.append(BLACK_BISHOP);
-                    case KNIGHT -> rowString.append(BLACK_KNIGHT);
-                    case ROOK -> rowString.append(BLACK_ROOK);
-                    case PAWN -> rowString.append(BLACK_PAWN);
-                    default -> rowString.append(EMPTY);
-                }
-            }
+            rowString.append(printPiecesByRow(rowPieces, i));
         }
         rowString.append(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED).append(rowNum).append(RESET_GAME);
         return rowString.toString();
@@ -175,40 +182,46 @@ public class EscapeSequences {
             } else {
                 rowString.append(SET_BG_COLOR_BROWN);
             }
-            ChessPiece.PieceType type;
-            ChessGame.TeamColor color;
-            if (rowPieces[i] != null) {
-                type = rowPieces[i].getPieceType();
-                color = rowPieces[i].getTeamColor();
-            } else {
-                type = BLANK;
-                color = ChessGame.TeamColor.BLACK;
-            }
-            if (color == ChessGame.TeamColor.WHITE) {
-                rowString.append(SET_TEXT_COLOR_TAN);
-                switch (type) {
-                    case KING -> rowString.append(WHITE_KING);
-                    case QUEEN -> rowString.append(WHITE_QUEEN);
-                    case BISHOP-> rowString.append(WHITE_BISHOP);
-                    case KNIGHT -> rowString.append(WHITE_KNIGHT);
-                    case ROOK -> rowString.append(WHITE_ROOK);
-                    case PAWN -> rowString.append(WHITE_PAWN);
-                    default -> rowString.append(EMPTY);
-                }
-            } else {
-                rowString.append(SET_TEXT_COLOR_DARK_BROWN);
-                switch (type) {
-                    case KING -> rowString.append(BLACK_KING);
-                    case QUEEN -> rowString.append(BLACK_QUEEN);
-                    case BISHOP-> rowString.append(BLACK_BISHOP);
-                    case KNIGHT -> rowString.append(BLACK_KNIGHT);
-                    case ROOK -> rowString.append(BLACK_ROOK);
-                    case PAWN -> rowString.append(BLACK_PAWN);
-                    default -> rowString.append(EMPTY);
-                }
-            }
+            rowString.append(printPiecesByRow(rowPieces, i));
+
         }
         rowString.append(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED).append(rowNum).append(RESET_GAME);
         return rowString.toString();
+    }
+
+    public static void printBoard(ChessBoard board, String color) {
+        ChessPiece[] row1;
+        //Fix this to dynamically get the row not to make random rows.
+        row1 = board.getRow(1);
+        var row2 = board.getRow(2);
+        var row3 = board.getRow(3);
+        var row4 = board.getRow(4);
+        var row5 = board.getRow(5);
+        var row6 = board.getRow(6);
+        var row7 = board.getRow(7);
+        var row8 = board.getRow(8);
+        if (color.equals("white") || color.equals("blanco")) {
+            System.out.println(ABCD_ROW);
+            System.out.println(whiteSquareFirstRow(row8, " 8 "));
+            System.out.println(blackSquareFirstRow(row7, " 7 "));
+            System.out.println(whiteSquareFirstRow(row6, " 6 "));
+            System.out.println(blackSquareFirstRow(row5, " 5 "));
+            System.out.println(whiteSquareFirstRow(row4, " 4 "));
+            System.out.println(blackSquareFirstRow(row3, " 3 "));
+            System.out.println(whiteSquareFirstRow(row2, " 2 "));
+            System.out.println(blackSquareFirstRow(row1, " 1 "));
+            System.out.println(ABCD_ROW);
+        } else {
+            System.out.println(HGFE_ROW);
+            System.out.println(blackSquareFirstRow(row1, " 1 "));
+            System.out.println(whiteSquareFirstRow(row2, " 2 "));
+            System.out.println(blackSquareFirstRow(row3, " 3 "));
+            System.out.println(whiteSquareFirstRow(row4, " 4 "));
+            System.out.println(blackSquareFirstRow(row5, " 5 "));
+            System.out.println(whiteSquareFirstRow(row6, " 6 "));
+            System.out.println(blackSquareFirstRow(row7, " 7 "));
+            System.out.println(whiteSquareFirstRow(row8, " 8 "));
+            System.out.println(HGFE_ROW);
+        }
     }
 }
