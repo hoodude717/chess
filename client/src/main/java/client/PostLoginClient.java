@@ -30,13 +30,13 @@ public class PostLoginClient {
             var result = server.listGames(request);
             var list = result.games();
             //Loop through al the games to match the ids to a new list of ordered numbers
-            for (var game : list) {
+            for (var curGame : list) {
                 if (gameIdToListNum.isEmpty()) {
-                    gameIdToListNum.put(game.gameID(), 1);
-                    listNumToGameId.put(1, game.gameID());
+                    gameIdToListNum.put(curGame.gameID(), 1);
+                    listNumToGameId.put(1, curGame.gameID());
                 } else {
-                    gameIdToListNum.put(game.gameID(), gameIdToListNum.size() + 1);
-                    listNumToGameId.put(listNumToGameId.size() + 1, game.gameID());
+                    gameIdToListNum.put(curGame.gameID(), gameIdToListNum.size() + 1);
+                    listNumToGameId.put(listNumToGameId.size() + 1, curGame.gameID());
                 }
             }
         } catch (ResponseException ex) {
@@ -145,14 +145,14 @@ public class PostLoginClient {
         if (params.length > 0) {
             var name = params[0];
             var request = new CreateGameRequest(authToken, name);
-            var result = server.createGame(request);
+            var curResult = server.createGame(request);
             if (gameIdToListNum.isEmpty()) {
                 //Update the maps every time there is a new game created
-                gameIdToListNum.put(result.gameID(), 1);
-                listNumToGameId.put(1, result.gameID());
+                gameIdToListNum.put(curResult.gameID(), 1);
+                listNumToGameId.put(1, curResult.gameID());
             } else {
-                gameIdToListNum.put(result.gameID(), gameIdToListNum.size() + 1);
-                listNumToGameId.put(listNumToGameId.size() + 1, result.gameID());
+                gameIdToListNum.put(curResult.gameID(), gameIdToListNum.size() + 1);
+                listNumToGameId.put(listNumToGameId.size() + 1, curResult.gameID());
                 gameplay.updateMaps(gameIdToListNum, listNumToGameId);
             }
 

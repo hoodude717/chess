@@ -105,12 +105,12 @@ public class SQLGameDAO implements GameDAO{
                 if (rs.next()) {
                     //create new Chess Game to serialize back into the gameData
                     ChessGame receivedGame = gson.fromJson(rs.getString("game"), ChessGame.class);
+                    var id = rs.getInt("gameID");
+                    var white = rs.getString("whiteUser");
+                    var black = rs.getString("blackUser");
+                    var name = rs.getString("gameName");
                     return new GameData(
-                            rs.getInt("gameID"),
-                            rs.getString("whiteUser"),
-                            rs.getString("blackUser"),
-                            rs.getString("gameName"),
-                            receivedGame);
+                            id, white, black, name, receivedGame);
                 } else {
                     //No new next thing
                     throw new UnauthorizedException("Error: Unauthorized");
