@@ -116,7 +116,7 @@ public class ServerFacadeTests {
     @Test
     @Order(12)
     public void joinBad() {
-        JoinGameRequest request = new JoinGameRequest(result.authToken(), "WHITE", 1);
+        JoinGameRequest request = new JoinGameRequest("result.authToken()", "WHITE", 1);
         Assertions.assertThrows(ResponseException.class, ()->serverFacade.joinGame(request));
     }
 

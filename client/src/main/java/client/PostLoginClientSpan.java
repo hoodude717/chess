@@ -83,7 +83,11 @@ public class PostLoginClientSpan {
     private String observeGame(String[] params) throws ResponseException {
         if (params.length >0 ) {
             var gameID = Integer.parseInt(params[0]);
-            gameplay.run(gameID, "BLANCO");
+            if (gameID > 0) {
+                gameplay.run(gameID, "BLANCO");
+            } else {
+                return SET_TEXT_COLOR_RED + "No Hay Juegos con ese ID\n" + RESET_POST + help();
+            }
         }
         else { return SET_TEXT_COLOR_RED + "Mirar requiere ID de Juego\n" + RESET_POST;}
 

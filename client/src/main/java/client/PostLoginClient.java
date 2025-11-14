@@ -88,8 +88,13 @@ public class PostLoginClient {
     private String observeGame(String[] params) throws ResponseException {
 
         if (params.length >0 ) {
+
             var gameID = Integer.parseInt(params[0]);
-            gameplay.run(gameID, "WHITE");
+            if (gameID > 0) {
+                gameplay.run(gameID, "WHITE");
+            } else {
+                return SET_TEXT_COLOR_RED + "No Games with that ID" + RESET_POST + help();
+            }
         }
         else { return SET_TEXT_COLOR_RED + "Play requires gameID and playerColor \n" + RESET_POST;}
 
