@@ -11,7 +11,7 @@ import static ui.EscapeSequences.*;
 
 public class PreLoginClient {
     private final ServerFacade server;
-    private PostLoginClient post;
+    private final PostLoginClient post;
 
 
     public PreLoginClient(String url) {
@@ -47,7 +47,6 @@ public class PreLoginClient {
             } catch (ResponseException ex) {
                 System.out.print(SET_TEXT_COLOR_RED + ex.getMessage() + "\n");
             } catch (Throwable e) {
-                var msg = e.toString();
                 System.out.print(SET_TEXT_COLOR_RED + "ERROR Unknown Error has occurred");
             }
         }
@@ -83,7 +82,7 @@ public class PreLoginClient {
             return "\n";
 
         } else  {
-            return SET_TEXT_COLOR_RED + "";
+            return SET_TEXT_COLOR_RED;
         }
     }
 

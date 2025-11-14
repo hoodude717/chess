@@ -11,7 +11,7 @@ import static ui.EscapeSequences.*;
 
 public class PreLoginClientSpan {
     private final ServerFacade server;
-    private PostLoginClientSpan post;
+    private final PostLoginClientSpan post;
 
 
     public PreLoginClientSpan(String url) {
@@ -36,18 +36,13 @@ public class PreLoginClientSpan {
                 switch (cmd) {
                     case "login", "iniciar" -> result = login(params);
                     case "register", "registrar" -> result = register(params);
-                    case "quit", "salir" -> result = "quit";
-                    case "clear" -> {
-//                        clear(params);
-                        result = "quit";
-                    }
+                    case "quit", "salir", "clear" -> result = "quit";
                     default -> result = help();
                 }
                 System.out.print(SET_TEXT_COLOR_GREEN + result + "\n");
             } catch (ResponseException ex) {
                 System.out.print(SET_TEXT_COLOR_RED + ex.getMessage() + "\n");
             } catch (Throwable e) {
-                var msg = e.toString();
                 System.out.print(SET_TEXT_COLOR_RED + "ERROR Un error desconocido ha occurrido");
             }
         }
@@ -79,7 +74,7 @@ public class PreLoginClientSpan {
             return "\n";
 
         } else  {
-            return SET_TEXT_COLOR_RED + "";
+            return SET_TEXT_COLOR_RED;
         }
     }
 

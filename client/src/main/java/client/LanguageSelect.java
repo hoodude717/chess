@@ -1,8 +1,5 @@
 package client;
 
-import exceptions.ResponseException;
-
-import java.util.Arrays;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
@@ -33,7 +30,6 @@ public class LanguageSelect {
             try {
                 String[] tokens = line.toLowerCase().split(" ");
                 String cmd = (tokens.length > 0) ? tokens[0] : "help";
-                String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (cmd.toLowerCase()) {
                     case "english" -> {
                         client.run();
@@ -48,7 +44,6 @@ public class LanguageSelect {
                 }
                 System.out.print(SET_TEXT_COLOR_BLUE + result + "\n");
             } catch (Throwable e) {
-                var msg = e.toString();
                 System.out.print(SET_TEXT_COLOR_RED + "ERROR Unknown Error has occurred");
             }
         }

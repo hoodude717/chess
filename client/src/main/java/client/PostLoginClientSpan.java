@@ -12,11 +12,11 @@ import java.util.*;
 import static ui.EscapeSequences.*;
 
 public class PostLoginClientSpan {
-    private ServerFacade server;
-    private GameplayClientSpan gameplay;
+    private final ServerFacade server;
+    private final GameplayClientSpan gameplay;
     private String authToken = "";
-    private Map<Integer, Integer> gameIdToListNum = new HashMap<>();
-    private Map<Integer, Integer> listNumToGameId = new HashMap<>();
+    private final Map<Integer, Integer> gameIdToListNum = new HashMap<>();
+    private final Map<Integer, Integer> listNumToGameId = new HashMap<>();
 
 
     public PostLoginClientSpan(String url) {
@@ -62,9 +62,9 @@ public class PostLoginClientSpan {
                 String cmd = (tokens.length > 0) ? tokens[0] : "help";
                 String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (cmd) {
-                    case "logout", "quit", "salir" -> result = logout(params);
+                    case "logout", "quit", "salir" -> result = logout();
                     case "create", "crear" -> result = createGame(params);
-                    case "list", "listar" -> result = listGames(params);
+                    case "list", "listar" -> result = listGames();
                     case "play", "jugar" -> result = playGame(params);
                     case "observe", "mirar" -> result = observeGame(params);
                     default -> result = help();
@@ -73,7 +73,6 @@ public class PostLoginClientSpan {
             } catch (ResponseException ex) {
                 System.out.print(SET_TEXT_COLOR_BLUE + ex.getMessage() + "\n");
             } catch (Throwable e) {
-                var msg = e.toString();
                 System.out.print(SET_TEXT_COLOR_RED+ "Error desconocido ha ocurrido");
             }
         }
@@ -81,7 +80,6 @@ public class PostLoginClientSpan {
     }
 
     private String observeGame(String[] params) throws ResponseException {
-        JoinGameRequest request;
         if (params.length >0 ) {
             var gameID = Integer.parseInt(params[0]);
             gameplay.run(gameID, "BLANCO");
@@ -108,11 +106,11 @@ public class PostLoginClientSpan {
         return "";
     }
 
-    private String listGames(String[] params) throws ResponseException {
+    private String listGames() throws ResponseException {
         var request = new ListGameRequest(authToken);
         var result = server.listGames(request);
         Collection<GameData> gameList = result.games();
-        var returnStr = "Juegos:\n";
+        StringBuilder returnStr = new StringBuilder("Juegos:\n");
 
         for (var game : gameList) {
             var ID = game.gameID();
@@ -120,14 +118,13 @@ public class PostLoginClientSpan {
             var name = game.gameName();
             var playerWhite = game.whiteUsername();
             var playerBlack = game.blackUsername();
-            returnStr = returnStr + listID.toString() +": Nombre: " + name + " BLANCO: " + playerWhite + " NEGRO: " + playerBlack + "\n";
+            returnStr.append(listID.toString()).append(": Nombre: ").append(name).append(" BLANCO: ").append(playerWhite).append(" NEGRO: ").append(playerBlack).append("\n");
         }
         if (gameList.isEmpty()) {
-            returnStr += SET_TEXT_COLOR_RED + "No hay juegos activos. Usa crear para crear uno nuevo\n"
-                    + RESET_POST + help();
+            returnStr.append(SET_TEXT_COLOR_RED + "No hay juegos activos. Usa crear para crear uno nuevo\n" + RESET_POST).append(help());
         }
 
-        return returnStr;
+        return returnStr.toString();
     }
 
     private String createGame(String[] params) throws ResponseException {
@@ -149,7 +146,7 @@ public class PostLoginClientSpan {
         return  SET_TEXT_COLOR_RED + "Ningún nombre incluido\n" + RESET_POST;
     }
 
-    private String logout(String[] params) throws ResponseException {
+    private String logout() throws ResponseException {
         var request = new LogoutRequest(authToken);
         server.logout(request);
         return "quit";
