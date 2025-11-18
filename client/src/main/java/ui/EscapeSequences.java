@@ -4,6 +4,9 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static chess.ChessPiece.PieceType.BLANK;
 
 /**
@@ -123,13 +126,13 @@ public class EscapeSequences {
             EMPTY + " h  g  f  e  d  c  b  a " + EMPTY + RESET_GAME;
 
 
-    private static String printPiecesByRow(ChessPiece[] rowPieces, int itr) {
+    private static String printPiecesByRow(List<ChessPiece> rowPieces, int itr) {
         ChessPiece.PieceType type;
         ChessGame.TeamColor color;
         StringBuilder rowString = new StringBuilder();
-        if (rowPieces[itr] != null) {
-            type = rowPieces[itr].getPieceType();
-            color = rowPieces[itr].getTeamColor();
+        if (rowPieces.get(itr) != null) {
+            type = rowPieces.get(itr).getPieceType();
+            color = rowPieces.get(itr).getTeamColor();
         } else {
             type = BLANK;
             color = ChessGame.TeamColor.BLACK;
@@ -160,7 +163,7 @@ public class EscapeSequences {
         return rowString.toString();
     }
     // Takes in String rowNum and the pieces in that row, rowNum must be padded with one space on each side
-    public static String blackSquareFirstRow(ChessPiece[] rowPieces, String rowNum) {
+    public static String blackSquareFirstRow(List<ChessPiece> rowPieces, String rowNum) {
         StringBuilder rowString = new StringBuilder(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowNum);
         for (int i = 0; i < 8; i++) {
             if (i%2 == 0) {
@@ -174,7 +177,7 @@ public class EscapeSequences {
         return rowString.toString();
     }
 
-    public static String whiteSquareFirstRow(ChessPiece[] rowPieces, String rowNum) {
+    public static String whiteSquareFirstRow(List<ChessPiece> rowPieces, String rowNum) {
         StringBuilder rowString = new StringBuilder(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowNum);
         for (int i = 0; i < 8; i++) {
             if (i%2 == 0) {
@@ -190,16 +193,15 @@ public class EscapeSequences {
     }
 
     public static void printBoard(ChessBoard board, String color) {
-        ChessPiece[] row1;
         //Fix this to dynamically get the row not to make random rows.
-        row1 = board.getRow(1);
-        var row2 = board.getRow(2);
-        var row3 = board.getRow(3);
-        var row4 = board.getRow(4);
-        var row5 = board.getRow(5);
-        var row6 = board.getRow(6);
-        var row7 = board.getRow(7);
-        var row8 = board.getRow(8);
+        List<ChessPiece> row1 = Arrays.asList(board.getRow(1));
+        List<ChessPiece> row2 = Arrays.asList(board.getRow(2));
+        List<ChessPiece> row3 = Arrays.asList(board.getRow(3));
+        List<ChessPiece> row4 = Arrays.asList(board.getRow(4));
+        List<ChessPiece> row5 = Arrays.asList(board.getRow(5));
+        List<ChessPiece> row6 = Arrays.asList(board.getRow(6));
+        List<ChessPiece> row7 = Arrays.asList(board.getRow(7));
+        List<ChessPiece> row8 = Arrays.asList(board.getRow(8));
         if (color.equals("white") || color.equals("blanco")) {
             System.out.println(ABCD_ROW);
             System.out.println(whiteSquareFirstRow(row8, " 8 "));
@@ -212,15 +214,17 @@ public class EscapeSequences {
             System.out.println(blackSquareFirstRow(row1, " 1 "));
             System.out.println(ABCD_ROW);
         } else {
+
+
             System.out.println(HGFE_ROW);
-            System.out.println(blackSquareFirstRow(row1, " 1 "));
-            System.out.println(whiteSquareFirstRow(row2, " 2 "));
-            System.out.println(blackSquareFirstRow(row3, " 3 "));
-            System.out.println(whiteSquareFirstRow(row4, " 4 "));
-            System.out.println(blackSquareFirstRow(row5, " 5 "));
-            System.out.println(whiteSquareFirstRow(row6, " 6 "));
-            System.out.println(blackSquareFirstRow(row7, " 7 "));
-            System.out.println(whiteSquareFirstRow(row8, " 8 "));
+            System.out.println(whiteSquareFirstRow(row1.reversed(), " 1 "));
+            System.out.println(blackSquareFirstRow(row2.reversed(), " 2 "));
+            System.out.println(whiteSquareFirstRow(row3.reversed(), " 3 "));
+            System.out.println(blackSquareFirstRow(row4.reversed(), " 4 "));
+            System.out.println(whiteSquareFirstRow(row5.reversed(), " 5 "));
+            System.out.println(blackSquareFirstRow(row6.reversed(), " 6 "));
+            System.out.println(whiteSquareFirstRow(row7.reversed(), " 7 "));
+            System.out.println(blackSquareFirstRow(row8.reversed(), " 8 "));
             System.out.println(HGFE_ROW);
         }
     }

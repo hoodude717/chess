@@ -47,7 +47,7 @@ public class PreLoginClient {
             } catch (ResponseException ex) {
                 System.out.print(SET_TEXT_COLOR_RED + ex.getMessage() + "\n");
             } catch (Throwable e) {
-                System.out.print(SET_TEXT_COLOR_RED + "ERROR Unknown Error has occurred");
+                System.out.print(SET_TEXT_COLOR_RED + "ERROR Unknown Error has occurred\n");
             }
         }
         System.out.println();
@@ -82,7 +82,7 @@ public class PreLoginClient {
             return "\n";
 
         } else  {
-            return SET_TEXT_COLOR_RED;
+            return SET_TEXT_COLOR_RED + "Loging requires username and Password\n";
         }
     }
 

@@ -79,7 +79,7 @@ public class PostLoginClient {
                 System.out.print(SET_TEXT_COLOR_BLUE + ex.getMessage() + "\n");
             } catch (Throwable e) {
 
-                System.out.print(SET_TEXT_COLOR_RED+ "ERROR Unknown Error has occurred");
+                System.out.print(SET_TEXT_COLOR_RED+ "ERROR Unknown Error has occurred\n" + RESET_POST);
             }
         }
         System.out.println();
@@ -87,16 +87,16 @@ public class PostLoginClient {
 
     private String observeGame(String[] params) throws ResponseException {
 
-        if (params.length >0 ) {
+        if (params.length >0) {
 
             var gameID = Integer.parseInt(params[0]);
-            if (gameID > 0) {
+            if (gameID > 0 && gameID <= listNumToGameId.size()) {
                 gameplay.run(gameID, "WHITE");
             } else {
-                return SET_TEXT_COLOR_RED + "No Games with that ID" + RESET_POST + help();
+                return SET_TEXT_COLOR_RED + "No Games with that ID\n" + RESET_POST + help();
             }
         }
-        else { return SET_TEXT_COLOR_RED + "Play requires gameID and playerColor \n" + RESET_POST;}
+        else { return SET_TEXT_COLOR_RED + "Observe requires gameID \n" + RESET_POST;}
 
         return "";
     }

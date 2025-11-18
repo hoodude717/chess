@@ -54,13 +54,17 @@ public class GameplayClient {
 //                String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (cmd) {
                     case "logout", "quit" -> result = "quit";
+                    case "redraw" -> {
+                        redraw(gameID);
+                        result = "";
+                    }
                     case "leave" -> result = "leave";
                     default -> result = help();
                 }
                 System.out.print(result);
             } catch (Throwable e) {
 //                var msg = e.toString();
-                System.out.print(SET_TEXT_COLOR_RED+"ERROR Unknown Error has occurred");
+                System.out.print(SET_TEXT_COLOR_RED+"ERROR Unknown Error has occurred\n" + RESET_GAME);
             }
         }
         System.out.println();
@@ -91,6 +95,7 @@ public class GameplayClient {
     public String help() {
         return """
                 - help
+                - redraw (redraws the game board)
                 - quit or leave (leave current game)
                 """;
     }
@@ -99,6 +104,11 @@ public class GameplayClient {
         var board = gameboard.getBoard();
         printBoard(board, colorSide);
 
+    }
+
+    private void redraw(int gameID) {
+        var curGame = getChessGame(gameID);
+        printGameBoard(curGame);
     }
 
     private void printPrompt() {
