@@ -9,6 +9,7 @@ import exceptions.DataAccessException;
 import exceptions.UnauthorizedException;
 import io.javalin.*;
 import io.javalin.http.Context;
+import server.websocket.WebSocketHandler;
 import service.*;
 import servicerequests.*;
 import serviceresults.*;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 public class Server {
 
+    private final WebSocketHandler webSocketHandler;
     private final Javalin javalin;
 
     private final GameService gameService;
@@ -27,6 +29,7 @@ public class Server {
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
+        webSocketHandler = new WebSocketHandler();
         try {
             DatabaseManager.createDatabase();
         } catch (DataAccessException e) {
@@ -55,6 +58,11 @@ public class Server {
         javalin.get("/game", this::listGames);
         javalin.post("/game", this::createGame);
         javalin.put("/game", this::joinGame);
+        javalin.ws("/ws", ws -> {
+            ws.onConnect(webSocketHandler);
+            ws.onMessage(webSocketHandler);
+            ws.onClose(webSocketHandler);
+        });
 
     }
 
@@ -169,6 +177,7 @@ public class Server {
             JoinGameResult joinGameResult = gameService.joinGame(joinGameRequest);
             ctx.json(serializer.toJson(joinGameResult));
             ctx.status(200);
+
         } catch (UnauthorizedException e) {
             printErrorMsg(ctx, e, 401);
         } catch (BadRequestException e) {

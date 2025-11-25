@@ -30,21 +30,36 @@ public class PostLoginClient {
             var result = server.listGames(request);
             var list = result.games();
             //Loop through al the games to match the ids to a new list of ordered numbers
-            for (var curGame : list) {
-                if (gameIdToListNum.isEmpty()) {
-                    gameIdToListNum.put(curGame.gameID(), 1);
-                    listNumToGameId.put(1, curGame.gameID());
-                } else {
-                    gameIdToListNum.put(curGame.gameID(), gameIdToListNum.size() + 1);
-                    listNumToGameId.put(listNumToGameId.size() + 1, curGame.gameID());
-                }
-            }
+            updateGameIdList(list);
+
         } catch (ResponseException ex) {
             throw new RuntimeException("Did not set up admin auth");
         }
-        gameplay = new GameplayClient(url, gameIdToListNum, listNumToGameId);
+
+        try {
+            gameplay = new GameplayClient(url, gameIdToListNum, listNumToGameId);
+        }
+        catch (ResponseException ex) {
+            throw new RuntimeException("Error when creating the GameplayClient");
+
+        }
+
+    }
 
 
+    private void updateGameIdList(Collection<GameData> list) {
+        gameIdToListNum.clear();
+        listNumToGameId.clear();
+        for (var curGame : list) {
+            //clear and then refill the lists
+            if (gameIdToListNum.isEmpty()) {
+                gameIdToListNum.put(curGame.gameID(), 1);
+                listNumToGameId.put(1, curGame.gameID());
+            } else {
+                gameIdToListNum.put(curGame.gameID(), gameIdToListNum.size() + 1);
+                listNumToGameId.put(listNumToGameId.size() + 1, curGame.gameID());
+            }
+        }
     }
 
     public void setAuthToken(String auth) {
@@ -91,7 +106,7 @@ public class PostLoginClient {
 
             var gameID = Integer.parseInt(params[0]);
             if (gameID > 0 && gameID <= listNumToGameId.size()) {
-                gameplay.run(gameID, "WHITE");
+                gameplay.run(gameID, "EMPTY");
             } else {
                 return SET_TEXT_COLOR_RED + "No Games with that ID\n" + RESET_POST + help();
             }
@@ -111,6 +126,8 @@ public class PostLoginClient {
         else { return SET_TEXT_COLOR_RED + "Play requires gameID and playerColor \n" + RESET_POST;}
         try {
             server.joinGame(request);
+//            ws.connect(); // add the connection to the websocket
+            //Returns a Load_Game ServerMessage
             gameplay.run(request.gameID(), request.playerColor());
         } catch (ResponseException ex) {
             return SET_TEXT_COLOR_RED + ex.getMessage() + " You cannot join this game. You can use observe to watch it\n" + RESET_POST;
@@ -123,6 +140,7 @@ public class PostLoginClient {
         var result = server.listGames(request);
         Collection<GameData> gameList = result.games();
         StringBuilder returnStr = new StringBuilder("Games:\n");
+        updateGameIdList(gameList);
 
         for (var game : gameList) {
             var id = game.gameID();

@@ -26,6 +26,13 @@ public class ServerMessage {
     }
 
     @Override
+    public String toString() {
+        return "ServerMessage{" +
+                "serverMessageType=" + serverMessageType +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

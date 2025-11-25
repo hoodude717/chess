@@ -2,25 +2,36 @@ package client;
 
 import chess.ChessGame;
 import chess.ChessPiece;
+import client.websocket.NotificationHandler;
+import client.websocket.WebSocketFacade;
+import exceptions.ResponseException;
+import servicerequests.JoinGameRequest;
 import servicerequests.ListGameRequest;
 import serviceresults.ListGameResult;
+import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 import static ui.EscapeSequences.BLACK_PAWN;
 
-public class GameplayClient {
+public class GameplayClient implements NotificationHandler {
 
     private final ServerFacade server;
+    private final String url;
+    private WebSocketFacade ws;
     private String authToken;
     private Map<Integer, Integer> gameIdToListNum;
     private Map<Integer, Integer> listNumToGameId;
     private String colorSide;
 
-    public GameplayClient(String url, Map<Integer, Integer> idToList, Map<Integer, Integer> listToID) {
+    public GameplayClient(String url, Map<Integer, Integer> idToList, Map<Integer, Integer> listToID)
+            throws ResponseException {
         server = new ServerFacade(url);
+        this.url = url;
         gameIdToListNum = idToList;
         listNumToGameId = listToID;
     }
@@ -38,6 +49,18 @@ public class GameplayClient {
         System.out.println(RESET_GAME + BLACK_PAWN + " You are in game "+ gameID + "!" + BLACK_PAWN);
         var curGame = getChessGame(gameID);
         colorSide = color.toLowerCase();
+        if (colorSide.equals("empty")) { colorSide = "white"; }
+
+        try{
+            if (ws==null) {
+                ws = new WebSocketFacade(url, this);
+            }
+            ws.connectToGame(authToken, gameID);
+        } catch (ResponseException ex) {
+            System.out.println("Failed to connect to Game");
+            return;
+        }
+
 
         printGameBoard(curGame);
         System.out.print(help());
@@ -51,14 +74,15 @@ public class GameplayClient {
             try {
                 String[] tokens = line.toLowerCase().split(" ");
                 String cmd = (tokens.length > 0) ? tokens[0] : "help";
-//                String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+                String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (cmd) {
                     case "logout", "quit" -> result = "quit";
                     case "redraw" -> {
                         redraw(gameID);
                         result = "";
                     }
-                    case "leave" -> result = "leave";
+                    case "move" -> result = makeMove(params);
+                    case "leave" -> result = leaveGame(gameID);
                     default -> result = help();
                 }
                 System.out.print(result);
@@ -111,7 +135,27 @@ public class GameplayClient {
         printGameBoard(curGame);
     }
 
+    private String leaveGame(int gameID) {
+        var gameWOPlayer = new JoinGameRequest(authToken, colorSide, gameID);
+        // possibly create a new service side thing that adds null to a game where the person was before.
+
+        return "";
+    }
+
+    private String makeMove(String[] params) {
+
+        return "";
+
+    }
+
     private void printPrompt() {
         System.out.print("[GameMode] >>> ");
+    }
+
+    @Override
+    public void notify(ServerMessage notification) {
+        System.out.println(SET_TEXT_COLOR_RED + "Print Stuff");
+        printPrompt();
+
     }
 }
