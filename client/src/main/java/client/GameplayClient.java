@@ -9,6 +9,8 @@ import servicerequests.JoinGameRequest;
 import servicerequests.ListGameRequest;
 import serviceresults.ListGameResult;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
@@ -154,7 +156,15 @@ public class GameplayClient implements NotificationHandler {
 
     @Override
     public void notify(ServerMessage notification) {
-        System.out.println(SET_TEXT_COLOR_RED + "Print Stuff");
+        String msg;
+        if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.NOTIFICATION)) {
+            msg = ((NotificationMessage) notification).getMessage();
+        } else if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.ERROR)) {
+            msg = ((ErrorMessage) notification).getMessage();
+        } else {
+            msg = "Printing Game Board";
+        }
+        System.out.println(SET_TEXT_COLOR_RED + msg + RESET_GAME);
         printPrompt();
 
     }

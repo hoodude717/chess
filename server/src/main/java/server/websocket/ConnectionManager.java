@@ -19,9 +19,8 @@ public class ConnectionManager {
     }
 
     public void broadcast(Session excludeSession, ServerMessage notification, Integer gameID) throws IOException {
-        String msg = notification.toString();
         var gson = new Gson();
-        msg = gson.toJson(notification);
+        String msg = gson.toJson(notification);
         for (var s: connections.keySet()) {
             if (!connections.get(s).equals(gameID)) {
                 return;

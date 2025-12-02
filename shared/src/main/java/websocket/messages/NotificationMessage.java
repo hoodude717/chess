@@ -6,8 +6,12 @@ public class NotificationMessage extends ServerMessage {
     String msg;
 
     public NotificationMessage(String message) {
-        super(ServerMessageType.ERROR);
+        super(ServerMessageType.NOTIFICATION);
         msg = message;
+    }
+
+    public String getMessage() {
+        return msg;
     }
 
     @Override

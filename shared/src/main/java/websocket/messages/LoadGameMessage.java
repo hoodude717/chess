@@ -11,6 +11,10 @@ public class LoadGameMessage extends ServerMessage {
         this.game = game;
     }
 
+    public GameData getGame() {
+        return game;
+    }
+
     @Override
     public String toString() {
         return "LoadGameMessage{" +

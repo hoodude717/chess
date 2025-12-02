@@ -10,6 +10,10 @@ public class ErrorMessage extends ServerMessage {
         msg = errorMessage;
     }
 
+    public String getMessage() {
+        return msg;
+    }
+
     @Override
     public String toString() {
         return "ErrorMessage{" +
