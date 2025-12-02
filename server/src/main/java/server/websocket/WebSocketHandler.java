@@ -1,6 +1,10 @@
 package server.websocket;
 
 import com.google.gson.Gson;
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
+import dataaccess.SQLAuthDAO;
+import dataaccess.SQLGameDAO;
 import exceptions.ResponseException;
 import io.javalin.websocket.WsCloseContext;
 import io.javalin.websocket.WsCloseHandler;
@@ -56,9 +60,30 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
         // Connect
         connections.add(session, command.getGameID());
+        var auth = command.getAuthToken();
+        var username = "";
+        var color = "";
+        try {
+            GameDAO gameDAO = new SQLGameDAO();
+            AuthDAO authDAO = new SQLAuthDAO();
+            var data = authDAO.getAuth(auth);
+            username = data.username();
+            var game = gameDAO.getGame(command.getGameID());
+            if (game.whiteUsername().equals(username)) {
+                color = "white";
+            } else if (game.blackUsername().equals(username)) {
+                color = "black";
+            } else {
+                color = "an observer";
+            }
+        } catch (Exception e) {
+            throw new IOException("Error getting Game or Auth from DAOS");
+        }
+
+        var notifStr = String.format("Player %s has joined the game as %s", username, color);
 
         //Notify
-        var notification = new NotificationMessage("Player Has Joined the Game as Color");
+        var notification = new NotificationMessage(notifStr);
         connections.broadcast(session, notification, command.getGameID());
     }
 
