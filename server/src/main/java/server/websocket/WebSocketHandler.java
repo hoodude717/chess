@@ -12,6 +12,7 @@ import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsConnectHandler;
 import io.javalin.websocket.WsMessageContext;
 import io.javalin.websocket.WsMessageHandler;
+import model.GameData;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.websocket.api.Session;
@@ -93,11 +94,34 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     new ErrorMessage("Error: Did not use the right command\n"), command.getGameID());
             return;
         }
+        connections.remove(session);
         //Leave Action
+        var auth = command.getAuthToken();
+        var username = "";
+        try {
+            GameDAO gameDAO = new SQLGameDAO();
+            AuthDAO authDAO = new SQLAuthDAO();
+            var game = gameDAO.getGame(command.getGameID());
+            username = authDAO.getAuth(auth).username();
+            String whiteUser = game.whiteUsername();
+            String blackUser = game.blackUsername();
+            //Figure out the color of the player leaving
+            if (game.whiteUsername().equals(username)) {
+                whiteUser = null;
+            } else if (game.blackUsername().equals(username)) {
+                blackUser = null;
+            }
+            //Update the game
+            var newGame = new GameData(command.getGameID(), whiteUser,blackUser, game.gameName(), game.game());
+            gameDAO.updateGame(command.getGameID(), newGame);
 
+        } catch (Exception e) {
+            throw new IOException("Error getting Game or Auth from DAOS");
+        }
 
         //Notify
-        var notification = new NotificationMessage("Player Has Left the Game\n");
+        var notifStr = String.format("Player %s has left the game", username);
+        var notification = new NotificationMessage(notifStr);
         connections.broadcast(session, notification, command.getGameID());
     }
 

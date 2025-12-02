@@ -4,6 +4,7 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
+import com.mysql.cj.exceptions.ClosedOnExpiredPasswordException;
 import exceptions.ResponseException;
 import servicerequests.JoinGameRequest;
 import servicerequests.ListGameRequest;
@@ -78,13 +79,13 @@ public class GameplayClient implements NotificationHandler {
                 String cmd = (tokens.length > 0) ? tokens[0] : "help";
                 String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (cmd) {
-                    case "logout", "quit" -> result = "quit";
+                    case "logout" -> result = "quit";
                     case "redraw" -> {
                         redraw(gameID);
                         result = "";
                     }
                     case "move" -> result = makeMove(params);
-                    case "leave" -> result = leaveGame(gameID);
+                    case "leave", "quit" -> result = leaveGame(gameID);
                     default -> result = help();
                 }
                 System.out.print(result);
@@ -137,11 +138,9 @@ public class GameplayClient implements NotificationHandler {
         printGameBoard(curGame);
     }
 
-    private String leaveGame(int gameID) {
-        var gameWOPlayer = new JoinGameRequest(authToken, colorSide, gameID);
-        // possibly create a new service side thing that adds null to a game where the person was before.
-
-        return "";
+    private String leaveGame(int gameID) throws ResponseException {
+        ws.leaveGame(authToken, gameID);
+        return "leave";
     }
 
     private String makeMove(String[] params) {
