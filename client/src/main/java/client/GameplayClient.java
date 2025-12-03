@@ -133,7 +133,9 @@ public class GameplayClient implements NotificationHandler {
 
     private String printGameBoard(ChessGame gameboard) {
         var board = gameboard.getBoard();
-        return printBoard(board, colorSide);
+        var turn = gameboard.getTeamTurn();
+        String turnStr = turn.equals(ChessGame.TeamColor.WHITE) ? "White's Turn\n" : "Black's Turn\n";
+        return printBoard(board, colorSide) + turnStr;
 
     }
 

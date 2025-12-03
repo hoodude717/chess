@@ -58,7 +58,15 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 default -> connections.broadcast(null,
                         new ErrorMessage("Error: Invalid Command Type"), command.getGameID());
             }
+        } catch (InvalidMoveException ex) {
+            var error = new ErrorMessage(ex.getMessage());
+            try {
+                connections.singleBroadcast(ctx.session, error);
+            } catch (IOException e) {
+                ex.printStackTrace();
+            }
         } catch (IOException ex) {
+
             ex.printStackTrace();
         }
     }
@@ -142,7 +150,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connections.broadcast(session, notification, command.getGameID());
     }
 
-    private void makeMove(UserGameCommand command, Session session) throws IOException {
+    private void makeMove(UserGameCommand command, Session session) throws IOException, InvalidMoveException {
         if (!command.getCommandType().equals(UserGameCommand.CommandType.MAKE_MOVE)) {
             connections.broadcast(null,
                     new ErrorMessage("Error: Did not use the right command\n"), command.getGameID());
@@ -150,15 +158,34 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
         //Get the ChessGame datatype from the DAO
         GameDAO gameDAO;
+        AuthDAO authDAO;
         int gameID = command.getGameID();
         ChessMove move = ((MakeMoveCommand) command).getMove();
         ChessGame game;
+        String auth = command.getAuthToken();
+        String username = "";
         try {
             gameDAO = new SQLGameDAO();
+            authDAO = new SQLAuthDAO();
             var gameData = gameDAO.getGame(gameID);
             game = gameData.game();
+            username = authDAO.getAuth(auth).username();
+            ChessGame.TeamColor turn = null;
+            if (game.getTeamTurn().equals(ChessGame.TeamColor.WHITE)) {turn = ChessGame.TeamColor.WHITE;}
+            else {turn = ChessGame.TeamColor.BLACK;}
+
+            if (gameData.whiteUsername().equals(username)
+                    && turn.equals(ChessGame.TeamColor.WHITE)) {
+                game.makeMove(move);
+
+            } else if (gameData.blackUsername().equals(username)
+                    && turn.equals(ChessGame.TeamColor.BLACK)) {
+                game.makeMove(move);
+            } else {
+                throw new InvalidMoveException("Cannot make move if not your turn or an observer");
+            }
             //Make the move
-            game.makeMove(move);
+
             gameDAO.updateGame(
                     gameID,
                     new GameData(gameID,
@@ -167,15 +194,17 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                             gameData.gameName(),
                             game));
         } catch (InvalidMoveException ex) {
-            throw new IOException("Error: Invalid Move" + ex.getMessage());
+            throw new InvalidMoveException("Error: Invalid Move " + ex.getMessage());
         } catch (Exception e) {
             throw new IOException("Error getting Game or Auth from DAOS");
         }
 
-
+        String notifStr = String.format("Player %s has made the following move: %s",username, move.toString());
         var loadGameMessage = new LoadGameMessage(game);
+        var notificationMessage = new NotificationMessage(notifStr);
 
         connections.broadcast(null, loadGameMessage, gameID);
+        connections.broadcast(null, notificationMessage, gameID);
     }
 
     private void resign(UserGameCommand command, Session session) throws IOException {
