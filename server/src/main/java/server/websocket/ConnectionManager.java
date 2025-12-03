@@ -18,6 +18,10 @@ public class ConnectionManager {
         connections.remove(session);
     }
 
+    public void singleBroadcast(Session session, ServerMessage notification) throws IOException {
+        session.getRemote().sendString(new Gson().toJson(notification));
+    }
+
     public void broadcast(Session excludeSession, ServerMessage notification, Integer gameID) throws IOException {
         var gson = new Gson();
         String msg = gson.toJson(notification);

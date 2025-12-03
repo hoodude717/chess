@@ -86,6 +86,15 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
+//    public void redrawBoard(String authToken, Integer id) throws ResponseException {
+//        try {
+//
+//        } catch (IOException ex) {
+//            throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());
+//        }
+//    }
+
+
     public void resignGame(String authToken, Integer id) throws ResponseException {
         try {
             var action = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, id);

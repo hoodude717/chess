@@ -1,7 +1,9 @@
 package client;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import chess.ChessPiece;
+import chess.ChessPosition;
 import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
 import com.mysql.cj.exceptions.ClosedOnExpiredPasswordException;
@@ -11,6 +13,7 @@ import servicerequests.ListGameRequest;
 import serviceresults.ListGameResult;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
@@ -65,7 +68,7 @@ public class GameplayClient implements NotificationHandler {
         }
 
 
-        printGameBoard(curGame);
+//        System.out.print(printGameBoard(curGame));
         System.out.print(help());
 
         Scanner scanner = new Scanner(System.in);
@@ -81,10 +84,9 @@ public class GameplayClient implements NotificationHandler {
                 switch (cmd) {
                     case "logout" -> result = "quit";
                     case "redraw" -> {
-                        redraw(gameID);
-                        result = "";
+                        result = redraw(gameID);;
                     }
-                    case "move" -> result = makeMove(params);
+                    case "move" -> result = makeMove(params, gameID);
                     case "leave", "quit" -> result = leaveGame(gameID);
                     default -> result = help();
                 }
@@ -94,6 +96,7 @@ public class GameplayClient implements NotificationHandler {
                 System.out.print(SET_TEXT_COLOR_RED+"ERROR Unknown Error has occurred\n" + RESET_GAME);
             }
         }
+
         System.out.println();
     }
 
@@ -122,20 +125,21 @@ public class GameplayClient implements NotificationHandler {
     public String help() {
         return """
                 - help
+                - move <from> <to> (make a move from and to format is A3 or F1)
                 - redraw (redraws the game board)
                 - quit or leave (leave current game)
                 """;
     }
 
-    private void printGameBoard(ChessGame gameboard) {
+    private String printGameBoard(ChessGame gameboard) {
         var board = gameboard.getBoard();
-        printBoard(board, colorSide);
+        return printBoard(board, colorSide);
 
     }
 
-    private void redraw(int gameID) {
+    private String redraw(int gameID) {
         var curGame = getChessGame(gameID);
-        printGameBoard(curGame);
+        return printGameBoard(curGame);
     }
 
     private String leaveGame(int gameID) throws ResponseException {
@@ -143,7 +147,45 @@ public class GameplayClient implements NotificationHandler {
         return "leave";
     }
 
-    private String makeMove(String[] params) {
+    private String makeMove(String[] params, Integer gameID) throws ResponseException{
+        //Reading the parameters
+        String from, to, promotion;
+        if (params.length >= 2) {
+            from = params[0];
+            to = params[1];
+            if (params.length == 3) {
+                promotion = params[2];
+            } else {
+                promotion = "";
+            }
+        } else {
+            return "Invalid Move Format";
+        }
+
+        //Getting promotion type
+        ChessPiece.PieceType pieceType;
+        switch (promotion.toLowerCase()) {
+            case "rook" -> pieceType = ChessPiece.PieceType.ROOK;
+            case "knight" -> pieceType = ChessPiece.PieceType.KNIGHT;
+            case "bishop" -> pieceType = ChessPiece.PieceType.BISHOP;
+            case "queen" -> pieceType = ChessPiece.PieceType.QUEEN;
+            default -> pieceType = null;
+        }
+        //Extracting rows and columns from the string
+        from = from.toUpperCase();
+        to = to.toUpperCase();
+        Map<Character, Integer> colMap = Map.of(
+                'A', 1, 'B', 2, 'C', 3, 'D', 4,
+                'E', 5, 'F', 6, 'G', 7, 'H', 8);
+        int fromCol = colMap.get(from.charAt(0));
+        int fromRow = Integer.parseInt(from.substring(1));
+        int toCol = colMap.get(to.charAt(0));
+        int toRow = Integer.parseInt(to.substring(1));
+        var startPosition = new ChessPosition(fromRow, fromCol);
+        var endPosition = new ChessPosition(toRow, toCol);
+        var curMove = new ChessMove(startPosition, endPosition, pieceType);
+
+        ws.makeMove(authToken, gameID, curMove);
 
         return "";
 
@@ -161,7 +203,7 @@ public class GameplayClient implements NotificationHandler {
         } else if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.ERROR)) {
             msg = ((ErrorMessage) notification).getMessage();
         } else {
-            msg = "Printing Game Board";
+            msg = printGameBoard(((LoadGameMessage) notification).getGame());
         }
         System.out.println(SET_TEXT_COLOR_RED + msg + RESET_GAME);
         printPrompt();

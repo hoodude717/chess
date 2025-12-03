@@ -1,6 +1,11 @@
 package server.websocket;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.SQLAuthDAO;
@@ -15,6 +20,7 @@ import io.javalin.websocket.WsMessageHandler;
 import model.GameData;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.IO;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.*;
 import websocket.messages.*;
@@ -34,7 +40,16 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     @Override
     public void handleMessage(WsMessageContext ctx) {
         try {
-            UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
+            String mess = ctx.message();
+            JsonObject json = JsonParser.parseString(mess).getAsJsonObject();
+            String commandType = json.get("commandType").getAsString();
+            UserGameCommand.CommandType type = UserGameCommand.CommandType.valueOf(commandType);
+            UserGameCommand command;
+            if (type.equals(UserGameCommand.CommandType.MAKE_MOVE)) {
+                command = new Gson().fromJson(mess, MakeMoveCommand.class);
+            }else {
+                command = new Gson().fromJson(mess, UserGameCommand.class);
+            }
             switch (command.getCommandType()) {
                 case CONNECT -> connect(command, ctx.session);
                 case LEAVE -> leave(command, ctx.session);
@@ -64,12 +79,13 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         var auth = command.getAuthToken();
         var username = "";
         var color = "";
+        GameData game;
         try {
             GameDAO gameDAO = new SQLGameDAO();
             AuthDAO authDAO = new SQLAuthDAO();
             var data = authDAO.getAuth(auth);
             username = data.username();
-            var game = gameDAO.getGame(command.getGameID());
+            game = gameDAO.getGame(command.getGameID());
             if (game.whiteUsername().equals(username)) {
                 color = "white";
             } else if (game.blackUsername().equals(username)) {
@@ -85,6 +101,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         //Notify
         var notification = new NotificationMessage(notifStr);
+        connections.singleBroadcast(session, new LoadGameMessage(game.game()));
         connections.broadcast(session, notification, command.getGameID());
     }
 
@@ -131,8 +148,34 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     new ErrorMessage("Error: Did not use the right command\n"), command.getGameID());
             return;
         }
-        //Make the move
+        //Get the ChessGame datatype from the DAO
+        GameDAO gameDAO;
+        int gameID = command.getGameID();
+        ChessMove move = ((MakeMoveCommand) command).getMove();
+        ChessGame game;
+        try {
+            gameDAO = new SQLGameDAO();
+            var gameData = gameDAO.getGame(gameID);
+            game = gameData.game();
+            //Make the move
+            game.makeMove(move);
+            gameDAO.updateGame(
+                    gameID,
+                    new GameData(gameID,
+                            gameData.whiteUsername(),
+                            gameData.blackUsername(),
+                            gameData.gameName(),
+                            game));
+        } catch (InvalidMoveException ex) {
+            throw new IOException("Error: Invalid Move" + ex.getMessage());
+        } catch (Exception e) {
+            throw new IOException("Error getting Game or Auth from DAOS");
+        }
 
+
+        var loadGameMessage = new LoadGameMessage(game);
+
+        connections.broadcast(null, loadGameMessage, gameID);
     }
 
     private void resign(UserGameCommand command, Session session) throws IOException {
