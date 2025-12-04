@@ -1,10 +1,9 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
+import chess.*;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static chess.ChessPiece.PieceType.BLANK;
@@ -163,37 +162,74 @@ public class EscapeSequences {
         return rowString.toString();
     }
     // Takes in String rowNum and the pieces in that row, rowNum must be padded with one space on each side
-    public static String blackSquareFirstRow(List<ChessPiece> rowPieces, String rowNum) {
-        StringBuilder rowString = new StringBuilder(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowNum);
+    public static String blackSquareFirstRow(List<ChessPiece> rowPieces,  Integer rowNum, Collection<ChessMove> moves) {
+        String rowStr = " " + rowNum + " ";
+        StringBuilder rowString = new StringBuilder(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowStr);
         for (int i = 0; i < 8; i++) {
-            if (i%2 == 0) {
-                rowString.append(SET_BG_COLOR_BROWN);
-            } else {
-                rowString.append(SET_BG_COLOR_CREAM);
+            boolean isAMove = false;
+            for (var move : moves) {
+                if (move.getStartPosition().getColumn() == i+1 && move.getStartPosition().getRow() == rowNum) {
+                    rowString.append(SET_BG_COLOR_YELLOW);
+                }
+                if (move.getEndPosition().getColumn() == i+1 && move.getEndPosition().getRow() == rowNum) {
+                    if (i%2 == 0) { rowString.append(SET_BG_COLOR_DARK_ORANGE); }
+                    else { rowString.append(SET_BG_COLOR_ORANGE); }
+                    isAMove = true;
+                }
             }
+            if (!isAMove) {
+                if (i%2 == 0) {
+                    rowString.append(SET_BG_COLOR_BROWN);
+                } else {
+                    rowString.append(SET_BG_COLOR_CREAM);
+                }
+            }
+
             rowString.append(printPiecesByRow(rowPieces, i));
         }
-        rowString.append(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED).append(rowNum).append(RESET_GAME);
+        rowString.append(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED).append(rowStr).append(RESET_GAME);
         return rowString.toString();
     }
 
-    public static String whiteSquareFirstRow(List<ChessPiece> rowPieces, String rowNum) {
-        StringBuilder rowString = new StringBuilder(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowNum);
+    public static String whiteSquareFirstRow(List<ChessPiece> rowPieces, Integer rowNum, Collection<ChessMove> moves) {
+        String rowStr = " " + rowNum + " ";
+        StringBuilder rowString = new StringBuilder(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowStr);
+
         for (int i = 0; i < 8; i++) {
-            if (i%2 == 0) {
-                rowString.append(SET_BG_COLOR_CREAM);
-            } else {
-                rowString.append(SET_BG_COLOR_BROWN);
+            boolean isAMove = false;
+            for (var move : moves) {
+                if (move.getStartPosition().getColumn() == i+1 && move.getStartPosition().getRow() == rowNum) {
+                    rowString.append(SET_BG_COLOR_YELLOW);
+                    isAMove = true;
+                    break;
+                }
+                if (move.getEndPosition().getColumn() == i+1 && move.getEndPosition().getRow() == rowNum) {
+                    if (i%2 == 0) { rowString.append(SET_BG_COLOR_ORANGE); }
+                    else { rowString.append(SET_BG_COLOR_DARK_ORANGE); }
+                    isAMove = true;
+                    break;
+                }
             }
+            if (!isAMove) {
+                if (i%2 == 0) {
+                    rowString.append(SET_BG_COLOR_CREAM);
+                } else {
+                    rowString.append(SET_BG_COLOR_BROWN);
+                }
+            }
+
             rowString.append(printPiecesByRow(rowPieces, i));
 
         }
-        rowString.append(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED).append(rowNum).append(RESET_GAME);
+        rowString.append(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED).append(rowStr).append(RESET_GAME);
         return rowString.toString();
     }
 
-    public static String printBoard(ChessBoard board, String color) {
+    public static String printBoard(ChessBoard board, String color, Collection<ChessMove> moves) {
         String retStr = "\n";
+        if (moves == null) {
+            moves = List.of();
+        }
         //Fix this to dynamically get the row not to make random rows.
         List<ChessPiece> row1 = Arrays.asList(board.getRow(1));
         List<ChessPiece> row2 = Arrays.asList(board.getRow(2));
@@ -204,50 +240,31 @@ public class EscapeSequences {
         List<ChessPiece> row7 = Arrays.asList(board.getRow(7));
         List<ChessPiece> row8 = Arrays.asList(board.getRow(8));
         if (color.equals("white") || color.equals("blanco")) {
-//            System.out.println(ABCD_ROW);
             retStr += ABCD_ROW + "\n";
-//            System.out.println(whiteSquareFirstRow(row8, " 8 "));
-            retStr += whiteSquareFirstRow(row8, " 8 ") + "\n";
-//            System.out.println(blackSquareFirstRow(row7, " 7 "));
-            retStr += blackSquareFirstRow(row7, " 7 ") + "\n";
-//            System.out.println(whiteSquareFirstRow(row6, " 6 "));
-            retStr += whiteSquareFirstRow(row6, " 6 ") + "\n";
-//            System.out.println(blackSquareFirstRow(row5, " 5 "));
-            retStr += blackSquareFirstRow(row5, " 5 ") + "\n";
-//            System.out.println(whiteSquareFirstRow(row4, " 4 "));
-            retStr += whiteSquareFirstRow(row4, " 4 ") + "\n";
-//            System.out.println(blackSquareFirstRow(row3, " 3 "));
-            retStr += blackSquareFirstRow(row3, " 3 ") + "\n";
-//            System.out.println(whiteSquareFirstRow(row2, " 2 "));
-            retStr += whiteSquareFirstRow(row2, " 2 ") + "\n";
-//            System.out.println(blackSquareFirstRow(row1, " 1 "));
-            retStr += blackSquareFirstRow(row1, " 1 ") + "\n";
-//            System.out.println(ABCD_ROW);
+            retStr += whiteSquareFirstRow(row8, 8, moves) + "\n";
+            retStr += blackSquareFirstRow(row7, 7, moves) + "\n";
+            retStr += whiteSquareFirstRow(row6, 6, moves) + "\n";
+            retStr += blackSquareFirstRow(row5, 5, moves) + "\n";
+            retStr += whiteSquareFirstRow(row4, 4, moves) + "\n";
+            retStr += blackSquareFirstRow(row3, 3, moves) + "\n";
+            retStr += whiteSquareFirstRow(row2, 2, moves) + "\n";
+            retStr += blackSquareFirstRow(row1, 1, moves) + "\n";
             retStr += ABCD_ROW + "\n";
         } else {
-
-//            System.out.println(HGFE_ROW);
             retStr += HGFE_ROW + "\n";
-//            System.out.println(whiteSquareFirstRow(row1.reversed(), " 1 "));
-            retStr += whiteSquareFirstRow(row1.reversed(), " 1 ") + "\n";
-//            System.out.println(blackSquareFirstRow(row2.reversed(), " 2 "));
-            retStr += blackSquareFirstRow(row2.reversed(), " 2 ") + "\n";
-//            System.out.println(whiteSquareFirstRow(row3.reversed(), " 3 "));
-            retStr += whiteSquareFirstRow(row3.reversed(), " 3 ") + "\n";
-//            System.out.println(blackSquareFirstRow(row4.reversed(), " 4 "));
-            retStr += blackSquareFirstRow(row4.reversed(), " 4 ") + "\n";
-//            System.out.println(whiteSquareFirstRow(row5.reversed(), " 5 "));
-            retStr += whiteSquareFirstRow(row5.reversed(), " 5 ") + "\n";
-//            System.out.println(blackSquareFirstRow(row6.reversed(), " 6 "));
-            retStr += blackSquareFirstRow(row6.reversed(), " 6 ") + "\n";
-//            System.out.println(whiteSquareFirstRow(row7.reversed(), " 7 "));
-            retStr += whiteSquareFirstRow(row7.reversed(), " 7 ") + "\n";
-//            System.out.println(blackSquareFirstRow(row8.reversed(), " 8 "));
-            retStr += blackSquareFirstRow(row8.reversed(), " 8 ") + "\n";
-//            System.out.println(HGFE_ROW);
+            retStr += whiteSquareFirstRow(row1.reversed(), 1, moves) + "\n";
+            retStr += blackSquareFirstRow(row2.reversed(), 2, moves) + "\n";
+            retStr += whiteSquareFirstRow(row3.reversed(), 3, moves) + "\n";
+            retStr += blackSquareFirstRow(row4.reversed(), 4, moves) + "\n";
+            retStr += whiteSquareFirstRow(row5.reversed(), 5, moves) + "\n";
+            retStr += blackSquareFirstRow(row6.reversed(), 6, moves) + "\n";
+            retStr += whiteSquareFirstRow(row7.reversed(), 7, moves) + "\n";
+            retStr += blackSquareFirstRow(row8.reversed(), 8, moves) + "\n";
             retStr += HGFE_ROW + "\n";
         }
 
         return retStr;
     }
+
+
 }

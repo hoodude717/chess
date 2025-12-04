@@ -94,7 +94,7 @@ public class GameplayClientSpan {
     private void printGameBoard(ChessGame gameboard) {
 
         var board = gameboard.getBoard();
-        printBoard(board, colorSide);
+        printBoard(board, colorSide, null);
     }
 
     private void printPrompt() {

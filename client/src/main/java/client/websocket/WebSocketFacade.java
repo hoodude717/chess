@@ -1,16 +1,15 @@
 package client.websocket;
 
 import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import exceptions.ResponseException;
 import jakarta.websocket.ContainerProvider;
 import jakarta.websocket.*;
 import websocket.commands.MakeMoveCommand;
+import websocket.commands.ShowMovesCommand;
 import websocket.commands.UserGameCommand;
-import websocket.messages.ErrorMessage;
-import websocket.messages.LoadGameMessage;
-import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
+import websocket.messages.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -41,6 +40,8 @@ public class WebSocketFacade extends Endpoint {
                         notification = new Gson().fromJson(message, ErrorMessage.class);
                     } else if (message.contains("LOAD_GAME")) {
                         notification = new Gson().fromJson(message, LoadGameMessage.class);
+                    } else if (message.contains("VALID_MOVES")) {
+                        notification = new Gson().fromJson(message, ValidMovesMessage.class);
                     } else {
                         notification = new Gson().fromJson(message, ServerMessage.class);
                     }
@@ -85,6 +86,16 @@ public class WebSocketFacade extends Endpoint {
             throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());
         }
     }
+
+    public void showMoves(String authToken, Integer id, ChessPosition position) throws ResponseException {
+        try {
+            var action = new ShowMovesCommand(UserGameCommand.CommandType.SHOW_MOVES, authToken, id, position);
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        } catch (IOException ex) {
+            throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());
+        }
+    }
+
 
 //    public void redrawBoard(String authToken, Integer id) throws ResponseException {
 //        try {

@@ -2,6 +2,7 @@ package server.websocket;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -26,6 +27,7 @@ import websocket.commands.*;
 import websocket.messages.*;
 
 import java.io.IOException;
+import java.util.Collection;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
 
@@ -47,7 +49,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             UserGameCommand command;
             if (type.equals(UserGameCommand.CommandType.MAKE_MOVE)) {
                 command = new Gson().fromJson(mess, MakeMoveCommand.class);
-            }else {
+            } else if (type.equals(UserGameCommand.CommandType.SHOW_MOVES)) {
+                command = new Gson().fromJson(mess, ShowMovesCommand.class);
+            } else {
                 command = new Gson().fromJson(mess, UserGameCommand.class);
             }
             switch (command.getCommandType()) {
@@ -55,6 +59,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case LEAVE -> leave(command, ctx.session);
                 case MAKE_MOVE -> makeMove(command, ctx.session);
                 case RESIGN -> resign(command, ctx.session);
+                case SHOW_MOVES -> showMoves(command, ctx.session);
                 default -> connections.broadcast(null,
                         new ErrorMessage("Error: Invalid Command Type"), command.getGameID());
             }
@@ -164,6 +169,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         ChessGame game;
         String auth = command.getAuthToken();
         String username = "";
+        NotificationMessage checkNotif = null;
         try {
             gameDAO = new SQLGameDAO();
             authDAO = new SQLAuthDAO();
@@ -184,7 +190,16 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             } else {
                 throw new InvalidMoveException("Cannot make move if not your turn or an observer");
             }
-            //Make the move
+            // Check to see if game in check or checkmate
+            if (game.isInCheck(ChessGame.TeamColor.WHITE)) {
+                checkNotif = new NotificationMessage("White is in check!");
+            } else if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                checkNotif = new NotificationMessage("Black has won the game!");
+            } else if (game.isInCheck(ChessGame.TeamColor.BLACK)) {
+                checkNotif = new NotificationMessage("Black is in check!");
+            } else if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
+                checkNotif = new NotificationMessage("White has won the game!");
+            }
 
             gameDAO.updateGame(
                     gameID,
@@ -205,6 +220,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         connections.broadcast(null, loadGameMessage, gameID);
         connections.broadcast(null, notificationMessage, gameID);
+        if (checkNotif != null) { connections.broadcast(null, checkNotif, gameID);}
+
     }
 
     private void resign(UserGameCommand command, Session session) throws IOException {
@@ -219,6 +236,31 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         //Notify
         var notification = new NotificationMessage("Player Has Resigned from the Game\n");
         connections.broadcast(session, notification, command.getGameID());
+    }
+
+    private void showMoves(UserGameCommand command, Session session) throws IOException {
+        if (!command.getCommandType().equals(UserGameCommand.CommandType.SHOW_MOVES)) {
+            connections.broadcast(null,
+                    new ErrorMessage("Error: Did not use the right command\n"), command.getGameID());
+            return;
+        }
+
+        GameDAO gameDAO;
+        ChessPosition pos = ((ShowMovesCommand) command).getPosition();
+        Collection<ChessMove> valid = null;
+        ChessGame game;
+        try {
+            gameDAO = new SQLGameDAO();
+            var gameData = gameDAO.getGame(command.getGameID());
+            game = gameData.game();
+            valid = game.validMoves(pos);
+        } catch (Exception e) {
+            throw new IOException("Error getting Game or Auth from DAOS");
+        }
+
+        var validMovesMessage = new ValidMovesMessage(valid, game);
+        connections.singleBroadcast(session, validMovesMessage);
+
     }
 
 }

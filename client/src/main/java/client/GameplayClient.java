@@ -12,14 +12,9 @@ import servicerequests.JoinGameRequest;
 import servicerequests.ListGameRequest;
 import serviceresults.ListGameResult;
 import websocket.commands.UserGameCommand;
-import websocket.messages.ErrorMessage;
-import websocket.messages.LoadGameMessage;
-import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
+import websocket.messages.*;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 import static ui.EscapeSequences.*;
 import static ui.EscapeSequences.BLACK_PAWN;
@@ -87,7 +82,9 @@ public class GameplayClient implements NotificationHandler {
                         result = redraw(gameID);;
                     }
                     case "move" -> result = makeMove(params, gameID);
+                    case "show_moves" -> result = showMoves(params, gameID);
                     case "leave", "quit" -> result = leaveGame(gameID);
+                    case "resign" -> resignGame(gameID);
                     default -> result = help();
                 }
                 System.out.print(result);
@@ -124,9 +121,11 @@ public class GameplayClient implements NotificationHandler {
 
     public String help() {
         return """
-                - help
                 - move <from> <to> (make a move from and to format is A3 or F1)
                 - redraw (redraws the game board)
+                - resign (quit the game and the opponent wins)
+                - show_moves <piece> (highlight possible moves for specified piece)
+                - help
                 - quit or leave (leave current game)
                 """;
     }
@@ -135,8 +134,13 @@ public class GameplayClient implements NotificationHandler {
         var board = gameboard.getBoard();
         var turn = gameboard.getTeamTurn();
         String turnStr = turn.equals(ChessGame.TeamColor.WHITE) ? "White's Turn\n" : "Black's Turn\n";
-        return printBoard(board, colorSide) + turnStr;
+        return printBoard(board, colorSide, null) + turnStr;
 
+    }
+
+    private String printValidMoves(Collection<ChessMove> moves, ChessGame gameboard) {
+        var board = gameboard.getBoard();
+        return printBoard(board, colorSide, moves);
     }
 
     private String redraw(int gameID) {
@@ -147,6 +151,31 @@ public class GameplayClient implements NotificationHandler {
     private String leaveGame(int gameID) throws ResponseException {
         ws.leaveGame(authToken, gameID);
         return "leave";
+    }
+
+    private String resignGame(int gameID) throws ResponseException {
+        ws.resignGame(authToken, gameID);
+        return "leave";
+    }
+    private String showMoves(String[] params, Integer gameID) throws ResponseException {
+
+        String piece;
+        if (params.length > 0) {
+            piece = params[0];
+        } else {
+            return "Please include Piece location";
+        }
+        piece = piece.toUpperCase();
+        Map<Character, Integer> colMap = Map.of(
+                'A', 1, 'B', 2, 'C', 3, 'D', 4,
+                'E', 5, 'F', 6, 'G', 7, 'H', 8);
+        int col = colMap.get(piece.charAt(0));
+        int row = Integer.parseInt(piece.substring(1));
+        var pos = new ChessPosition(row, col);
+
+        ws.showMoves(authToken, gameID, pos);
+
+        return "Showing Possible Moves";
     }
 
     private String makeMove(String[] params, Integer gameID) throws ResponseException{
@@ -204,8 +233,13 @@ public class GameplayClient implements NotificationHandler {
             msg = ((NotificationMessage) notification).getMessage();
         } else if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.ERROR)) {
             msg = ((ErrorMessage) notification).getMessage();
-        } else {
+        } else if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.LOAD_GAME)){
             msg = printGameBoard(((LoadGameMessage) notification).getGame());
+        } else if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.VALID_MOVES)) {
+            msg = printValidMoves(((ValidMovesMessage) notification).getValidMoves(),
+                    ((ValidMovesMessage) notification).getGame());
+        } else {
+            msg = "Unknown Message";
         }
         System.out.println(SET_TEXT_COLOR_RED + msg + RESET_GAME);
         printPrompt();
