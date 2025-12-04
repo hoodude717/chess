@@ -6,12 +6,9 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
-import com.mysql.cj.exceptions.ClosedOnExpiredPasswordException;
 import exceptions.ResponseException;
-import servicerequests.JoinGameRequest;
 import servicerequests.ListGameRequest;
 import serviceresults.ListGameResult;
-import websocket.commands.UserGameCommand;
 import websocket.messages.*;
 
 import java.util.*;
@@ -25,7 +22,6 @@ public class GameplayClient implements NotificationHandler {
     private final String url;
     private WebSocketFacade ws;
     private String authToken;
-    private Map<Integer, Integer> gameIdToListNum;
     private Map<Integer, Integer> listNumToGameId;
     private String colorSide;
 
@@ -33,12 +29,10 @@ public class GameplayClient implements NotificationHandler {
             throws ResponseException {
         server = new ServerFacade(url);
         this.url = url;
-        gameIdToListNum = idToList;
         listNumToGameId = listToID;
     }
 
     public void updateMaps(Map<Integer, Integer> newIDMap, Map<Integer, Integer> newListMap) {
-        gameIdToListNum = newIDMap;
         listNumToGameId = newListMap;
     }
 
@@ -48,7 +42,6 @@ public class GameplayClient implements NotificationHandler {
 
     public void run(int gameID, String color) {
         System.out.println(RESET_GAME + BLACK_PAWN + " You are in game "+ gameID + "!" + BLACK_PAWN);
-        var curGame = getChessGame(gameID);
         colorSide = color.toLowerCase();
         if (colorSide.equals("empty")) { colorSide = "white"; }
 
@@ -79,7 +72,7 @@ public class GameplayClient implements NotificationHandler {
                 switch (cmd) {
                     case "logout" -> result = "quit";
                     case "redraw" -> {
-                        result = redraw(gameID);;
+                        result = redraw(gameID);
                     }
                     case "move" -> result = makeMove(params, gameID);
                     case "show_moves" -> result = showMoves(params, gameID);
@@ -153,9 +146,8 @@ public class GameplayClient implements NotificationHandler {
         return "leave";
     }
 
-    private String resignGame(int gameID) throws ResponseException {
+    private void resignGame(int gameID) throws ResponseException {
         ws.resignGame(authToken, gameID);
-        return "";
     }
     private String showMoves(String[] params, Integer gameID) throws ResponseException {
 

@@ -32,6 +32,8 @@ public class ChessGame {
         this.whiteKingPos = original.whiteKingPos;
         this.teamTurn = original.teamTurn;
         this.allMoves = original.allMoves;
+        this.gameOver = original.gameOver;
+        this.winner = original.winner;
     }
 
     /**
@@ -62,10 +64,6 @@ public class ChessGame {
 
     public boolean gameOver() {
         return gameOver;
-    }
-
-    public TeamColor getWinner() {
-        return winner;
     }
 
     /**

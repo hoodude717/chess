@@ -14,18 +14,15 @@ public class GameplayClientSpan {
 
     private final ServerFacade server;
     private String authToken;
-    private Map<Integer, Integer> gameIdToListNum;
     private Map<Integer, Integer> listNumToGameId;
     private String colorSide;
 
     public GameplayClientSpan(String url, Map<Integer, Integer> idToList, Map<Integer, Integer> listToID) {
         server = new ServerFacade(url);
-        gameIdToListNum = idToList;
         listNumToGameId = listToID;
     }
 
     public void updateMaps(Map<Integer, Integer> newIDMap, Map<Integer, Integer> newListMap) {
-        gameIdToListNum = newIDMap;
         listNumToGameId = newListMap;
     }
 

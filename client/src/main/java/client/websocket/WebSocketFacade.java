@@ -30,23 +30,20 @@ public class WebSocketFacade extends Endpoint {
             this.session = container.connectToServer(this, socketURI);
 
             //set message handler
-            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
-                @Override
-                public void onMessage(String message) {
-                    ServerMessage notification;
-                    if (message.contains("NOTIFICATION")) {
-                        notification = new Gson().fromJson(message, NotificationMessage.class);
-                    } else if (message.contains("ERROR")) {
-                        notification = new Gson().fromJson(message, ErrorMessage.class);
-                    } else if (message.contains("LOAD_GAME")) {
-                        notification = new Gson().fromJson(message, LoadGameMessage.class);
-                    } else if (message.contains("VALID_MOVES")) {
-                        notification = new Gson().fromJson(message, ValidMovesMessage.class);
-                    } else {
-                        notification = new Gson().fromJson(message, ServerMessage.class);
-                    }
-                    notificationHandler.notify(notification);
+            this.session.addMessageHandler((MessageHandler.Whole<String>) message -> {
+                ServerMessage notification;
+                if (message.contains("NOTIFICATION")) {
+                    notification = new Gson().fromJson(message, NotificationMessage.class);
+                } else if (message.contains("ERROR")) {
+                    notification = new Gson().fromJson(message, ErrorMessage.class);
+                } else if (message.contains("LOAD_GAME")) {
+                    notification = new Gson().fromJson(message, LoadGameMessage.class);
+                } else if (message.contains("VALID_MOVES")) {
+                    notification = new Gson().fromJson(message, ValidMovesMessage.class);
+                } else {
+                    notification = new Gson().fromJson(message, ServerMessage.class);
                 }
+                notificationHandler.notify(notification);
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());

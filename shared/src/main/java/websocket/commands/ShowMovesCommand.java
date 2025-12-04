@@ -1,6 +1,5 @@
 package websocket.commands;
 
-import chess.ChessMove;
 import chess.ChessPosition;
 
 import java.util.Objects;

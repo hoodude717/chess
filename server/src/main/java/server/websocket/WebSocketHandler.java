@@ -11,7 +11,6 @@ import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.SQLAuthDAO;
 import dataaccess.SQLGameDAO;
-import exceptions.ResponseException;
 import io.javalin.websocket.WsCloseContext;
 import io.javalin.websocket.WsCloseHandler;
 import io.javalin.websocket.WsConnectContext;
@@ -19,10 +18,8 @@ import io.javalin.websocket.WsConnectHandler;
 import io.javalin.websocket.WsMessageContext;
 import io.javalin.websocket.WsMessageHandler;
 import model.GameData;
-import org.eclipse.jetty.server.Authentication;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.IO;
 import org.eclipse.jetty.websocket.api.Session;
+import org.jetbrains.annotations.NotNull;
 import websocket.commands.*;
 import websocket.messages.*;
 
@@ -77,7 +74,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     @Override
-    public void handleClose(WsCloseContext ctx) {
+    public void handleClose(@NotNull WsCloseContext ctx) {
         System.out.println("Websocket closed");
     }
 
@@ -169,7 +166,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         ChessMove move = ((MakeMoveCommand) command).getMove();
         ChessGame game;
         String auth = command.getAuthToken();
-        String username = "";
+        String username;
         NotificationMessage checkNotif = null;
         try {
             gameDAO = new SQLGameDAO();
@@ -177,7 +174,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             var gameData = gameDAO.getGame(gameID);
             game = gameData.game();
             username = authDAO.getAuth(auth).username();
-            ChessGame.TeamColor turn = null;
+            ChessGame.TeamColor turn;
             if (game.getTeamTurn().equals(ChessGame.TeamColor.WHITE)) {turn = ChessGame.TeamColor.WHITE;}
             else {turn = ChessGame.TeamColor.BLACK;}
 
@@ -216,7 +213,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             throw new IOException("Error getting Game or Auth from DAOS");
         }
 
-        String notifStr = String.format("Player %s has made the following move: %s",username, move.toString());
+        String notifStr = String.format("Player %s has made the following move: %s",username, move);
         var loadGameMessage = new LoadGameMessage(game);
         var notificationMessage = new NotificationMessage(notifStr);
         connections.broadcast(session, notificationMessage, gameID);
@@ -238,7 +235,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         int gameID = command.getGameID();
         ChessGame game;
         String auth = command.getAuthToken();
-        String username = "";
+        String username;
         try {
             gameDAO = new SQLGameDAO();
             authDAO = new SQLAuthDAO();
@@ -295,7 +292,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         GameDAO gameDAO;
         ChessPosition pos = ((ShowMovesCommand) command).getPosition();
-        Collection<ChessMove> valid = null;
+        Collection<ChessMove> valid;
         ChessGame game;
         try {
             gameDAO = new SQLGameDAO();
