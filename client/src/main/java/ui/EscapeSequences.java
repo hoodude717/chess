@@ -170,6 +170,8 @@ public class EscapeSequences {
             for (var move : moves) {
                 if (move.getStartPosition().getColumn() == i+1 && move.getStartPosition().getRow() == rowNum) {
                     rowString.append(SET_BG_COLOR_YELLOW);
+                    isAMove = true;
+                    break;
                 }
                 if (move.getEndPosition().getColumn() == i+1 && move.getEndPosition().getRow() == rowNum) {
                     if (i%2 == 0) { rowString.append(SET_BG_COLOR_DARK_ORANGE); }

@@ -166,9 +166,16 @@ public class GameplayClient implements NotificationHandler {
             return "Please include Piece location";
         }
         piece = piece.toUpperCase();
-        Map<Character, Integer> colMap = Map.of(
-                'A', 1, 'B', 2, 'C', 3, 'D', 4,
-                'E', 5, 'F', 6, 'G', 7, 'H', 8);
+        Map<Character, Integer> colMap;
+        if (colorSide.equals("white")){
+            colMap = Map.of(
+                    'A', 1, 'B', 2, 'C', 3, 'D', 4,
+                    'E', 5, 'F', 6, 'G', 7, 'H', 8);
+        } else {
+            colMap = Map.of(
+                    'A', 8, 'B', 7, 'C', 6, 'D', 5,
+                    'E', 4, 'F', 3, 'G', 2, 'H', 1);
+        }
         int col = colMap.get(piece.charAt(0));
         int row = Integer.parseInt(piece.substring(1));
         var pos = new ChessPosition(row, col);
@@ -205,9 +212,16 @@ public class GameplayClient implements NotificationHandler {
         //Extracting rows and columns from the string
         from = from.toUpperCase();
         to = to.toUpperCase();
-        Map<Character, Integer> colMap = Map.of(
-                'A', 1, 'B', 2, 'C', 3, 'D', 4,
-                'E', 5, 'F', 6, 'G', 7, 'H', 8);
+        Map<Character, Integer> colMap;
+        if (colorSide.equals("white")){
+            colMap = Map.of(
+                    'A', 1, 'B', 2, 'C', 3, 'D', 4,
+                    'E', 5, 'F', 6, 'G', 7, 'H', 8);
+        } else {
+            colMap = Map.of(
+                    'A', 8, 'B', 7, 'C', 6, 'D', 5,
+                    'E', 4, 'F', 3, 'G', 2, 'H', 1);
+        }
         int fromCol = colMap.get(from.charAt(0));
         int fromRow = Integer.parseInt(from.substring(1));
         int toCol = colMap.get(to.charAt(0));
