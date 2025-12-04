@@ -162,22 +162,36 @@ public class EscapeSequences {
         return rowString.toString();
     }
     // Takes in String rowNum and the pieces in that row, rowNum must be padded with one space on each side
-    public static String blackSquareFirstRow(List<ChessPiece> rowPieces,  Integer rowNum, Collection<ChessMove> moves) {
+    public static String blackSquareFirstRow(List<ChessPiece> rowPieces,  Integer rowNum, Collection<ChessMove> moves, String color) {
         String rowStr = " " + rowNum + " ";
         StringBuilder rowString = new StringBuilder(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowStr);
         for (int i = 0; i < 8; i++) {
             boolean isAMove = false;
             for (var move : moves) {
-                if (move.getStartPosition().getColumn() == i+1 && move.getStartPosition().getRow() == rowNum) {
-                    rowString.append(SET_BG_COLOR_YELLOW);
-                    isAMove = true;
-                    break;
+                if (color.equals("white")) {
+                    if (move.getStartPosition().getColumn() == i+1 && move.getStartPosition().getRow() == rowNum) {
+                        rowString.append(SET_BG_COLOR_YELLOW);
+                        isAMove = true;
+                        break;
+                    }
+                    if (move.getEndPosition().getColumn() == i+1 && move.getEndPosition().getRow() == rowNum) {
+                        if (i%2 == 0) { rowString.append(SET_BG_COLOR_ORANGE); }
+                        else { rowString.append(SET_BG_COLOR_DARK_ORANGE); }
+                        isAMove = true;
+                    }
+                } else {
+                    if (move.getStartPosition().getColumn() == 8-i && move.getStartPosition().getRow() == rowNum) {
+                        rowString.append(SET_BG_COLOR_YELLOW);
+                        isAMove = true;
+                        break;
+                    }
+                    if (move.getEndPosition().getColumn() == 8-i && move.getEndPosition().getRow() == rowNum) {
+                        if (i%2 == 0) { rowString.append(SET_BG_COLOR_ORANGE); }
+                        else { rowString.append(SET_BG_COLOR_DARK_ORANGE); }
+                        isAMove = true;
+                    }
                 }
-                if (move.getEndPosition().getColumn() == i+1 && move.getEndPosition().getRow() == rowNum) {
-                    if (i%2 == 0) { rowString.append(SET_BG_COLOR_DARK_ORANGE); }
-                    else { rowString.append(SET_BG_COLOR_ORANGE); }
-                    isAMove = true;
-                }
+
             }
             if (!isAMove) {
                 if (i%2 == 0) {
@@ -193,23 +207,38 @@ public class EscapeSequences {
         return rowString.toString();
     }
 
-    public static String whiteSquareFirstRow(List<ChessPiece> rowPieces, Integer rowNum, Collection<ChessMove> moves) {
+    public static String whiteSquareFirstRow(List<ChessPiece> rowPieces, Integer rowNum, Collection<ChessMove> moves, String color) {
         String rowStr = " " + rowNum + " ";
         StringBuilder rowString = new StringBuilder(SET_BG_COLOR_MAROON + SET_TEXT_COLOR_RED + rowStr);
 
         for (int i = 0; i < 8; i++) {
             boolean isAMove = false;
             for (var move : moves) {
-                if (move.getStartPosition().getColumn() == i+1 && move.getStartPosition().getRow() == rowNum) {
-                    rowString.append(SET_BG_COLOR_YELLOW);
-                    isAMove = true;
-                    break;
-                }
-                if (move.getEndPosition().getColumn() == i+1 && move.getEndPosition().getRow() == rowNum) {
-                    if (i%2 == 0) { rowString.append(SET_BG_COLOR_ORANGE); }
-                    else { rowString.append(SET_BG_COLOR_DARK_ORANGE); }
-                    isAMove = true;
-                    break;
+                if (color.equals("white")) {
+                    if (move.getStartPosition().getColumn() == i+1 && move.getStartPosition().getRow() == rowNum) {
+                        rowString.append(SET_BG_COLOR_YELLOW);
+                        isAMove = true;
+                        break;
+                    }
+                    if (move.getEndPosition().getColumn() == i+1 && move.getEndPosition().getRow() == rowNum) {
+                        if (i%2 == 0) { rowString.append(SET_BG_COLOR_DARK_ORANGE); }
+                        else { rowString.append(SET_BG_COLOR_ORANGE); }
+                        isAMove = true;
+                    }
+                } else {
+                    if (move.getStartPosition().getColumn() == 8 - i && move.getStartPosition().getRow() == rowNum) {
+                        rowString.append(SET_BG_COLOR_YELLOW);
+                        isAMove = true;
+                        break;
+                    }
+                    if (move.getEndPosition().getColumn() == 8 - i && move.getEndPosition().getRow() == rowNum) {
+                        if (i % 2 == 0) {
+                            rowString.append(SET_BG_COLOR_DARK_ORANGE);
+                        } else {
+                            rowString.append(SET_BG_COLOR_ORANGE);
+                        }
+                        isAMove = true;
+                    }
                 }
             }
             if (!isAMove) {
@@ -243,25 +272,25 @@ public class EscapeSequences {
         List<ChessPiece> row8 = Arrays.asList(board.getRow(8));
         if (color.equals("white") || color.equals("blanco")) {
             retStr += ABCD_ROW + "\n";
-            retStr += whiteSquareFirstRow(row8, 8, moves) + "\n";
-            retStr += blackSquareFirstRow(row7, 7, moves) + "\n";
-            retStr += whiteSquareFirstRow(row6, 6, moves) + "\n";
-            retStr += blackSquareFirstRow(row5, 5, moves) + "\n";
-            retStr += whiteSquareFirstRow(row4, 4, moves) + "\n";
-            retStr += blackSquareFirstRow(row3, 3, moves) + "\n";
-            retStr += whiteSquareFirstRow(row2, 2, moves) + "\n";
-            retStr += blackSquareFirstRow(row1, 1, moves) + "\n";
+            retStr += whiteSquareFirstRow(row8, 8, moves, color) + "\n";
+            retStr += blackSquareFirstRow(row7, 7, moves, color) + "\n";
+            retStr += whiteSquareFirstRow(row6, 6, moves, color) + "\n";
+            retStr += blackSquareFirstRow(row5, 5, moves, color) + "\n";
+            retStr += whiteSquareFirstRow(row4, 4, moves, color) + "\n";
+            retStr += blackSquareFirstRow(row3, 3, moves, color) + "\n";
+            retStr += whiteSquareFirstRow(row2, 2, moves, color) + "\n";
+            retStr += blackSquareFirstRow(row1, 1, moves, color) + "\n";
             retStr += ABCD_ROW + "\n";
         } else {
             retStr += HGFE_ROW + "\n";
-            retStr += whiteSquareFirstRow(row1.reversed(), 1, moves) + "\n";
-            retStr += blackSquareFirstRow(row2.reversed(), 2, moves) + "\n";
-            retStr += whiteSquareFirstRow(row3.reversed(), 3, moves) + "\n";
-            retStr += blackSquareFirstRow(row4.reversed(), 4, moves) + "\n";
-            retStr += whiteSquareFirstRow(row5.reversed(), 5, moves) + "\n";
-            retStr += blackSquareFirstRow(row6.reversed(), 6, moves) + "\n";
-            retStr += whiteSquareFirstRow(row7.reversed(), 7, moves) + "\n";
-            retStr += blackSquareFirstRow(row8.reversed(), 8, moves) + "\n";
+            retStr += whiteSquareFirstRow(row1.reversed(), 1, moves, color) + "\n";
+            retStr += blackSquareFirstRow(row2.reversed(), 2, moves, color) + "\n";
+            retStr += whiteSquareFirstRow(row3.reversed(), 3, moves, color) + "\n";
+            retStr += blackSquareFirstRow(row4.reversed(), 4, moves, color) + "\n";
+            retStr += whiteSquareFirstRow(row5.reversed(), 5, moves, color) + "\n";
+            retStr += blackSquareFirstRow(row6.reversed(), 6, moves, color) + "\n";
+            retStr += whiteSquareFirstRow(row7.reversed(), 7, moves, color) + "\n";
+            retStr += blackSquareFirstRow(row8.reversed(), 8, moves, color) + "\n";
             retStr += HGFE_ROW + "\n";
         }
 

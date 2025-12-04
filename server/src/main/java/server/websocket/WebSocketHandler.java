@@ -104,7 +104,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 color = "an observer";
             }
         } catch (Exception e) {
-            connections.singleBroadcast(session, new ErrorMessage("Error: Game ID or AuthToken Incorrect"));
+            connections.singleBroadcast(session, new ErrorMessage("Error: Not Properly Logged into this Game"));
             throw new IOException("Error getting Game or Auth from DAOS");
         }
 
@@ -189,14 +189,14 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 throw new InvalidMoveException("Cannot make move if not your turn or an observer");
             }
             // Check to see if game in check or checkmate
-            if (game.isInCheck(ChessGame.TeamColor.WHITE)) {
-                checkNotif = new NotificationMessage("White is in check!");
-            } else if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
-                checkNotif = new NotificationMessage("Black has won the game!");
-            } else if (game.isInCheck(ChessGame.TeamColor.BLACK)) {
-                checkNotif = new NotificationMessage("Black is in check!");
+            if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                checkNotif = new NotificationMessage(String.format("White %s is in checkmate! Black has won", username));
             } else if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
-                checkNotif = new NotificationMessage("White has won the game!");
+                checkNotif = new NotificationMessage(String.format("Black %s is in checkmate! White has won", username));
+            } else if (game.isInCheck(ChessGame.TeamColor.WHITE)) {
+                checkNotif = new NotificationMessage(String.format("White %s is in check!", gameData.whiteUsername()));
+            } else if (game.isInCheck(ChessGame.TeamColor.BLACK)) {
+                checkNotif = new NotificationMessage(String.format("Black %s is in check!", gameData.blackUsername()));
             }
 
             gameDAO.updateGame(
@@ -209,7 +209,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         } catch (InvalidMoveException ex) {
             throw new InvalidMoveException("Error: Invalid Move " + ex.getMessage());
         } catch (Exception e) {
-            connections.singleBroadcast(session, new ErrorMessage("Error: Game ID or AuthToken Incorrect"));
+            connections.singleBroadcast(session, new ErrorMessage("Error: Not properly logged into this game"));
             throw new IOException("Error getting Game or Auth from DAOS");
         }
 
@@ -272,7 +272,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         } catch (IOException e) {
             throw new IOException("Error resigning from Game " + e.getMessage());
         } catch (Exception e) {
-            connections.singleBroadcast(session, new ErrorMessage("Error: Game ID or AuthToken Incorrect"));
+            connections.singleBroadcast(session, new ErrorMessage("Error: Not Properly Logged into this Game"));
             throw new IOException("Error getting Game or Auth from DAOS");
         }
 

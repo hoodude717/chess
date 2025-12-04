@@ -77,7 +77,7 @@ public class GameplayClient implements NotificationHandler {
                     case "move" -> result = makeMove(params, gameID);
                     case "show_moves" -> result = showMoves(params, gameID);
                     case "leave", "quit" -> result = leaveGame(gameID);
-                    case "resign" -> resignGame(gameID);
+                    case "resign" -> checkResign(gameID);
                     default -> result = help();
                 }
                 System.out.print(result);
@@ -146,6 +146,26 @@ public class GameplayClient implements NotificationHandler {
         return "leave";
     }
 
+    private void checkResign(int gameID) {
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
+        System.out.println("Are you sure you want to resign? (yes/no)");
+        String line = scanner.nextLine();
+
+        try {
+            String[] tokens = line.toLowerCase().split(" ");
+            var answer = tokens[0];
+            switch (answer.toLowerCase()) {
+                case "yes": resignGame(gameID);
+                case "no": printPrompt();
+                default: printPrompt();
+            }
+        } catch (Exception e) {
+            System.out.print(SET_TEXT_COLOR_RED+"ERROR Unknown Error has occurred when Resigning\n" + RESET_GAME);
+        }
+    }
+
+
     private void resignGame(int gameID) throws ResponseException {
         ws.resignGame(authToken, gameID);
     }
@@ -154,20 +174,18 @@ public class GameplayClient implements NotificationHandler {
         String piece;
         if (params.length > 0) {
             piece = params[0];
+            piece = piece.toUpperCase();
+            if (!piece.matches("[A-H][1-8]")) {
+                return  SET_TEXT_COLOR_RED + "ERROR Invalid Move Format use Letter Number eg. A2 or F6\n" + RESET_GAME;
+            }
         } else {
             return "Please include Piece location";
         }
         piece = piece.toUpperCase();
-        Map<Character, Integer> colMap;
-        if (colorSide.equals("white")){
-            colMap = Map.of(
-                    'A', 1, 'B', 2, 'C', 3, 'D', 4,
-                    'E', 5, 'F', 6, 'G', 7, 'H', 8);
-        } else {
-            colMap = Map.of(
-                    'A', 8, 'B', 7, 'C', 6, 'D', 5,
-                    'E', 4, 'F', 3, 'G', 2, 'H', 1);
-        }
+        Map<Character, Integer> colMap = Map.of(
+                'A', 1, 'B', 2, 'C', 3, 'D', 4,
+                'E', 5, 'F', 6, 'G', 7, 'H', 8);
+
         int col = colMap.get(piece.charAt(0));
         int row = Integer.parseInt(piece.substring(1));
         var pos = new ChessPosition(row, col);
@@ -188,8 +206,13 @@ public class GameplayClient implements NotificationHandler {
             } else {
                 promotion = "";
             }
+            from = from.toUpperCase();
+            to = to.toUpperCase();
+            if (!from.matches("[A-H][1-8]") || !to.matches("[A-H][1-8]")) {
+                return "Invalid Move Format use Letter Number eg. A2 or F6";
+            }
         } else {
-            return "Invalid Move Format";
+            return "Invalid Move Format use Letter Number eg. A2 or F6";
         }
 
         //Getting promotion type
@@ -205,15 +228,15 @@ public class GameplayClient implements NotificationHandler {
         from = from.toUpperCase();
         to = to.toUpperCase();
         Map<Character, Integer> colMap;
-        if (colorSide.equals("white")){
-            colMap = Map.of(
-                    'A', 1, 'B', 2, 'C', 3, 'D', 4,
-                    'E', 5, 'F', 6, 'G', 7, 'H', 8);
-        } else {
-            colMap = Map.of(
-                    'A', 8, 'B', 7, 'C', 6, 'D', 5,
-                    'E', 4, 'F', 3, 'G', 2, 'H', 1);
-        }
+//        if (colorSide.equals("white")){
+        colMap = Map.of(
+                'A', 1, 'B', 2, 'C', 3, 'D', 4,
+                'E', 5, 'F', 6, 'G', 7, 'H', 8);
+//        } else {
+//            colMap = Map.of(
+//                    'A', 8, 'B', 7, 'C', 6, 'D', 5,
+//                    'E', 4, 'F', 3, 'G', 2, 'H', 1);
+//        }
         int fromCol = colMap.get(from.charAt(0));
         int fromRow = Integer.parseInt(from.substring(1));
         int toCol = colMap.get(to.charAt(0));
