@@ -155,7 +155,7 @@ public class GameplayClient implements NotificationHandler {
 
     private String resignGame(int gameID) throws ResponseException {
         ws.resignGame(authToken, gameID);
-        return "leave";
+        return "";
     }
     private String showMoves(String[] params, Integer gameID) throws ResponseException {
 

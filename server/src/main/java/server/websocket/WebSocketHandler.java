@@ -137,13 +137,13 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             String whiteUser = game.whiteUsername();
             String blackUser = game.blackUsername();
             //Figure out the color of the player leaving
-            if (game.whiteUsername().equals(username)) {
+            if (username.equals(game.whiteUsername())) {
                 whiteUser = null;
-            } else if (game.blackUsername().equals(username)) {
+            } else if (username.equals(game.blackUsername())) {
                 blackUser = null;
             }
             //Update the game
-            var newGame = new GameData(command.getGameID(), whiteUser,blackUser, game.gameName(), game.game());
+            var newGame = new GameData(command.getGameID(), whiteUser, blackUser, game.gameName(), game.game());
             gameDAO.updateGame(command.getGameID(), newGame);
 
         } catch (Exception e) {
@@ -244,6 +244,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             authDAO = new SQLAuthDAO();
             var gameData = gameDAO.getGame(gameID);
             game = gameData.game();
+            if (game.gameOver()) {
+                connections.singleBroadcast(session, new ErrorMessage("Error: Cannot resign after game is over"));
+                throw new IOException("Cannot resign after game is over");
+            }
             username = authDAO.getAuth(auth).username();
             String white = gameData.whiteUsername();
             String black = gameData.blackUsername();
@@ -252,7 +256,15 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             } else {
                 black = null;
             }
+            // If observer cannot resign
+            if (!username.equals(gameData.blackUsername()) && !username.equals(gameData.whiteUsername()) ) {
+                connections.singleBroadcast(session, new ErrorMessage("Error: Cannot resign as an observer"));
+                throw new IOException("Cannot resign as an observer");
+            }
 
+            //Make the reigning action
+            ChessGame.TeamColor resigningColor = (white == null) ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+            game.resign(resigningColor);
             gameDAO.updateGame(
                     gameID,
                     new GameData(gameID,
@@ -260,13 +272,17 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                             black,
                             gameData.gameName(),
                             game));
+        } catch (IOException e) {
+            throw new IOException("Error resigning from Game " + e.getMessage());
         } catch (Exception e) {
             connections.singleBroadcast(session, new ErrorMessage("Error: Game ID or AuthToken Incorrect"));
             throw new IOException("Error getting Game or Auth from DAOS");
         }
 
         //Notify
-        var notification = new NotificationMessage("Player Has Resigned from the Game\n");
+        var resignerNotif = new NotificationMessage("You have resigned from the game");
+        var notification = new NotificationMessage(String.format("Player %s has resigned from the game", username));
+        connections.singleBroadcast(session, resignerNotif);
         connections.broadcast(session, notification, command.getGameID());
     }
 

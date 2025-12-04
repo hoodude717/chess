@@ -15,6 +15,8 @@ public class ChessGame {
     private Collection<ChessMove> allMoves = new ArrayList<>(); //Used to keep track of all the moves in the game
     protected ChessPosition whiteKingPos = new ChessPosition(1, 5);
     protected ChessPosition blackKingPos = new ChessPosition(8, 5);
+    private boolean gameOver = false;
+    private TeamColor winner = null;
 
     public ChessGame() {
         board.resetBoard();
@@ -49,6 +51,24 @@ public class ChessGame {
     }
 
     /**
+     * Resign the game and set winner to other team
+     *
+     * @param team the team who is resigning
+     */
+    public void resign(TeamColor team) {
+        gameOver = true;
+        winner = (team.equals(TeamColor.WHITE)) ? TeamColor.WHITE : TeamColor.BLACK;
+    }
+
+    public boolean gameOver() {
+        return gameOver;
+    }
+
+    public TeamColor getWinner() {
+        return winner;
+    }
+
+    /**
      * Enum identifying the 2 possible teams in a chess game
      */
     public enum TeamColor {
@@ -66,9 +86,11 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = board.getPiece(startPosition);
         Collection<ChessMove> moves;
+
         if (piece == null) {
             return List.of();
         }
+
         TeamColor pieceColor = piece.getTeamColor();
         moves = piece.pieceMoves(board, startPosition);
         Collection<ChessMove> movesCopy =  new ArrayList<>();
@@ -124,6 +146,7 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPosition start = move.getStartPosition();
         ChessPiece piece = board.getPiece(start);
+        if (gameOver) {throw new InvalidMoveException("Game Over");}
         if (piece == null) {
             throw new InvalidMoveException("No Piece at start space");
         }
@@ -187,6 +210,7 @@ public class ChessGame {
     }
 
     private boolean noValidMoves(TeamColor teamColor) {
+
         for (int i=1; i<=8; i++ ) { // Check row by row
             for (int j=1; j<=8; j++) { // Check columns
                 ChessPiece piece =  board.getPiece(new ChessPosition(i, j));
@@ -203,6 +227,8 @@ public class ChessGame {
 
             }
         }
+        gameOver = true;
+        winner = (teamColor.equals(TeamColor.WHITE)) ? TeamColor.BLACK : TeamColor.WHITE;
         return true;
     }
 
