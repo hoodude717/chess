@@ -27,7 +27,7 @@ public class ConnectionManager {
         String msg = gson.toJson(notification);
         for (var s: connections.keySet()) {
             if (!connections.get(s).equals(gameID)) {
-                return;
+                continue;
             }
             if (s.isOpen()) {
                 if (!s.equals(excludeSession)) {

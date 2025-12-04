@@ -107,6 +107,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 color = "an observer";
             }
         } catch (Exception e) {
+            connections.singleBroadcast(session, new ErrorMessage("Error: Game ID or AuthToken Incorrect"));
             throw new IOException("Error getting Game or Auth from DAOS");
         }
 
@@ -211,15 +212,15 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         } catch (InvalidMoveException ex) {
             throw new InvalidMoveException("Error: Invalid Move " + ex.getMessage());
         } catch (Exception e) {
+            connections.singleBroadcast(session, new ErrorMessage("Error: Game ID or AuthToken Incorrect"));
             throw new IOException("Error getting Game or Auth from DAOS");
         }
 
         String notifStr = String.format("Player %s has made the following move: %s",username, move.toString());
         var loadGameMessage = new LoadGameMessage(game);
         var notificationMessage = new NotificationMessage(notifStr);
-
+        connections.broadcast(session, notificationMessage, gameID);
         connections.broadcast(null, loadGameMessage, gameID);
-        connections.broadcast(null, notificationMessage, gameID);
         if (checkNotif != null) { connections.broadcast(null, checkNotif, gameID);}
 
     }
@@ -232,6 +233,37 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
 
         //Resign
+        GameDAO gameDAO;
+        AuthDAO authDAO;
+        int gameID = command.getGameID();
+        ChessGame game;
+        String auth = command.getAuthToken();
+        String username = "";
+        try {
+            gameDAO = new SQLGameDAO();
+            authDAO = new SQLAuthDAO();
+            var gameData = gameDAO.getGame(gameID);
+            game = gameData.game();
+            username = authDAO.getAuth(auth).username();
+            String white = gameData.whiteUsername();
+            String black = gameData.blackUsername();
+            if (username.equals(gameData.whiteUsername())) {
+                white = null;
+            } else {
+                black = null;
+            }
+
+            gameDAO.updateGame(
+                    gameID,
+                    new GameData(gameID,
+                            white,
+                            black,
+                            gameData.gameName(),
+                            game));
+        } catch (Exception e) {
+            connections.singleBroadcast(session, new ErrorMessage("Error: Game ID or AuthToken Incorrect"));
+            throw new IOException("Error getting Game or Auth from DAOS");
+        }
 
         //Notify
         var notification = new NotificationMessage("Player Has Resigned from the Game\n");

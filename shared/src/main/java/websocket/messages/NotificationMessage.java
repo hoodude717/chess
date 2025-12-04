@@ -3,21 +3,21 @@ package websocket.messages;
 import java.util.Objects;
 
 public class NotificationMessage extends ServerMessage {
-    String msg;
+    String message;
 
     public NotificationMessage(String message) {
         super(ServerMessageType.NOTIFICATION);
-        msg = message;
+        this.message = message;
     }
 
     public String getMessage() {
-        return msg;
+        return message;
     }
 
     @Override
     public String toString() {
         return "NotificationMessage{" +
-                "msg='" + msg + '\'' +
+                "msg='" + message + '\'' +
                 '}';
     }
 
@@ -30,11 +30,11 @@ public class NotificationMessage extends ServerMessage {
             return false;
         }
         NotificationMessage that = (NotificationMessage) o;
-        return Objects.equals(msg, that.msg);
+        return Objects.equals(message, that.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), msg);
+        return Objects.hash(super.hashCode(), message);
     }
 }
